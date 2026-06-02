@@ -40,10 +40,24 @@
       **AIUP chain for M2 (each step produces a file the next one reads; review/edit between steps):**
       - [x] (1) Write `docs/vision.md` for M2 — by hand. The one human input AIUP can't derive. Use the marketplace README's recommended structure (Mission · Target Users · Goals · Scope in/out · Constraints). Seed it from: the M2 decision (00-foundation.md:232), pains P01🔥/P02🔥, the Pareto + "fun, unpaid, dogfood private mailbox" guardrails, and the HumanLayer light-approval product constraint (todo.md ~:42). Keep the interaction surface + mail-selection as OPEN questions here — don't pre-decide them.
       - [x] (2) `/requirements` → `docs/requirements.md` — mostly a RE-FORMAT: the existing pains (P01, P02, A##) already ARE functional requirements. Map them to FR-### / NFR-### / CON-### and KEEP the trace back to the P/A IDs (don't lose the existing namespace).
-        - [ ] grill-with-docs conflict resolution (ubiquitous language? glossary?). What is missing in AIUP?
-        - [ ] review/edit/adjust requirement.md (see tutorial.md from aiup/book-library)
+        - [x] grill-with-docs conflict resolution (ubiquitous language? glossary?). What is missing in AIUP? (2026-06-02)
+              13-question grill → built `docs/CONTEXT.md` (18 terms, kernel + M2 section), 2 ADRs
+              (`docs/adr/0001-external-provenance-ledger.md`, `0002-approval-surface-as-adapter.md`).
+              **Method-test finding:** AIUP ships no ubiquitous-language artifact and no ADR mechanism —
+              grill-with-docs supplies both; that's the gap it fills over a cold AIUP chain.
+              Key decisions: Proposal (object) vs Approval Request (gate); Sender = From address;
+              Document Type = editable closed enum; min(type,location) confidence gate; dedup keys on
+              content-hash (Conflict = same-path/different-content, human-resolved); external Provenance
+              Ledger; Message-ID mail identity; plan/apply YAML Action Plan as first Approval-Surface
+              adapter (GUI later); Routing Roots define F04's closed set; Run Scope is an adapter concern.
+        - [x] review/edit/adjust requirement.md (2026-06-02) — folded all grill decisions into
+              `docs/vision.md` + `docs/requirements.md` (new FR-011..014, C-008..010, ADR refs),
+              added F32·infer-filename (M2b) to `plan/01-foundation.md`, fixed stale 00→01 links.
+        - [ ] human review/edit/adjust requirement.md (see tutorial.md from aiup/book-library)
+        - [ ] in case of significant changes: grill-with-docs again (only in respect to the changes)
         - [ ] other skills/guardrails from coding repo?
       - [ ] check below steps with aiup/book-library/tutorial.md
+      - [ ] where would humanlayer/riptide fit in this process? how to assure deep modules and tracer-bullets?
       - [ ] (3) `/entity-model` → `docs/entity_model.md` — the genuinely NEW value. Yields the missing M2 domain model: Attachment, RoutingRule, Provenance (= F06), and the idempotency key F22 needs. Watch that it surfaces these.
       - [ ] (4) `/use-case-diagram` → `docs/use_cases.puml` — actors + UC-### IDs, each tracing to ≥1 FR. This is where the M2 actor(s) + the slice into use cases gets pinned (likely a small set, e.g. "review & file proposed attachments").
       - [ ] (5) `/use-case-spec UC-XXX` → `docs/use_cases/UC-XXX-*.md` — the detailed spec: actor · preconditions · main success scenario (numbered) · alternative flows (file-already-exists, target-folder unclear/undefined, not-every-attachment-should-be-filed, rename) · postconditions · business rules. Resolve interaction-surface + mail-selection HERE as explicit decisions.

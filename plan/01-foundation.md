@@ -26,7 +26,7 @@
 |---|---|---|
 | **M1 · Semantic Mail Q&A** | F07 F08 F09 F10 F11 F12 (+F06) | ask a question → answer synthesized from the archive (incl. attachments) |
 | **M2 · Attachment Auto-Router** | F01 F02 F03 F04 F22 (+F06) | extract a file, classify it, decide where, file it |
-| **M2b · Intelligent Auto-Router** | F30 F31 (+F01–F04 F22 F06) | extends M2: LLM-assisted routing for unknown senders/destinations, sender→location knowledge base |
+| **M2b · Intelligent Auto-Router** | F30 F31 F32 (+F01–F04 F22 F06) | extends M2: LLM-assisted routing for unknown senders/destinations, sender→location knowledge base, and folder-naming-scheme inference for suggested filenames |
 | **M3 · Mail Triage Engine** | F17 F13 F14 F15 F16 (+F04) | classify a mail, decide the action, learn the rule, ask when unsure |
 | **M4 · Document Data Extractor** | F18 F19 F20 (+F02 F03) | parse structured docs, reconcile vs reference, flag missing fields |
 | **M5 · Drafting Assistant** | F21 F23 F24 F25 | summarize, draft, adapt, generate outgoing content |
@@ -73,6 +73,7 @@
 | **F16** | request-confirmation | low-confidence case → human prompt → decision | M3 | ☐ |
 | **F30** | maintain-sender-map | read/write the sender→location knowledge base | M2b | ☐ |
 | **F31** | infer-target-location | LLM-based folder inference for unknown senders/types | M2b | ☐ |
+| **F32** | infer-filename | LLM-based filename suggestion from a target folder's naming scheme (sibling of F31) | M2b | ☐ |
 
 ### Layer 5 — Comparison & validation
 | ID | Function | Contract (rough) | Used by | Status |
@@ -117,12 +118,12 @@ Each module lists its **core** functions and the **shared substrate** it borrows
 | Notes | Lowest effort; non-destructive (files a copy). Establishes substrate F22/F06/F03/F04 reused by M1, M2b, M3, M4. |
 
 ### M2b · Intelligent Auto-Router — *LLM-assisted routing for unknown destinations*
-**Pipeline:** `F01 detect-attachment → F02 extract-attachment → F03 classify-attachment-type → F04 derive-target-location → [if low-confidence] F30 maintain-sender-map → F31 infer-target-location → F22 write-to-external-system` (F06 throughout)
+**Pipeline:** `F01 detect-attachment → F02 extract-attachment → F03 classify-attachment-type → F04 derive-target-location → [if low-confidence] F30 maintain-sender-map → F31 infer-target-location → F32 infer-filename → F22 write-to-external-system` (F06 throughout)
 | Role | Functions |
 |---|---|
-| Core | F30, F31 |
+| Core | F30, F31, F32 |
 | Shared substrate | F01, F02, F03, F04 (with M2), F22 write-to-external-system (with M2/M3/M4), F06 record-provenance |
-| Notes | Depends on M2's substrate. Activates only when F04 confidence falls below threshold. User corrections feed back into the sender→location mapping. Folder *creation* (not just routing) is in scope. Local/network folder is the v1 write target. Status: ☐ not started — M2 must ship first. |
+| Notes | Depends on M2's substrate. Activates only when F04 confidence falls below threshold. User corrections feed back into the sender→location mapping. Folder *creation* (not just routing) is in scope. **F32 infers a suggested Target Filename** from the target folder's naming scheme (M2 supports only manual rename via the editable Action Plan). Local/network folder is the v1 write target. Status: ☐ not started — M2 must ship first. |
 
 ### M3 · Mail Triage Engine — *classify a mail, decide & do the action, learn the rule*
 **Pipeline:** `F17 classify-mail-type → F14 match-rule → F13 decide-action → (F04 derive-target-location) → F22 write` · `F16 request-confirmation` on low confidence · `F15 learn-rule` from corrections
