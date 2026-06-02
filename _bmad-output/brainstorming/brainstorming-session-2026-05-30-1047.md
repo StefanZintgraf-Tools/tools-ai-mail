@@ -160,7 +160,7 @@ context_file: ''
 
 ## Technique Execution — Phase 3: Resource Constraints (Pareto squeeze)
 
-Constraint applied: *"three fun evenings — which one capability ships, running on the private mailbox?"* Full finalist comparison table persisted in [plan/capability_pain_matrix.md](../../plan/capability_pain_matrix.md). Function-level breakdown in [plan/functions.md](../../plan/functions.md).
+Constraint applied: *"three fun evenings — which one capability ships, running on the private mailbox?"* Full finalist comparison table and function-level breakdown persisted in [plan/00-foundation.md](../../plan/00-foundation.md).
 
 **Finalists scored:** M2 (effort 🟢 / risk 🟢 / fun 🟡 / tracer 🟡-substrate), M3 (effort 🟡 / risk 🔴 destructive / tracer 🟢), M1 (effort 🔴 index / fun 🟢 magic / tracer 🟢).
 

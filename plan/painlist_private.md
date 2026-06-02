@@ -24,7 +24,7 @@ Eingehende Mails bringen Anhänge mit (Rechnungen, Verträge, Tickets, Fotos, Do
 
 ### Relevante Zeitfresser
 
-1. `[P01]` **Anhänge in den richtigen Google-Drive-Ordner ablegen** — Rechnung kommt per Mail, Anhang muss manuell heruntergeladen und in den passenden Ordner (z. B. `Finanzen/Rechnungen/2026`) hochgeladen werden. Wiederkehrend, stupide, wird oft aufgeschoben.
+1. `[P01]` **Anhänge in den richtigen Ordner ablegen** — Rechnung kommt per Mail, Anhang muss manuell heruntergeladen und in den passenden Ordner (z. B. `Finanzen/Rechnungen/2026`) hochgeladen werden. Wiederkehrend, stupide, wird oft aufgeschoben.
 2. `[P02]` **Den passenden Zielordner für einen Anhang finden** — verschiedene Absender, verschiedene Dokumenttypen: Wo gehört diese PDF hin? Die Entscheidung kostet Aufmerksamkeit.
 3. `[P03]` **Anhänge wiederfinden** — „Wo ist die Garantieurkunde für das Gerät, das ich letztes Jahr gekauft habe?" — steckt in einem alten Mail-Thread statt in der strukturierten Ablage.
 
