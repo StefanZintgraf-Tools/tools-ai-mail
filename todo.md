@@ -5,9 +5,12 @@ Next step to continue, see unchecked "[ ]" term
 - [x] create new skills to align aiup and the coding project: see `plan/create_skills.md`
       call order once built: `ubiquitous-language-guard` → `pareto-scope-cut` → `domain-model` → `adr-threshold-gate` → `hidden-constraint-sweep` → `/use-case-diagram` (stock + lenses) → `/use-case-spec` (stock + lenses) → `trace-check`
 
-- [ ] analyse, run and test the above created skills.
+- [ ] new domain-requirements skill (directory link!)
 
-- [ ] resolve which of the created artifacts are needed by the pockock skills and how to achieve this.
+- [ ] analyse, run and test the newly created skills.
+
+- [ ] review workflow.md (specifically: what about the aiup artifacts and the pocock skills?)
+      resolve which of the created artifacts are needed by the pockock skills and how to achieve this.
       **GATE before running any pocock skill** (`prototype`/`to-prd`/`to-issues`/`tdd`). Risk = two sources of truth.
       Finding (2026-06-03, read the SKILL.md bodies): the pocock skills are **context-driven, not file-driven** — none
       reads the AIUP spine artifacts by path. They formally consume only TWO of our outputs, by convention:

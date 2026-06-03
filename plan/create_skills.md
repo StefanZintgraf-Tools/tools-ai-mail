@@ -1,4 +1,4 @@
-# Plan — Generic AIUP Guardrail Skills + a Modified `domain-model` Skill
+# Plan — Generic AIUP Guardrail Skills + Modified Authoring Skills (`domain-requirements`, `domain-model`)
 
 ## Background information
 
@@ -53,15 +53,22 @@ before `domain-model`), and runs against any artifact. Source of truth for the r
 | `pareto-scope-cut` | `gr_greenfield` G1,G3,G5,G9,G10 | Flag entities/FRs/flows built for imagined/future scope; push to a deferred list with a one-line postponed-decision record each (G9). | requirements, domain-model, use-case-diagram |
 | `trace-check` | `gr_domain_language` L1 + AIUP-native traceability | Cross-artifact consistency: every UC traces to ≥1 FR; every entity named in a spec exists in the domain-model; actors match the glossary (L1); every business rule maps to a domain-model invariant. Reports breaks; fixes loop back HITL. | use-case-diagram, use-case-spec, any time artifacts drift |
 
-### Family B — Modified modeling skill
+### Family B — Modified authoring skills
+
+Forked from the stock `aiup-core` authoring skills so they **consume the glossary** as input. Both are
+*generic successors*, not wrappers; both **consume** the glossary but **do not maintain** it (that stays
+`ubiquitous-language-guard`'s job).
 
 | Skill | Replaces | gr cluster it absorbs |
 | ----- | -------- | --------------------- |
+| `domain-requirements` | stock `aiup-core:requirements` | `gr_domain_language` L1 (consumes glossary: terms + actors verbatim) |
 | `domain-model` | stock `aiup-core:entity-model` | `gr_ddd` D1,D2,D3,D5,D7,D9 + `gr_architecture` A9 + `gr_domain_language` (consumes glossary) |
 
-`domain-model` is a **generic successor** to `entity-model`, not a wrapper. It owns
-*modeling-intrinsic* discipline; it **consumes** the glossary but does not maintain it (that stays
-`ubiquitous-language-guard`'s job).
+The two are **not symmetric.** `domain-model` also fixes *structural* defects (everything-a-table,
+forced datatypes) that no lens can post-process — that is why it was the original "exception."
+`domain-requirements` fixes **only** the vocabulary-input defect (stock `requirements` reads
+`vision.md`, never a glossary, so it invents terms and defaults to "User/Admin/System" actors). See
+§"What changes" for each.
 
 ## The boundary: what's IN `domain-model` vs. a separate lens
 
@@ -94,6 +101,21 @@ Three stock defects that contradict its own "stack-agnostic" claim — fixed at 
 Everything else stock `entity-model` does well (Mermaid ER diagram, per-entity attribute tables,
 explicit validation rules, the cross-validation pass) is **kept**.
 
+## What changes in `domain-requirements` vs stock `requirements`
+
+**Exactly one** change — stock `requirements` has no structural defect, only a vocabulary-input one:
+
+1. **Consumes the glossary.** Reads the glossary (resolve `docs/CONTEXT.md` → `docs/glossary.md`,
+   warn-and-continue if absent) in addition to `vision.md`; uses domain terms **verbatim**; draws FR
+   actors/roles from the glossary's actor terms instead of the stock "User/Admin/System" default;
+   prefers a glossary term over coining a synonym.
+
+Everything else stock `requirements` does well (the FR/NFR/C catalog, the user-story format, the
+measurable-NFR rule, the quality-checks table, error recovery) is **kept**. Enforcement, synonym
+flagging, near-match halting, and glossary write-back are **not** added here — those stay
+`ubiquitous-language-guard` (the run-time partner). Contingency: this change is only valuable once a
+glossary exists *before* the requirements step — see [`workflow.md`](workflow.md).
+
 ## Source materials (read these first)
 
 A fresh session needs only this file plus these. All paths absolute.
@@ -109,6 +131,11 @@ A fresh session needs only this file plus these. All paths absolute.
 **Stock AIUP skill to use as the `domain-model` baseline (modify a *copy*, never edit upstream):**
 - `c:\PROJ\github\aiup\marketplace\aiup-core\skills\entity-model\SKILL.md` (reliable git clone)
 - also installed at `~\.claude\plugins\marketplaces\ai-unified-process-marketplace\aiup-core\skills\entity-model\SKILL.md`
+
+**Stock AIUP skill to use as the `domain-requirements` baseline (modify a *copy*, never edit upstream):**
+- `c:\PROJ\github\aiup\marketplace\aiup-core\skills\requirements\SKILL.md` (reliable git clone)
+- also installed at `~\.claude\plugins\marketplaces\ai-unified-process-marketplace\aiup-core\skills\requirements\SKILL.md`
+- a project-skill copy already in this repo: `c:\PROJ\ai-mail\.claude\skills\requirements\SKILL.md`
 
 **SKILL.md format exemplars (copy the shape):**
 - `c:\PROJ\ai-mail\.claude\skills\entity-model\SKILL.md` — an existing project-skill in this repo
@@ -235,6 +262,26 @@ appear only as the test case.
 - **Out:** a consistency report (pass / list of breaks); HITL fixes loop back into the offending
   artifact.
 
+### - [ ] 7 · `domain-requirements`  (Family B · modified authoring — replaces stock `requirements`)
+- **Baseline:** start from a *copy* of the stock `requirements` SKILL.md; keep its FR/NFR/C catalog
+  structure, user-story format, quality-checks table, and error-recovery **wholesale** — change **only**
+  the glossary-consumption defect below.
+- **gr:** gr_domain_language L1 (canonical terms **verbatim**) — **consumes** the glossary; does **not**
+  enforce or evolve it (that stays `ubiquitous-language-guard`).
+- **In:** glossary (arg; resolve `docs/CONTEXT.md` → `docs/glossary.md`; warn-and-continue if absent),
+  `docs/vision.md`.
+- **Does:** read the glossary as input; draw FR actors/roles from the glossary's actor terms (**not**
+  the stock "User/Admin/System" default); use domain terms **verbatim** in titles/user-stories/
+  constraints; prefer a glossary term over coining a synonym. Everything else stock `requirements` does
+  is kept.
+- **Out:** `docs/requirements.md` — **keep this filename** (AIUP chain contract downstream skills read).
+- **POST self-check:** actors trace to glossary terms; no storage-shaped or silently-invented domain
+  nouns in FR titles; any genuinely-new term is flagged for the `ubiquitous-language-guard` write-back
+  loop (L8) rather than silently coined.
+- **NOTE (contingency):** only useful once a glossary exists *before* this step — see
+  [`workflow.md`](workflow.md) (grill-with-docs seeds `CONTEXT.md` before requirements). On a cold
+  project with no glossary, it degrades to stock behaviour (warn-and-continue).
+
 ## Composition model
 
 By **convention**, not a heavyweight orchestrator (Pareto; `gr_greenfield` G5 = extract shared
@@ -252,6 +299,10 @@ Each step is invoked explicitly and reviewed between runs (AIUP's edit-between-s
 A thin per-step **orchestrator** (`prep-domain-model`, etc.) is deferred — add one only if running
 the lenses by hand proves annoying across ≥2 steps.
 
+The full end-to-end order (inception → vision → glossary → requirements → model/spec spine → post-spec)
+lives in [`workflow.md`](workflow.md). `domain-requirements` runs at the **requirements step**, *before*
+this model-phase chain.
+
 ## Build order (value-first, Pareto)
 
 Built and tested **as ai-mail project skills** for now (not via the coding `/make-skill` toolchain —
@@ -267,6 +318,9 @@ stock `aiup-core:entity-model` SKILL.md body as the baseline to modify.
    only once a second consumer appears (G5).
 5. **`trace-check`** — the one genuinely-new downstream concern: cross-artifact consistency
    (UC→FR, entity-in-spec, actor↔glossary, BR↔invariant). Step-agnostic like the other lenses.
+6. **`domain-requirements`** *(not yet built — the one skill a fresh session must still create; build
+   spec #7)* — fork stock `requirements` to consume the glossary. Independent of #1–#5; build it from
+   build spec #7 + the stock `requirements` baseline.
 
 **Downstream use-case steps need no modified skill** (decided 2026-06-03). `use-case-diagram` and
 `use-case-spec` run as **stock `aiup-core` + composed Family-A lenses + `trace-check`**. The lenses
@@ -313,3 +367,12 @@ later). Upstream `aiup-core` marketplace stays **untouched** throughout.
    coding project later (mechanism TBD).
 6. **No orchestrator skill yet** — compose by convention; extract a `prep-*` only if manual
    sequencing proves annoying across ≥2 steps (G5).
+7. **Fork stock `requirements` → `domain-requirements`** (2026-06-03) — a *thin* second authoring fork.
+   Unlike `domain-model` (which fixed *structural* defects a lens can't post-process), this fixes the
+   single *consumption* defect: stock `requirements` reads only `vision.md`, never a glossary, so it
+   coins terms and defaults to "User/Admin/System" actors. The fork makes it **consume** the glossary
+   (terms + actors verbatim) — and nothing else; enforcement/evolution stays `ubiquitous-language-guard`.
+   Justified despite the reactive-only rule (Decision 4) because (a) requirements is regenerated against
+   the glossary, so prevention-at-generation beats lens-cure-after, and (b) the workflow now seeds the
+   glossary *before* the requirements step ([`workflow.md`](workflow.md)), so the fork has something to
+   read on pass one. Output filename stays `docs/requirements.md`.
