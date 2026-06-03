@@ -73,6 +73,7 @@ Next step to continue, see unchecked "[ ]" term
               Also banked this session (pre-challenge): NFR-005/G4/CONTEXT note that findability survives the
               User moving/archiving the source mail — lookups key on `Message-ID`, never on folder location.
         - [ ] in case of significant changes: grill-with-docs again (only in respect to the changes)
+        /grill-with-docs Grill me ONLY about the change set in `git diff HEAD~1 HEAD`. Treat that diff as the entire plan; read other files only to check consistency, never as new grill subjects.
         - [ ] other skills/guardrails from coding repo?
       - [ ] check below steps with aiup/book-library/tutorial.md
       - [ ] where would humanlayer/riptide fit in this process? how to assure deep modules and tracer-bullets?

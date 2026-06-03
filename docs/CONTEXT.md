@@ -59,6 +59,9 @@ _Avoid_: from, author, contact, customer (for the v1 key).
 What F04 maps to a **Target Location**. In M2 v1 it is the **Sender** alone (one-dimensional).
 Document Type as a second dimension is deferred to M2b; later modules add further dimensions
 (e.g. project number, recipient address for shared mailboxes). M2 deliberately keeps it minimal.
+A one-dimensional key is **single-valued only when each sender files into one folder**; a sender
+that historically spans multiple folders is below-confidence by construction and routes to the
+**Staging Area** — the document-type dimension that disambiguates such senders is a must-have in M2b.
 
 **Document Type** *(M2b)*:
 The label F03 assigns to an **Attachment** (invoice, contract, bank-statement, delivery-note,
@@ -121,7 +124,9 @@ from v1. In M2 it defaults to the original **Attachment** name and is editable b
 the **Action Plan** (free manual rename). In M2b it is *suggested* by inferring the Target
 Location's **Naming Scheme** (new primitive F32 · infer-filename, sibling of F31); the User still
 approves or edits. Renaming itself is not a primitive — F22 writes under whatever name the Proposal
-carries.
+carries. On a same-path/different-content collision, F22 applies a deterministic **mail-date prefix**
+(`YYYY-MM-DD-<original>`) as a one-shot tiebreaker before declaring a **Conflict** — a fixed rule, *not*
+the M2b **Naming Scheme** inference (F32).
 _Avoid_: filename, title (without the "target/filed" qualifier).
 
 **Naming Scheme** *(M2b)*:
@@ -131,12 +136,15 @@ concept; M2 is only "aware" of it insofar as the Target Filename slot already ex
 _Avoid_: naming convention, pattern, format (use Naming Scheme).
 
 **Conflict**:
-The state where a **Proposal** would write to a target path that already holds a file of
-**different** content (same path, different bytes). Detection is F22's pre-write check; the item then
-**routes to `_review/` staging** rather than being committed or auto-overwritten — the dedicated
-in-plan rename / overwrite / skip resolution workflow is deferred (FR-013). Never auto-resolved,
-never a primitive. Distinct from dedup: identical content is silently de-duplicated (see
-**Provenance**), only differing content at the same path is a Conflict.
+The **terminal** state where a **Proposal** would write **different** content (same path, different
+bytes) to a path that is *still* occupied **after** the deterministic tiebreaker. F22's pre-write
+check first retries once under a **mail-date prefix** (`YYYY-MM-DD-<original>`); a same-path/different
+-content collision is therefore **auto-resolved** in the common recurring case (e.g. a monthly
+`rechnung.pdf`). Only when the date-prefixed path *also* holds different bytes (e.g. two distinct
+same-named attachments in one mail, sharing a Date) is it a true Conflict → **routes to `_review/`
+staging**, never committed or auto-overwritten; the dedicated in-plan rename / overwrite / skip
+resolution workflow is deferred (FR-013). Never a primitive. Distinct from dedup: identical content
+is silently de-duplicated (see **Provenance**), only differing content at the same path conflicts.
 _Avoid_: duplicate (a duplicate is dedup, not a Conflict).
 
 ### M2 · Attachment Auto-Router

@@ -57,11 +57,20 @@ principle applies throughout — minimum work, maximum relief on the actual pain
 - **F02** extract-attachment — get the file object from the mail (one **Proposal** per attachment)
 - **F04** derive-target-location — map the **Routing Key (Sender)** to an **existing**
   folder discovered beneath the declared **Routing Roots**; *Sender = the From email address* in v1;
-  unknown mappings or below-threshold confidence → `_review/` Staging Area, never auto-created folders
+  unknown mappings or below-threshold confidence → `_review/` Staging Area, never auto-created folders.
+  *Sender-only is single-valued only when each sender files into one folder.* A sender that
+  historically files into **more than one** folder (e.g. a company sending both an invoice → `Finanzen/Rechnungen`
+  and a contract → `Verträge`) is, by construction, below location-confidence and routes to `_review/`.
+  This is an accepted **Pareto cut for M2 only** — private-mailbox senders are mostly single-type;
+  the document-type dimension that disambiguates multi-type senders is a **must-have in M2b** (F03),
+  not optional (ADR-0003)
 - **F22** write-to-external-system — copy the file into the target folder under the **Target Filename**
   (defaults to the original name, User-editable); **dedup keys on content-hash** (identical bytes are
-  not re-filed — only a new provenance link is recorded); a same-path/different-content **Conflict**
-  routes to `_review/` staging, never auto-overwritten
+  not re-filed — only a new provenance link is recorded); a same-path/different-content collision is
+  **first retried once** with a deterministic **mail-date prefix** (`YYYY-MM-DD-<original>`, from the
+  source mail's Date header — a fixed tiebreaker, *not* F32 naming inference) so the common recurring
+  case (e.g. a monthly `rechnung.pdf`) auto-files instead of stalling; only if that date-prefixed path
+  *also* holds different bytes is it a true **Conflict** → `_review/` staging, never auto-overwritten
 - **F06** record-provenance — via an **external Provenance Ledger** (ADR-0001) that maps
   `source Mail ↔ filed copy` for bidirectional findability *without writing back to the mailbox*;
   mail identity = the `Message-ID` header (content-hash fallback)
@@ -105,8 +114,9 @@ principle applies throughout — minimum work, maximum relief on the actual pain
   F03 type-confidence, and the gate becomes **min(type, location)**.)
 - **CON-6 Idempotency / dedup** — the **dedup decision keys on content-hash** (re-filing identical
   bytes is a no-op that only adds a provenance link); the Provenance Ledger is the dedup store
-  (ADR-0001). A same-path/different-content **Conflict** is a separate concern — routed to `_review/`
-  staging, not dedup.
+  (ADR-0001). A same-path/different-content collision is a separate concern — first auto-resolved by a
+  deterministic **mail-date-prefix** retry (so recurring same-named attachments auto-file), and only a
+  true **Conflict** (date-prefixed path also holds different bytes) routes to `_review/` staging, not dedup.
 - **CON-7 Stack TBD** — programming language and runtime are not constrained here; the choice is
   deferred to the build-spine's plan step.
 - **CON-8 Mail-access deferred (surface & selection resolved)** — the approval surface is the
