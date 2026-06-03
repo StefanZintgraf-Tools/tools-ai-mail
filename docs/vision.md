@@ -43,7 +43,9 @@ principle applies throughout — minimum work, maximum relief on the actual pain
 - **G3** — The user can approve or reject any proposal without opening the original mail — all
   necessary context is in the proposal itself.
 - **G4** — Every filed document is findable from both its target folder location and the original email —
-  nothing gets lost in the filing process.
+  nothing gets lost in the filing process, and findability survives the user later archiving or moving
+  the source mail within the mailbox (lookups key on the portable `Message-ID`, not on mail location);
+  in v1 this is served by inspecting the ledger directly, not by a built lookup tool.
 
 ## Scope
 
@@ -53,21 +55,18 @@ principle applies throughout — minimum work, maximum relief on the actual pain
   "worth filing" judgment (filter inline images / footer logos / signatures) lives here, not in the
   definition of an attachment
 - **F02** extract-attachment — get the file object from the mail (one **Proposal** per attachment)
-- **F03** classify-attachment-type — label the file from a **closed but editable enum** (invoice /
-  contract / bank-statement / delivery-note / license-agreement / … / `other`); `other` always routes
-  to the Staging Area
-- **F04** derive-target-location — map the **Routing Key (Sender × Document Type)** to an **existing**
+- **F04** derive-target-location — map the **Routing Key (Sender)** to an **existing**
   folder discovered beneath the declared **Routing Roots**; *Sender = the From email address* in v1;
   unknown mappings or below-threshold confidence → `_review/` Staging Area, never auto-created folders
 - **F22** write-to-external-system — copy the file into the target folder under the **Target Filename**
   (defaults to the original name, User-editable); **dedup keys on content-hash** (identical bytes are
-  not re-filed — only a new provenance link is recorded); a same-path/different-content **Conflict** is
-  flagged for the User, never auto-resolved
+  not re-filed — only a new provenance link is recorded); a same-path/different-content **Conflict**
+  routes to `_review/` staging, never auto-overwritten
 - **F06** record-provenance — via an **external Provenance Ledger** (ADR-0001) that maps
   `source Mail ↔ filed copy` for bidirectional findability *without writing back to the mailbox*;
   mail identity = the `Message-ID` header (content-hash fallback)
 - **Approval surface** — the tool emits an **Action Plan** (the batch of Proposals); the User edits it
-  (approve / re-target / rename / skip / clear-conflict) and `apply` commits only the approved rows.
+  (approve / re-target / rename / skip) and `apply` commits only the approved rows.
   The Proposal is a **UI-agnostic contract** and the surface is a swappable adapter (ADR-0002); M2's
   first adapter is a plan/apply **YAML** file; a later GUI (e.g. Outlook plugin) is just another adapter.
 
@@ -79,6 +78,8 @@ principle applies throughout — minimum work, maximum relief on the actual pain
 - AI-suggested renaming — inferring a folder's **Naming Scheme** to propose a Target Filename
   (new primitive **F32 · infer-filename**) is **M2b**, not M2; M2 supports only *manual* rename via
   the editable Action Plan
+- Document-type classification (**F03**) — v1 routes by **Sender only**; the closed-but-editable type
+  enum (invoice / contract / …) and its type-confidence move to **M2b**
 - Sender organization-grouping (many addresses → one org) — **M2b** (F30 sender→location map)
 - Target folder creation — v1 targets existing folders only; creation is v2
 - Sender-rule learning (F15) — not in M2; belongs to M3
@@ -99,21 +100,21 @@ principle applies throughout — minimum work, maximum relief on the actual pain
 - **CON-4 Existing folders only (v1)** — F04 is a gradeable closed-set classifier over the existing
   folders beneath the declared **Routing Roots**; it must never fabricate a folder path. Unknown
   targets → `_review/` Staging Area.
-- **CON-5 Confidence gate** — F03 emits a type-confidence and F04 a location-confidence (both in
-  [0,1]); the gate compares **min(type, location)** to the threshold; below it the proposal goes to
-  `_review/` rather than being auto-approved.
+- **CON-5 Confidence gate** — F04 emits a location-confidence in [0,1]; the gate compares it to the
+  threshold; below it the proposal goes to `_review/` rather than being auto-approved. (M2b adds
+  F03 type-confidence, and the gate becomes **min(type, location)**.)
 - **CON-6 Idempotency / dedup** — the **dedup decision keys on content-hash** (re-filing identical
   bytes is a no-op that only adds a provenance link); the Provenance Ledger is the dedup store
-  (ADR-0001). A same-path/different-content **Conflict** is a separate, human-resolved concern — not
-  dedup.
+  (ADR-0001). A same-path/different-content **Conflict** is a separate concern — routed to `_review/`
+  staging, not dedup.
 - **CON-7 Stack TBD** — programming language and runtime are not constrained here; the choice is
   deferred to the build-spine's plan step.
 - **CON-8 Mail-access deferred (surface & selection resolved)** — the approval surface is the
-  plan/apply Action Plan adapter (ADR-0002) and **Run Scope** is a User-specified folder + optional
-  date range (a trigger/adapter concern). Only the *mail-access method* (IMAP / Graph / PST / …)
+  plan/apply Action Plan adapter (ADR-0002) and **Run Scope** is a User-specified folder (a
+  trigger/adapter concern; date-range narrowing deferred). Only the *mail-access method* (IMAP / Graph / PST / …)
   remains deferred to the use-case spec.
-- **CON-9 Proposal completeness** — every proposal must display sender, document type, proposed folder
-  path, and both confidence scores (type and location); the user must be able to decide without opening the original mail.
+- **CON-9 Proposal completeness** — every proposal must display sender, proposed folder path, and the
+  location-confidence score; the user must be able to decide without opening the original mail.
 - **CON-10 Err on inclusion** — F01 must never silently drop an ambiguous attachment (e.g. generic
   names like `scan.jpg`); when uncertain, surface for review rather than suppress.
 - **CON-11 External provenance ledger** — bidirectional findability (Copy↔Mail) must be achieved

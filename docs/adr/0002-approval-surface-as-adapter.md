@@ -25,8 +25,8 @@ later Outlook-plugin GUI is an *additional* adapter over the same contract, not 
 - **`_review/` queue of files** — no central view; the rename/select/conflict decisions get clumsy.
 - **Channel approval (Slack/HumanLayer)** — heavyweight external dependency, anti-Pareto for v1.
 - **Build the GUI now** — expensive (CON-3), and gives nothing to grade.
-- **plan/apply YAML file (chosen)** — async batch, no GUI, honors all four human-decision points
-  (rename / re-target / skip / conflict), and *doubles as the corpus artifact*.
+- **plan/apply YAML file (chosen)** — async batch, no GUI, honors the human-decision points
+  (rename / re-target / skip), and *doubles as the corpus artifact*.
 
 ## Consequences
 

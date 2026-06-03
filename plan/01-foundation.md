@@ -25,7 +25,7 @@
 | Capability | Primitives | Purpose |
 |---|---|---|
 | **M1 · Semantic Mail Q&A** | F07 F08 F09 F10 F11 F12 (+F06) | ask a question → answer synthesized from the archive (incl. attachments) |
-| **M2 · Attachment Auto-Router** | F01 F02 F03 F04 F22 (+F06) | extract a file, classify it, decide where, file it |
+| **M2 · Attachment Auto-Router** | F01 F02 F04 F22 (+F06) | extract a file, decide where (by sender), file it |
 | **M2b · Intelligent Auto-Router** | F30 F31 F32 (+F01–F04 F22 F06) | extends M2: LLM-assisted routing for unknown senders/destinations, sender→location knowledge base, and folder-naming-scheme inference for suggested filenames |
 | **M3 · Mail Triage Engine** | F17 F13 F14 F15 F16 (+F04) | classify a mail, decide the action, learn the rule, ask when unsure |
 | **M4 · Document Data Extractor** | F18 F19 F20 (+F02 F03) | parse structured docs, reconcile vs reference, flag missing fields |
@@ -49,7 +49,7 @@
 ### Layer 2 — Understanding & classification
 | ID | Function | Contract (rough) | Used by | Status |
 |---|---|---|---|---|
-| **F03** | classify-attachment-type | file → type (invoice/contract/photo/log…) | M2, M2b, M4 | ☐ |
+| **F03** | classify-attachment-type | file → type (invoice/contract/photo/log…) | M2b, M4 | ☐ |
 | **F17** | classify-mail-type | mail → type/intent; *falls back to F03 when body intent low-confidence* | M3 | ☐ |
 | **F18** | parse-structured-fields | doc → typed fields (qty/SKU/price/VAT-ID/address) | M4 | ☐ |
 | **F07** | understand-query | NL question → searchable intent | M1 | ☐ |
@@ -110,12 +110,12 @@ Each module lists its **core** functions and the **shared substrate** it borrows
 | Notes | Heaviest module: needs an index over the mailbox + attachment text. F08 toggle decides attachment inclusion. |
 
 ### M2 · Attachment Auto-Router — *file an attachment into the right place*
-**Pipeline:** `F01 detect-attachment → F02 extract-attachment → F03 classify-attachment-type → F04 derive-target-location → F22 write-to-external-system` (F06 throughout)
+**Pipeline:** `F01 detect-attachment → F02 extract-attachment → F04 derive-target-location → F22 write-to-external-system` (F06 throughout)
 | Role | Functions |
 |---|---|
-| Core | F01, F02, F03 |
+| Core | F01, F02 |
 | Shared substrate | F04 derive-target-location (with M2b/M3), F22 write-to-external-system (with M2b/M3/M4), F06 record-provenance |
-| Notes | Lowest effort; non-destructive (files a copy). Establishes substrate F22/F06/F03/F04 reused by M1, M2b, M3, M4. |
+| Notes | Lowest effort; non-destructive (files a copy). **v1 routes by Sender only** — F03 attachment-type classification is deferred to M2b. Establishes substrate F22/F06/F04 reused by M1, M2b, M3, M4. |
 
 ### M2b · Intelligent Auto-Router — *LLM-assisted routing for unknown destinations*
 **Pipeline:** `F01 detect-attachment → F02 extract-attachment → F03 classify-attachment-type → F04 derive-target-location → [if low-confidence] F30 maintain-sender-map → F31 infer-target-location → F32 infer-filename → F22 write-to-external-system` (F06 throughout)
@@ -164,7 +164,7 @@ These primitives are shared across the most capabilities — getting their inter
 | Function | Used by | Why it's substrate |
 |---|---|---|
 | **F22 write-to-external-system** | M2, M2b, M3, M4 | every "act/persist" step funnels through it |
-| **F03 classify-attachment-type** | M2, M2b, M4 | file typing reused by routing and extraction |
+| **F03 classify-attachment-type** | M2b, M4 | file typing reused by routing and extraction |
 | **F04 derive-target-location** | M2, M2b, M3 | "where does this belong" judgment, shared |
 | **F02 extract-attachment** | M2, M2b, M4 | get-the-file, reused |
 | **F06 record-provenance** | M1, M2, M2b (effectively all) | findability/citation backbone |

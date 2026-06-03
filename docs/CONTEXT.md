@@ -56,25 +56,25 @@ address**, verbatim. Organization-level grouping (many addresses → one org) is
 _Avoid_: from, author, contact, customer (for the v1 key).
 
 **Routing Key**:
-The tuple F04 maps to a **Target Location**. In M2 it is **(Sender × Document Type)**. Later modules
-add dimensions (e.g. project number, recipient address for shared mailboxes); M2 deliberately keeps
-it two-dimensional.
+What F04 maps to a **Target Location**. In M2 v1 it is the **Sender** alone (one-dimensional).
+Document Type as a second dimension is deferred to M2b; later modules add further dimensions
+(e.g. project number, recipient address for shared mailboxes). M2 deliberately keeps it minimal.
 
-**Document Type**:
+**Document Type** *(M2b)*:
 The label F03 assigns to an **Attachment** (invoice, contract, bank-statement, delivery-note,
-license-agreement, …) — one half of the **Routing Key**. A **closed enum** at any given moment (so
-F03 and the golden corpus always agree on the label space), but held in a **single editable source**
-both read, so adding a label is a one-line edit + re-grade, not code surgery. `other` is a real
-label meaning "type unrecognized" and always routes to the **Staging Area**, never to a Target
-Location. Distinct from the closed set of Target Locations — F04 is the map between the two sets.
+license-agreement, …). **Deferred to M2b** — v1 routes by **Sender only**, so M2 produces no Document
+Type and the Routing Key is one-dimensional. When F03 returns in M2b it is a **closed but editable
+enum** held in a **single source** both F03 and the golden corpus read (adding a label = one-line
+edit + re-grade, not code surgery); `other` means "type unrecognized" and routes to the **Staging
+Area**, never to a Target Location.
 _Avoid_: category, kind, class.
 
 **Confidence**:
-A per-decision score in [0,1]. M2 produces **two**, kept separate: **type-confidence** (F03) and
-**location-confidence** (F04) — you can be sure of the type yet unsure of the folder. The
-**Confidence gate** compares **min(type-confidence, location-confidence)** to the configured
-threshold; below it, the **Proposal** routes to the **Staging Area** (CON-5). The Proposal displays
-**both** scores so the User sees which half is weak.
+A per-decision score in [0,1]. M2 v1 produces **one**: **location-confidence** (F04) — how sure the
+router is of the folder. The **Confidence gate** compares it to the configured threshold; below it,
+the **Proposal** routes to the **Staging Area** (CON-5). The Proposal displays the score so the User
+sees the weak ones. (M2b reintroduces **type-confidence** from F03, and the gate becomes
+**min(type, location)**.)
 _Avoid_: a single blended score, certainty, probability.
 
 **Provenance**:
@@ -87,7 +87,11 @@ the **dedup decision** (write the file at all?) keys on **content-hash only** �
 reused Message-ID can never cause a duplicate file; the **provenance link** keys on
 `(Message-ID, content-hash)`, where Message-ID is the portable, access-method-independent mail
 identity (synthetic `hash(from+date+subject)` fallback when absent). One store, two jobs:
-findability and dedup.
+findability and dedup. The User routinely archives or moves the source **Mail** within the mailbox
+after filing; this is *why* both keys are location-independent — `Message-ID` (not folder path or
+IMAP UID) — and why CON-1's no-write-back rule leaves the User free to reorganize without breaking
+either lookup direction. In v1, resolving either direction is **manual ledger inspection** — the
+ledger is a greppable artifact; no dedicated lookup tool is built.
 _Avoid_: audit log, history, metadata (for the ledger specifically); IMAP UID / Graph item-ID (for
 the mail identity — not portable).
 
@@ -107,7 +111,7 @@ _Avoid_: UI, frontend, GUI (as if the surface were the architecture).
 
 **Action Plan**:
 The batch serialization of all **Proposals** for one pipeline run — M2's plan/apply file (YAML),
-which the **User** hand-edits (rename / re-target / skip / clear-conflict) and then `apply`
+which the **User** hand-edits (rename / re-target / skip) and then `apply`
 executes for approved rows only. The same structure the golden corpus grades.
 _Avoid_: report, output, manifest, queue.
 
@@ -128,11 +132,12 @@ _Avoid_: naming convention, pattern, format (use Naming Scheme).
 
 **Conflict**:
 The state where a **Proposal** would write to a target path that already holds a file of
-**different** content (same path, different bytes). Detection is F22's pre-write check; *resolution*
-is a flag the **User** clears in the **Action Plan** (rename / overwrite / skip). Never
-auto-resolved, never a primitive. Distinct from dedup: identical content is silently de-duplicated
-(see **Provenance**), only differing content at the same path is a Conflict.
-_Avoid_: collision, duplicate (a duplicate is dedup, not a Conflict).
+**different** content (same path, different bytes). Detection is F22's pre-write check; the item then
+**routes to `_review/` staging** rather than being committed or auto-overwritten — the dedicated
+in-plan rename / overwrite / skip resolution workflow is deferred (FR-013). Never auto-resolved,
+never a primitive. Distinct from dedup: identical content is silently de-duplicated (see
+**Provenance**), only differing content at the same path is a Conflict.
+_Avoid_: duplicate (a duplicate is dedup, not a Conflict).
 
 ### M2 · Attachment Auto-Router
 
@@ -146,8 +151,8 @@ _Avoid_: base folder, scan path, root (unqualified).
 
 **Run Scope**:
 The set of **Mails** one pipeline run processes — a *trigger/adapter* concern, not the core (the
-core just consumes a set of Mails). M2's batch adapter defines it as a User-specified folder +
-optional date range; the future Outlook-plugin adapter defines it as "this one open Mail". Because
+core just consumes a set of Mails). M2's batch adapter defines it as a User-specified folder
+(date-range narrowing deferred); the future Outlook-plugin adapter defines it as "this one open Mail". Because
 dedup is content-hash based and re-runs are silent no-ops, Run Scope is an **efficiency** choice,
 never a correctness one — re-scanning is always safe; "since last run" incrementality is a deferred
 optimization.
