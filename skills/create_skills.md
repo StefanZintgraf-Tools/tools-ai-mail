@@ -2,7 +2,7 @@
 
 ## Background information
 
-See plan/skills_background_info.md
+See skills/skills_background_info.md
 
 ## What this plan is
 

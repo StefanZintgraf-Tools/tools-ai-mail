@@ -1,18 +1,18 @@
-# Handoff — background for `plan/create_skills.md` (AIUP guardrail skills)
+# Handoff — background for `skills/create_skills.md` (AIUP guardrail skills)
 
 **Date:** 2026-06-03 · **Repo:** `c:\PROJ\ai-mail` (branch `master`) · planning only, **no code/skills built**.
 
-This document captures the *discussion and reasoning* behind [`plan/create_skills.md`](create_skills.md). It does
-**not** repeat that plan — `plan/create_skills.md` is the authoritative, self-contained build spec. Read the
+This document captures the *discussion and reasoning* behind [`skills/create_skills.md`](create_skills.md). It does
+**not** repeat that plan — `skills/create_skills.md` is the authoritative, self-contained build spec. Read the
 plan first; read this only for the "why we landed here" and what was considered and rejected.
 
 ## What this session produced
 
 1. Rewrote the skill strategy from the old **"bridge skills"** framing (see prior handoff +
    `todo.md` history) into the current **two-family** design, and wrote it up self-contained in
-   [`plan/create_skills.md`](create_skills.md).
+   [`skills/create_skills.md`](create_skills.md).
 2. Added the post-`trace-check` continuation guidance to [`todo.md`](../todo.md) (first `- [ ]`
-   section) and a one-line call-order under the `plan/create_skills.md` pointer.
+   section) and a one-line call-order under the `skills/create_skills.md` pointer.
 3. Marked the old detailed plan **superseded** (it now lives in `plan/archive/todo_archive.md`, moved
    by the user; do not resurrect it).
 
@@ -80,16 +80,16 @@ two forks are the domain-language-aware authoring skills; the five lenses wrap a
 ## State of play
 
 - **Done:** decisions resolved (naming `domain-model`, output stays `docs/entity_model.md`,
-  glossary-as-arg, no orchestrator yet, etc. — all in `plan/create_skills.md` §Decisions). Nothing open in
+  glossary-as-arg, no orchestrator yet, etc. — all in `skills/create_skills.md` §Decisions). Nothing open in
   the plan.
 - **Not done:** **zero skills built.** The next session builds them, starting with
-  `ubiquitous-language-guard`, strictly from `plan/create_skills.md` (it lists every source path + per-skill
+  `ubiquitous-language-guard`, strictly from `skills/create_skills.md` (it lists every source path + per-skill
   spec).
 - **Open placement detail:** the "port back to coding" mechanism is still TBD (noted in the plan).
 
 ## Key references (do not re-derive)
 
-- [`plan/create_skills.md`](create_skills.md) — **the spec.** Source materials, per-skill build specs, build order,
+- [`skills/create_skills.md`](create_skills.md) — **the spec.** Source materials, per-skill build specs, build order,
   decisions. Self-contained.
 - [`todo.md`](../todo.md) — first `- [ ]` section: the call-order + the after-`trace-check` guidance.
 - Prior handoff: `…\AppData\Local\Temp\handoff-aiup-bridge-skills.md` — the *superseded* bridge
@@ -110,7 +110,7 @@ two forks are the domain-language-aware authoring skills; the five lenses wrap a
 ## Suggested skills for the next session
 
 - **None of the new skills exist yet** — building the *first* one (`ubiquitous-language-guard`) is the
-  job. Build it **by hand** per `plan/create_skills.md` §"How to build a skill here" + §"Per-skill build
+  job. Build it **by hand** per `skills/create_skills.md` §"How to build a skill here" + §"Per-skill build
   specs" #1. Do **not** use `/make-skill` (user's explicit choice for now).
 - **`write-a-skill`** (matt_pocock) — optional reference for SKILL.md structure/progressive
   disclosure while authoring the new skills by hand.

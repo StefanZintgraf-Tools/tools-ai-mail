@@ -1,8 +1,8 @@
 # Workflow — AIUP sequence for ai-mail (with guardrail skills)
 
 The end-to-end order in which to run the AIUP steps and the guardrail skills. Skill *behaviour* lives
-in [`create_skills.md`](create_skills.md) and the rationale in
-[`skills_background_info.md`](skills_background_info.md); **this file is the authoritative sequence.**
+in [`create_skills.md`](../skills/create_skills.md) and the rationale in
+[`skills_background_info.md`](../skills/skills_background_info.md); **this file is the authoritative sequence.**
 
 **Legend** — **stock** = upstream `aiup-core` skill, unmodified · **fork** = modified authoring skill
 in this repo (`domain-requirements`, `domain-model`) · **lens** = cross-cutting Family-A guardrail
@@ -55,7 +55,7 @@ own. Review between every step (AIUP's edit-between-steps discipline).
 
 > The use-case steps run **stock + composed lenses** (no fork): the step-agnostic lenses cover the
 > stock gaps (fabricated actors, weak scope, thin alt-flows, unforced surface decisions). Build a
-> modified `use-case-spec` **only reactively** if BR↔invariant linkage breaks. See `create_skills.md`
+> modified `use-case-spec` **only reactively** if BR↔invariant linkage breaks. See `skills/create_skills.md`
 > §"Build order".
 
 ## Phase 4 · Post-spec — leave AIUP
@@ -73,6 +73,6 @@ unusable for ai-mail's stack, so continue with matt_pocock skills:
 ## Notes
 
 - Skills are built and run **as ai-mail project skills** (`skills/<name>/`), by hand — see
-  `create_skills.md` §Placement. ai-mail is the sandbox; port proven skills back to the coding project
+  `skills/create_skills.md` §Placement. ai-mail is the sandbox; port proven skills back to the coding project
   later.
-- `domain-requirements` is the **one skill not yet built** (build spec #7 in `create_skills.md`).
+- `domain-requirements` is the **one skill not yet built** (build spec #7 in `skills/create_skills.md`).

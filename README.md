@@ -7,7 +7,7 @@ lives in [docs/vision.md](docs/vision.md).
 
 This repo is also a **live workflow experiment**: the planning runs through the AI Unified Process
 (AIUP) augmented with a family of custom guardrail/authoring skills. The end-to-end order is documented
-in [plan/workflow.md](plan/workflow.md).
+in [skills/workflow.md](skills/workflow.md).
 
 ## Key planning artifacts
 
@@ -18,9 +18,10 @@ in [plan/workflow.md](plan/workflow.md).
 | [plan/painlist_private.md](plan/painlist_private.md) | Raw private pains, IDs `P01`–`P16`. |
 | [plan/painlist_acontis.md](plan/painlist_acontis.md) | Raw acontis (work) pains, IDs `A01`–`A36`. |
 | [plan/01-foundation.md](plan/01-foundation.md) | **Source of truth for scope.** Capability ↔ Pain coverage matrix: the namespace catalog (`F##` primitives, `M#`/`M2b` capabilities), which capability covers which pains, the "build **M2** first" decision, and the M2b auto-router (`F30`/`F31`). |
-| [plan/workflow.md](plan/workflow.md) | **The authoritative end-to-end sequence** — inception → vision → glossary → requirements → model/spec spine → post-spec — tagging each step stock / fork / lens / external / HITL. |
-| [plan/create_skills.md](plan/create_skills.md) | Build plan for the generic AIUP guardrail skills (Family A lenses) + the modified authoring skills (`domain-requirements`, `domain-model`). Self-contained per-skill build specs. |
-| [plan/skills_background_info.md](plan/skills_background_info.md) | The reasoning/handoff behind `create_skills.md` — why the design landed where it did (the "bridge → generic peer skills" pivot, the two authoring forks, what was considered and rejected). |
+| [skills/workflow.md](skills/workflow.md) | **The authoritative end-to-end sequence** — inception → vision → glossary → requirements → model/spec spine → post-spec — tagging each step stock / fork / lens / external / HITL. |
+| [skills/create_skills.md](skills/create_skills.md) | Build plan for the generic AIUP guardrail skills (Family A lenses) + the modified authoring skills (`domain-requirements`, `domain-model`). Self-contained per-skill build specs. |
+| [skills/skills_background_info.md](skills/skills_background_info.md) | The reasoning/handoff behind `create_skills.md` — why the design landed where it did (the "bridge → generic peer skills" pivot, the two authoring forks, what was considered and rejected). |
+| [skills/skills_overview.md](skills/skills_overview.md) | Per-skill reference for the seven built skills — purpose, input/output artifacts, and the `gr_*.md` guardrail rules each one operationalizes. |
 
 > `01-foundation.md` supersedes an earlier `00-foundation.md`. Pain IDs (`P##`/`A##`), function
 > primitives (`F##`), and capabilities (`M#`) are the cross-cutting identifiers traced throughout the
@@ -41,17 +42,18 @@ glossary and ADRs as cross-cutting ground truth. All trace back to `F##`/`M#`/`P
 | [docs/adr/0003-sender-only-routing-m2.md](docs/adr/0003-sender-only-routing-m2.md) | ADR — sender-only routing for M2. |
 
 *(`docs/entity_model.md`, `docs/use_cases.puml`, and `docs/use_cases/*.md` are produced later in the
-spec spine — see `plan/workflow.md` Phase 3.)*
+spec spine — see `skills/workflow.md` Phase 3.)*
 
 ### Guardrail & authoring skills
 
 Built and run as ai-mail **project skills** in [skills/](skills/) (the sandbox; ported back to the
-coding project later). See `plan/create_skills.md` for specs and `plan/workflow.md` for when each runs.
+coding project later). See `skills/create_skills.md` for specs, `skills/workflow.md` for when each runs,
+and [skills/skills_overview.md](skills/skills_overview.md) for a per-skill reference (purpose, input/output
+artifacts, and the `gr_*.md` guardrail rules each one operationalizes).
 
 - **Lenses (Family A):** `ubiquitous-language-guard`, `pareto-scope-cut`, `adr-threshold-gate`,
-  `hidden-constraint-sweep`, `trace-check`.
-- **Authoring forks (Family B):** `domain-model` (built), `domain-requirements` (**not yet built** —
-  the one skill still to create, build spec #7 in `create_skills.md`).
+  `hidden-constraint-sweep`, `trace-check` — all built.
+- **Authoring forks (Family B):** `domain-model`, `domain-requirements` — both built.
 
 ### Work tracking
 
