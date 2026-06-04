@@ -36,7 +36,7 @@ lands in the Target Location.
 _Avoid_: file, document, enclosure.
 
 **Target Location**:
-The destination a **Proposal** routes its subject to. In M2, specialized to *an existing folder on
+The place a **Proposal** routes its subject to. In M2, specialized to *an existing folder on
 the local/network filesystem*, drawn from a closed set (CON-4) — never fabricated. Across ai-mail
 the destination may instead be a mail action, ERP record, or Pipedrive entity (M3/M4).
 _Avoid_: target folder, destination, store, target.
@@ -117,6 +117,13 @@ The batch serialization of all **Proposals** for one pipeline run — M2's plan/
 which the **User** hand-edits (rename / re-target / skip) and then `apply`
 executes for approved rows only. The same structure the golden corpus grades.
 _Avoid_: report, output, manifest, queue.
+
+**Golden Corpus**:
+The labelled reference set the headless pipeline is graded against — each entry pairs an input
+**Mail**/**Attachment** with its correct outcome (in M2: the correct **Target Location** by **Sender**,
+or "**Staging Area** / no decision" for below-**Confidence** or multi-folder senders). It grades
+**Proposals** directly and never raises an **Approval Request**. The **Action Plan** shares its structure.
+_Avoid_: test set, dataset, fixtures (for the graded reference set).
 
 **Target Filename**:
 The name the filed copy is stored under in its **Target Location** — a slot on every **Proposal**

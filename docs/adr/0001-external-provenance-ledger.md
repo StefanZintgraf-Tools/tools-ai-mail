@@ -12,8 +12,8 @@ implementation — tagging the mail "filed ✓" — is exactly the write-back CO
 
 ## Decision
 
-Keep an **external Provenance Ledger**: an append record, outside both the mailbox and the target
-folders, mapping `source Mail ↔ filed copy (+ content hash)`. It answers the Mail→Copy direction
+Keep an **external Provenance Ledger**: an append record, outside both the mailbox and the Target
+Locations, mapping `source Mail ↔ filed copy (+ content hash)`. It answers the Mail→Copy direction
 without ever touching the mail, and it is **the same store F22 reads for idempotency** (CON-6) —
 "have I already filed this Attachment?" is a ledger lookup. One store, two jobs: findability and
 dedup. The Copy→Mail back-link (mail ID, date, Sender) is additionally carried with the filed copy;

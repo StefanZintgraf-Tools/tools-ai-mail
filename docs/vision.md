@@ -20,7 +20,7 @@ or `A##` reference, see:
 Filing email attachments is repetitive, mindless work that still costs attention: download the file,
 decide where it belongs, upload it, repeat. The Attachment Auto-Router eliminates that loop for a
 mailbox by automatically detecting attachments, classifying each one (invoice, contract,
-ticket, photo, …), deriving the right target folder, and presenting the proposed actions
+ticket, photo, …), deriving the right Target Location, and presenting the proposed actions
 for human review before anything is committed. Nothing is filed silently; the human stays in the loop
 as a lightweight approver, not a full-time operator.
 
@@ -36,13 +36,13 @@ principle applies throughout — minimum work, maximum relief on the actual pain
 
 ## Goals
 
-- **G1** — A new attachment from any mail reaches its correct target folder with a single approval
+- **G1** — A new attachment from any mail reaches its correct Target Location with a single approval
   action, not a manual download-and-upload cycle (P01).
 - **G2** — The "where does this belong?" decision is made by the tool, not by the User — the User only
   confirms or overrides (P02).
 - **G3** — The user can approve or reject any proposal without opening the original mail — all
   necessary context is in the proposal itself.
-- **G4** — Every filed document is findable from both its target folder location and the original email —
+- **G4** — Every filed copy is findable from both its Target Location and the source Mail —
   nothing gets lost in the filing process, and findability survives the user later archiving or moving
   the source mail within the mailbox (lookups key on the portable `Message-ID`, not on mail location);
   in v1 this is served by inspecting the ledger directly, not by a built lookup tool.
@@ -64,7 +64,7 @@ principle applies throughout — minimum work, maximum relief on the actual pain
   This is an accepted **Pareto cut for M2 only** — private-mailbox senders are mostly single-type;
   the document-type dimension that disambiguates multi-type senders is a **must-have in M2b** (F03),
   not optional (ADR-0003)
-- **F22** write-to-external-system — copy the file into the target folder under the **Target Filename**
+- **F22** write-to-external-system — copy the file into the **Target Location** under the **Target Filename**
   (defaults to the original name, User-editable); **dedup keys on content-hash** (identical bytes are
   not re-filed — only a new provenance link is recorded); a same-path/different-content collision is
   **first retried once** with a deterministic **mail-date prefix** (`YYYY-MM-DD-<original>`, from the
@@ -90,7 +90,7 @@ principle applies throughout — minimum work, maximum relief on the actual pain
 - Document-type classification (**F03**) — v1 routes by **Sender only**; the closed-but-editable type
   enum (invoice / contract / …) and its type-confidence move to **M2b**
 - Sender organization-grouping (many addresses → one org) — **M2b** (F30 sender→location map)
-- Target folder creation — v1 targets existing folders only; creation is v2
+- Target Location creation — v1 targets existing Target Locations only; creation is v2
 - Sender-rule learning (F15) — not in M2; belongs to M3
 - Sending or replying to mail (M3/M5) — explicitly excluded; zero write-back to the mailbox
 - acontis / shared / PST mailboxes — v1 is private-mailbox only
@@ -100,7 +100,7 @@ principle applies throughout — minimum work, maximum relief on the actual pain
 
 - **CON-1 Non-destructive** — files a copy; never moves, deletes, or modifies the source mail or
   attachment.
-- **CON-2 Human-in-the-loop before commit** — no attachment is written to the target folder without an explicit
+- **CON-2 Human-in-the-loop before commit** — no attachment is written to the **Target Location** without an explicit
   approval step. The pattern is the HumanLayer `require_approval` light-approval model (borrow the
   pattern; do not depend on the deprecated SDK). The surface is a plan/apply **Action Plan** the User
   edits before `apply` commits (ADR-0002).

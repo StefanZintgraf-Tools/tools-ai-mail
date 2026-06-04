@@ -13,6 +13,7 @@
 
 ## Key planning artifacts
 
+- `docs/CONTEXT.md` — Domain glossary; read before any planning or implementation; update in-session when terms emerge or shift.
 - `todo.md` — read when asked "what's next" or to pick up the current task (topmost unchecked `- [ ]` section).
 - `plan/painlist_private.md`, `plan/painlist_acontis.md` — read when tracing why a feature exists or prioritizing scope (`P##` private pains, `A##` acontis pains).
 - `plan/01-foundation.md` — read when touching namespace/capability boundaries, adding primitives, or questioning build order (`F##` primitives, `M#`/`M2b` capabilities).
