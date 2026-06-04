@@ -21,7 +21,7 @@ in [skills/workflow.md](skills/workflow.md).
 | [skills/workflow.md](skills/workflow.md) | **The authoritative end-to-end sequence** — inception → vision → glossary → requirements → model/spec spine → post-spec — tagging each step stock / fork / lens / external / HITL. |
 | [skills/create_skills.md](skills/create_skills.md) | Build plan for the generic AIUP guardrail skills (Family A lenses) + the modified authoring skills (`domain-requirements`, `domain-model`). Self-contained per-skill build specs. |
 | [skills/skills_background_info.md](skills/skills_background_info.md) | The reasoning/handoff behind `create_skills.md` — why the design landed where it did (the "bridge → generic peer skills" pivot, the two authoring forks, what was considered and rejected). |
-| [skills/skills_overview.md](skills/skills_overview.md) | Per-skill reference for the seven built skills — purpose, input/output artifacts, and the `gr_*.md` guardrail rules each one operationalizes. |
+| [skills/skills_overview.md](skills/skills_overview.md) | Per-skill reference — purpose, input/output artifacts, and the `gr_*.md` guardrail rules each one operationalizes (the seven AIUP lenses/forks plus the `review-skills`/`refactor-skills` maintenance tooling). |
 
 > `01-foundation.md` supersedes an earlier `00-foundation.md`. Pain IDs (`P##`/`A##`), function
 > primitives (`F##`), and capabilities (`M#`) are the cross-cutting identifiers traced throughout the
@@ -54,6 +54,10 @@ artifacts, and the `gr_*.md` guardrail rules each one operationalizes).
 - **Lenses (Family A):** `ubiquitous-language-guard`, `pareto-scope-cut`, `adr-threshold-gate`,
   `hidden-constraint-sweep`, `trace-check` — all built.
 - **Authoring forks (Family B):** `domain-model`, `domain-requirements` — both built.
+- **Maintenance tooling (meta):** `review-skills` — reviews the skill set (single or all) into a
+  worklist `skills/skills_refactoring.md`, including a glossary-resolution guard check;
+  `refactor-skills` — sequentially applies that worklist (one sub-agent per pending skill), then
+  archives it to `skills/archive/`. Project tooling, not generic AIUP skills.
 
 ### Work tracking
 

@@ -40,6 +40,8 @@ Guardrail file legend (referenced below):
 13. [`to-prd` — **external**](#to-prd--external)
 14. [`to-issues` — **external**](#to-issues--external)
 15. [`tdd` — **external**](#tdd--external)
+16. [`review-skills` — **meta**](#review-skills--meta)
+17. [`refactor-skills` — **meta**](#refactor-skills--meta)
 
 ---
 
@@ -93,11 +95,9 @@ entities, cut scope, or gate ADRs (those are sibling skills).
   model, a `*.puml` use case diagram, or a `use_cases/*.md` spec. Named by the user or the
   file in focus.
 - **Glossary** (the ubiquitous-language file), resolved by a fallback chain — never a
-  hard-coded filename — starting from the rule-mandated `context.md`:
-  1. explicit path the user passed → 2. `context.md` at the repo root (single-domain) →
-  3. per-bounded-context `context.md` files (a monorepo **context map**) →
-  4. `docs/CONTEXT.md` → 5. `docs/glossary.md` →
-  6. none found → warn and drop to **report-only** mode running **L4 only** (L1/L2/L6 and
+  hard-coded filename:
+  1. explicit path the user passed → 2. `docs/CONTEXT.md` → 3. `docs/glossary.md` →
+  4. none found → warn and drop to **report-only** mode running **L4 only** (L1/L2/L6 and
   the L8 write-back cannot run without a glossary).
 - **`CLAUDE.md`** (read-only) — checked for a pointer to the resolved glossary (L9), only
   when a glossary exists.
@@ -109,7 +109,7 @@ entities, cut scope, or gate ADRs (those are sibling skills).
   decisions (incl. an `UNRESOLVED` state for AFK runs), proposed glossary changes, and L9
   CLAUDE.md pointer status.
 - **HITL write-back** of approved new/refined terms into the resolved glossary file
-  (`context.md`) — per-change approval, structure preserved.
+  (`docs/CONTEXT.md` / `docs/glossary.md`) — per-change approval, structure preserved.
 - A **proposed CLAUDE.md pointer fix** when the pointer is missing/wrong — *surfaced, not
   auto-applied* (CLAUDE.md ownership stays with the human).
 
@@ -135,11 +135,13 @@ verbatim:
   (same / refinement / new) is **batched** and, on AFK runs with no human, marks items
   `UNRESOLVED` rather than guessing; `same` decisions fold back into the L1/L2 tables.
 - **L7** Match language across bounded contexts deliberately — **partial**: the near-match
-  gate covers intra-glossary look-alikes, and when the resolved glossary is a context map
-  the skill audits the artifact against its own context and flags same-word cross-context
-  collisions (it does not handle the full "same word, two contexts" case beyond flagging).
-- **L8** `context.md` is the ubiquitous-language artifact and the source of truth for
-  terms — realized here as the HITL write-back to that file. Newly confirmed vocabulary
+  gate covers intra-context look-alikes, and when the glossary defines a term in more than
+  one bounded context the skill audits the artifact against its own context and flags
+  same-word cross-context collisions (it does not handle the full "same word, two contexts"
+  case beyond flagging).
+- **L8** the glossary (`docs/CONTEXT.md` / `docs/glossary.md`) is the ubiquitous-language
+  artifact and the source of truth for terms — realized here as the HITL write-back to that
+  file. Newly confirmed vocabulary
   (the former standalone "G7" concern) feeds this write-back so the glossary stays current.
 - **L9** CLAUDE.md points to the domain docs — verified (only when a glossary exists) with
   the canonical role-string ("Domain glossary; read before any planning or implementation;
@@ -157,7 +159,7 @@ L8 write-back rather than carried as a separate section.
 **Purpose.** A cross-cutting lens that enforces "build only what the next concrete requirement needs." It takes a single planning artifact plus the project's **scope marker** (the milestone/phase that defines "now"), enumerates every scopeable item, splits them into **in-scope** vs **deferred**, and records each deferral as a one-line postponed-decision so it is never silently re-decided. It produces a **scope split + postponed-decisions log** and — only with explicit human approval (HITL) — appends them to the artifact. It does *not* model entities, maintain a glossary, gate ADRs, or sweep constraints (those are sibling skills); it *only* does the scope cut and the postponed-decision log.
 
 **Input artifacts (must use).**
-- **Artifact to scope-cut** (required) — any one planning doc: a requirements catalog, entity/domain model, `*.puml` use-case diagram, or a `use_cases/*.md` spec. Named by the user or the file in focus.
+- **Artifact to scope-cut** (required) — any planning doc: a vision/requirements catalog (docs/vision.md, docs/requirements.md), entity/domain model, use-case diagram (`*.puml`), or a use-case spec  `use_cases/*.md`). Named by the user or the file in focus.
 - **Scope marker** (required) — the boundary that defines "now," typically a milestone/phase marker named in a planning doc. Taken as an argument if given; otherwise the user is asked which marker defines current scope. The boundary is NEVER guessed silently, and no project's milestone names or plan file paths are hard-coded — the marker is read generically.
 - **Scope marker's requirement set** (required) — the concrete requirements the marker *commits to*, read from the planning doc that names it. Classification is done against the marker's actual requirements, not its name alone; when markers are sequential, "at or before" is resolved from the marker order in that same doc. If the requirements cannot be found, the user is asked rather than guessing.
 
@@ -334,3 +336,37 @@ The remaining checks have no single named gr rule ID for cross-artifact traceabi
 ## `tdd` — **external**
 
 **Purpose.** Implements the issues red-green-refactor style (test-driven development).
+
+---
+
+## `review-skills` — **meta**
+
+**Purpose.** Project skill-maintenance tooling (not an AIUP-chain skill): produces a critical review of the skills in this `skills/` folder and writes it to `skills/skills_refactoring.md` — the refactoring worklist that `refactor-skills` later consumes. It **always asks first** whether to review a *single* skill or *all* skills. For each in-scope skill it spawns a **fresh sub-agent** (clean, un-cross-contaminated context) that reads only that one skill's `SKILL.md` (+ `REFERENCE.md`) and its entry here, discovers the `gr_*.md` files the skill cites, and reviews three dimensions: (1) guardrail coverage (missing/partial vs. the claims recorded here), (2) whether an agent running it achieves the skill's stated purpose, (3) writing effectiveness. Each review is headed by a pending `- [ ] refactored` checkbox.
+
+**Input artifacts (must use).**
+- The in-scope skill(s) under `skills/*/SKILL.md` (+ `REFERENCE.md`). Excludes `skills/archive/`, the loose `skills/*.md` files, and the meta-skills `review-skills` / `refactor-skills` themselves.
+- This file (`skills_overview.md`) — read each reviewed skill's declared `gr` cluster and **claimed** coverage; the review verifies and, where wrong, challenges those claims.
+- The guardrail rule files `c:\PROJ\ai-knowhow\coding\gr\gr_*.md` — which ones apply is **discovered** from the skill's own citations, never hard-coded.
+
+**Output artifacts / results.**
+- `skills/skills_refactoring.md` — per-skill review sections (3 dimensions + **Recommended refactor actions**), each headed by `- [ ] refactored`. Single-skill mode splices/replaces only that one section.
+- A **Glossary-resolution guard** section: a driver-level cross-cutting check run over **all** skills (canonical chain `arg → docs/CONTEXT.md → docs/glossary.md → warn`), flagging any root-`context.md`/context-map/bare-`context.md` deviation; glossary-less skills are recorded `N/A`. Verdict `clean` / `drift`.
+
+**Relation to guardrail items.** None operationalized — this is skill-maintenance tooling, not a guardrail/authoring skill. It *audits* other skills' `gr_*.md` coverage rather than implementing a `gr` cluster of its own.
+
+---
+
+## `refactor-skills` — **meta**
+
+**Purpose.** Project skill-maintenance tooling that consumes `skills/skills_refactoring.md` and refactors every skill still marked `- [ ] refactored`, in a **single invocation**. It spawns one fresh sub-agent per pending skill, **sequentially** (not parallel — refactors share `skills_overview.md`, so concurrent writes would collide); each applies its skill's **Recommended refactor actions** to the `SKILL.md` (and this overview where a coverage claim/boundary changes), runs the skill's POST self-check, and the driver flips that skill's checkbox to `- [x] refactored`. When no skill is left pending or blocked, it archives the worklist.
+
+**Input artifacts (must use).**
+- `skills/skills_refactoring.md` (required) — the worklist from `review-skills`. If absent, STOP and direct the user to run `review-skills` first.
+- Per pending skill (read by its sub-agent): that skill's review section (the Recommended actions are the brief), its `SKILL.md` (+ `REFERENCE.md`), the cited `gr_*.md` files, its `create_skills.md` build spec, and its `skills_overview.md` entry.
+
+**Output artifacts / results.**
+- Refactored `skills/<name>/SKILL.md` (+ `REFERENCE.md`) per pending skill, with `skills_overview.md` adjusted where a refactor changes a stated claim/boundary.
+- Updated checkboxes in `skills/skills_refactoring.md` (`- [ ] → - [x]`; blockers annotated `> blocked: <reason>`).
+- On full completion only: the worklist moved to `skills/archive/skills_refactoring_YYYYMMDDHHMM.md`.
+
+**Relation to guardrail items.** None operationalized — skill-maintenance tooling. It *applies* the guardrail-coverage findings recorded by `review-skills`; sub-agents read the relevant `gr_*.md` files as the standard each refactor must meet.

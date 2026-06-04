@@ -29,23 +29,18 @@ other skills.
    document, an entity model, a `*.puml` use case diagram, or a `use_cases/*.md`
    spec. The user names it or it is the file currently in focus.
 2. **Glossary** (optional argument) — path to the project's ubiquitous-language
-   file. The canonical name and location are defined by rule L8: a durable
-   in-tree **`context.md` at the root of each bounded context**. Resolve in this
-   order, taking the first that exists (match the filename case-insensitively):
+   file. Resolve in this order, taking the first that exists (match the filename
+   case-insensitively):
    1. The explicit path the user passed, if any.
-   2. `context.md` at the repository root (the single-domain case).
-   3. Per-bounded-context `context.md` files (a monorepo **context map** — one
-      per context). If more than one exists, treat each context's `context.md`
-      as the authority for that context (see L7) and ask the user which context
-      the artifact belongs to if it is not obvious.
-   4. `docs/CONTEXT.md`, then `docs/glossary.md` (legacy / alternate layouts).
-   5. If none exists: **warn the user** that no glossary was found and drop to
+   2. `docs/CONTEXT.md`.
+   3. `docs/glossary.md`.
+   4. If none exists: **warn the user** that no glossary was found and drop to
       **report-only mode** — run **L4 only** (storage-shaped names need no
       glossary). L1, L2, L6, and L8 write-back cannot run without a glossary;
-      say so explicitly and recommend creating `context.md` at the repo root.
+      say so explicitly and recommend creating `docs/CONTEXT.md`.
 
    NEVER hard-code a single glossary filename — always run the resolution chain
-   above, starting from the rule-mandated `context.md`.
+   above (`docs/CONTEXT.md` → `docs/glossary.md`).
 
 ## Instructions
 
@@ -142,19 +137,17 @@ glossary change for it, and surface the list for a later interactive pass.
 ### L7 — Match language across bounded contexts deliberately
 
 The same word may legitimately mean different things in different bounded
-contexts; never unify them by accident. Scope of this skill: by default it
-audits **one bounded context** against its single `context.md`. If the resolved
-glossary is a **context map** (multiple `context.md` files), audit the artifact
-only against the `context.md` of the context it belongs to, and when a term in
-the artifact collides with a same-spelled term defined in *another* context,
-flag it as a cross-context collision (do not merge the definitions). For the
-single-glossary case the near-match gate covers intra-glossary look-alikes; the
-cross-context "same word, two contexts" case applies only when a context map
-exists.
+contexts; never unify them by accident. This skill audits an artifact against a
+single glossary (`docs/CONTEXT.md`, fallback `docs/glossary.md`). If that
+glossary defines a term in more than one bounded context, audit the artifact
+against the context it belongs to, and flag any term that collides with a
+same-spelled term defined for *another* context as a cross-context collision —
+do not merge the definitions. The near-match gate covers intra-context
+look-alikes; this rule covers the same-word-different-context case.
 
 ### L8 — HITL write-back to the glossary
 
-The glossary (`context.md`) is the durable source of truth for terms; this skill
+The glossary (`docs/CONTEXT.md`, fallback `docs/glossary.md`) is the durable source of truth for terms; this skill
 may update it — but **only after explicit human approval**. New and refined
 terms confirmed at the near-match gate (and any vocabulary that surfaced during
 greenfield work) flow here so the glossary stays current and does not drift.
@@ -168,11 +161,11 @@ greenfield work) flow here so the glossary stays current and does not drift.
 - Apply only approved changes to the resolved glossary file. Preserve its
   existing structure and ordering.
 - If no glossary file exists, you cannot write back — report the proposed
-  entries and recommend creating `context.md` at the repo root first.
+  entries and recommend creating `docs/CONTEXT.md` first.
 
 ### L9 — CLAUDE.md still points at the glossary
 
-**Only when a glossary (`context.md` / context map) exists**, verify the
+**Only when a glossary (`docs/CONTEXT.md` / `docs/glossary.md`) exists**, verify the
 project's `CLAUDE.md` (or equivalent agent-instruction file) contains an
 explicit pointer to the resolved glossary path with the canonical one-line role
 description:
@@ -192,7 +185,7 @@ projects that legitimately have no glossary.
 - Do NOT cut scope or prioritize features (that is `pareto-scope-cut`).
 - Do NOT gate or author ADRs (that is `adr-threshold-gate`).
 - Do NOT hard-code a single glossary filename — always run the resolution
-  fallback chain starting from `context.md`.
+  fallback chain (`docs/CONTEXT.md` → `docs/glossary.md`).
 - Do NOT report an empty L2 table as "clean" when there is no `_Avoid_` list —
   fall back to judgment.
 - Do NOT write to the glossary without explicit per-change human approval.
@@ -205,10 +198,9 @@ projects that legitimately have no glossary.
 ## Workflow
 
 1. **Resolve inputs.** Identify the target artifact. Resolve the glossary via
-   the Inputs resolution chain (`context.md` at repo root → per-context
-   `context.md` → `docs/CONTEXT.md` → `docs/glossary.md` → report-only). State
-   which glossary you are using (or that none was found and you are in
-   report-only / L4-only mode).
+   the Inputs resolution chain (`docs/CONTEXT.md` → `docs/glossary.md` →
+   report-only). State which glossary you are using (or that none was found and
+   you are in report-only / L4-only mode).
 2. **Read both.** Read the artifact and the glossary. Extract the canonical
    term list and any `_Avoid_` / synonym lists from the glossary.
 3. **Run checks L1–L7 in order**, accumulating findings into the term-diff
@@ -256,7 +248,7 @@ Bounded context: <name | single>
 | Term | Why domain-significant | Proposed disposition |
 |------|------------------------|----------------------|
 
-## L7 — Cross-context collisions (context map only)
+## L7 — Cross-context collisions
 | Term | This context's meaning | Other context's meaning |
 |------|------------------------|-------------------------|
 

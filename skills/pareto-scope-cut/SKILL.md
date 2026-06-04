@@ -23,9 +23,9 @@ each deferral as a one-line postponed-decision so it is never silently re-decide
 
 ## Inputs
 
-1. **The artifact** to scope-cut — any one planning doc: a requirements catalog, entity/domain
-   model, use-case diagram (`*.puml`), or a use-case spec (`use_cases/*.md`). Named by the user
-   or the file in focus.
+1. **The artifact** to scope-cut — any planning doc: a vision/requirements catalog (docs/vision.md, docs/requirements.md), 
+   entity/domain model, use-case diagram (`*.puml`), or a use-case spec (`use_cases/*.md`). 
+   Named by the user or the file in focus.
 2. **The scope marker** — the boundary that defines "now," typically a milestone or phase marker
    named in a planning doc (the current milestone/phase the team committed to build). Take it as
    an argument if given; otherwise ask the user which marker defines current scope. NEVER guess

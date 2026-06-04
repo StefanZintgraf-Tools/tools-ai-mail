@@ -21,9 +21,9 @@ The filename stays `docs/entity_model.md` (not `domain_model.md`): it is the
 AIUP-chain contract that downstream skills (use-case-spec, trace-check) read.
 
 This skill models **one bounded context**. If the glossary spans multiple
-bounded contexts (a context map / several `context.md` files), model a single
-context per run; do NOT silently merge terms that collide across contexts —
-flag the collision instead (gr_ddd D7, gr_domain_language L7).
+bounded contexts, model a single context per run; do NOT silently merge terms
+that collide across contexts — flag the collision instead (gr_ddd D7,
+gr_domain_language L7).
 
 ## Inputs
 
