@@ -43,9 +43,18 @@ each deferral as a one-line postponed-decision so it is never silently re-decide
 ## Procedure
 
 1. **Resolve inputs** — the artifact, the scope marker, and the marker's requirement set (§Inputs).
+   *No scope marker exists:* if the project genuinely has no milestone/phase structure to name,
+   do not loop on asking — ask the user once to name the smallest concrete in-flight deliverable
+   (the next thing actually being built) and use that as the marker; if none exists, stop and report
+   that a scope cut needs a "now" boundary.
 2. **Enumerate every scopeable item** in the artifact: entities, functional requirements (FRs),
-   actors, use cases, flows, attributes, and any introduced abstraction/structure. "Abstraction"
-   is concrete here — e.g. a generic base entity or catch-all `Item`/`Thing` supertype, an
+   actors, use cases, flows, attributes, and any introduced abstraction/structure. Match item kinds
+   to the artifact type — only enumerate kinds that exist in it:
+   - **Requirements catalog:** FRs, actors, and the abstractions/structures they introduce.
+   - **Entity/domain model:** entities, attributes, relationships, and base/supertype abstractions.
+   - **`.puml` use-case diagram:** actors, use cases, and `include`/`extend` relationships (no FRs/attributes).
+   - **Use-case spec:** the use case, its flows (main/alternate), and any actors/abstractions it introduces.
+   "Abstraction" is concrete here — e.g. a generic base entity or catch-all `Item`/`Thing` supertype, an
    abstract/interface actor standing in for several concrete ones, a configurable rule engine
    where one hard-coded rule suffices, or a plugin/extension point with no second plugin yet.
 3. **Classify each item** in-scope vs deferred using the G1/G3/G5/G6/G10 rules below.
@@ -58,6 +67,10 @@ each deferral as a one-line postponed-decision so it is never silently re-decide
    `## Postponed decisions` section from a previous run, REPLACE those sections in place rather than
    appending — never leave two copies. Do not delete in-scope content or rewrite unrelated sections.
 8. **Validate:**
+   - **Enumeration is complete:** cross-check the enumerated item list back against the artifact's
+     own structure — its headings, FR/UC/entity id patterns (e.g. `FR-`, `UC-`, `##` sections),
+     and diagram declarations — so an item silently omitted from the split is caught. The classified
+     count must account for every such id/heading in the artifact.
    - Every enumerated item is classified exactly once (in-scope or deferred).
    - Every deferred item has a matching one-line postponed-decision record citing G1/G3/G5/G6/G10.
    - No in-scope content was deleted or rewritten.
@@ -113,17 +126,14 @@ Append to (or, on re-run, replace at) the END of the artifact, behind the HITL a
 - ...
 
 ## Postponed decisions
-- [<item>] Deferred: <what>. Reason: <why, cites G1/G3/G5/G6/G10>. Revisit when: <trigger>.
+- <one line per deferred item, in the canonical G9 format from §"Postponed-decision record (G9)" above>
 - ...
 ```
 
 ## DO NOT
 
-- Do NOT write to the artifact before showing the proposed split + log and getting explicit human approval.
-- Do NOT append a second "Scope split" / "Postponed decisions" section on re-run — replace the existing ones in place.
-- Do NOT delete or rewrite in-scope content — this skill only splits and appends/replaces.
-- Do NOT classify against the marker's *name* alone — read the requirements it commits to, and ask if they are unavailable.
+(HITL-before-write, replace-in-place, and the G9-per-deferred-item rule are enforced in Procedure/Validate above; the prohibitions below are the ones not otherwise covered.)
+
 - Do NOT model entities, maintain a glossary, gate ADRs, or sweep constraints — that is other skills' job. This skill ONLY does the scope cut and the postponed-decision log.
 - Do NOT hard-code any specific project's milestone names or plan file paths. Read the scope marker generically from the argument or by asking.
-- Do NOT defer an item without a one-line G9 postponed-decision record.
 - Do NOT silently re-decide a previously postponed decision; reference the existing log line instead.

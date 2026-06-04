@@ -165,7 +165,7 @@ L8 write-back rather than carried as a separate section.
 
 **Output artifacts / results.**
 - A **Scope split** section (template in the SKILL.md) headed `## Scope split (against <scope marker>)`, with an **In scope** list (one-line why each item is needed now) and a **Deferred** list (one-line why each item is future/imagined). Every enumerated item is classified exactly once.
-- A **Postponed decisions** log — one G9-format line per deferred item: `- [<item>] Deferred: <what>. Reason: <why, cites G1/G3/G5/G10>. Revisit when: <trigger>.`
+- A **Postponed decisions** log — one G9-format line per deferred item: `- [<item>] Deferred: <what>. Reason: <why, cites G1/G3/G5/G6/G10>. Revisit when: <trigger>.`
 - **HITL append** of both sections to the END of the artifact, only after the proposed split + log are shown and explicitly approved. In-scope content is never deleted or rewritten; unrelated sections are left untouched; the skill only splits and appends.
 
 **Relation to guardrail items.** This skill is the executable form of the over-engineering rules in **`gr_greenfield.md`** ("prevent premature architecture and over-engineering… the danger is building for imagined needs"), with the rule IDs carried over verbatim:
