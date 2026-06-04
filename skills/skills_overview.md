@@ -159,7 +159,9 @@ L8 write-back rather than carried as a separate section.
 **Purpose.** A cross-cutting lens that enforces "build only what the next concrete requirement needs." It takes a single planning artifact plus the project's **scope marker** (the milestone/phase that defines "now"), enumerates every scopeable item, splits them into **in-scope** vs **deferred**, and records each deferral as a one-line postponed-decision so it is never silently re-decided. It produces a **scope split + postponed-decisions log** and — only with explicit human approval (HITL) — appends them to the artifact. It does *not* model entities, maintain a glossary, gate ADRs, or sweep constraints (those are sibling skills); it *only* does the scope cut and the postponed-decision log.
 
 **Input artifacts (must use).**
-- **Artifact to scope-cut** (required) — any planning doc: a vision/requirements catalog (docs/vision.md, docs/requirements.md), entity/domain model, use-case diagram (`*.puml`), or a use-case spec  `use_cases/*.md`). Named by the user or the file in focus.
+- **Artifact to scope-cut** (required) — any planning doc: a vision/requirements catalog (docs/vision.md, docs/requirements.md), 
+   entity/domain model, use-case diagram (`*.puml`), or a use-case spec (`use_cases/*.md`). 
+   Named by the user or the file in focus.
 - **Scope marker** (required) — the boundary that defines "now," typically a milestone/phase marker named in a planning doc. Taken as an argument if given; otherwise the user is asked which marker defines current scope. The boundary is NEVER guessed silently, and no project's milestone names or plan file paths are hard-coded — the marker is read generically.
 - **Scope marker's requirement set** (required) — the concrete requirements the marker *commits to*, read from the planning doc that names it. Classification is done against the marker's actual requirements, not its name alone; when markers are sequential, "at or before" is resolved from the marker order in that same doc. If the requirements cannot be found, the user is asked rather than guessing.
 

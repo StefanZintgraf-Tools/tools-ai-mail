@@ -61,3 +61,19 @@ Boundaries imposed on the solution.
 - **C-007 / mail-access method** — IMAP vs Graph vs PST vs Outlook vs Kerio is still deferred, but
   **no longer blocks anything**: NFR-002's dedup key is content-hash and the provenance key uses the
   portable `Message-ID`. The choice can be made at the use-case spec / build step on its own merits.
+
+## Scope split (against M2 · Attachment Auto-Router)
+
+### In scope
+- FR-001, FR-002, FR-004 — detect / extract / derive-target (Sender-only): M2 substrate F01/F02/F04.
+- FR-005–FR-014 — staging, Action Plan, approve/edit/reject, commit, provenance, findability, manual rename, dedup, conflict, run-scope: the M2 plan/apply loop for pains P01/P02.
+- NFR-001–NFR-005 — confidence gate, idempotency, proposal completeness, inclusion bias, provenance coverage: M2 quality thresholds.
+- C-001–C-005, C-008, C-009, C-010 — non-destructive, HITL, existing-folders-only, private-mailbox-only, Pareto, provenance ledger, surface/core separation (ADR-0002), dedup-vs-conflict: M2 boundaries.
+
+### Deferred
+- FR-003 Classify Attachment (F03) — document-type classification and type-confidence; M2 v1 routes by Sender only, so a second routing signal is not needed at this marker.
+
+## Postponed decisions
+- [FR-003 Classify Attachment (F03)] Deferred: document-type classification (invoice/contract/…/`other` enum) and its type-confidence. Reason: M2 v1 routes by Sender only; a second routing signal is not needed at this marker (G1/G10). Revisit when: M2 ships and M2b (Intelligent Auto-Router) begins.
+- [C-006 Stack TBD] Deferred (pre-existing — see C-006): programming language/runtime choice. Reason: no concrete requirement at M2 fixes the stack (G3). Revisit when: the build-spine / use-case-spec step is reached.
+- [C-007 Mail-Access Method TBD] Deferred (pre-existing — see C-007): IMAP/Graph/PST/Outlook/Kerio choice. Reason: idempotency keys on content-hash + portable `Message-ID`, so no M2 requirement forces it (G3). Revisit when: the use-case-spec / build step is reached.
