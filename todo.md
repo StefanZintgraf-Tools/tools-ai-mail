@@ -5,9 +5,15 @@ Next step to continue, see unchecked "[ ]" term
 - [x] create new skills to align aiup and the coding project: see `plan/create_skills.md`
       call order once built: `ubiquitous-language-guard` → `pareto-scope-cut` → `domain-model` → `adr-threshold-gate` → `hidden-constraint-sweep` → `/use-case-diagram` (stock + lenses) → `/use-case-spec` (stock + lenses) → `trace-check`
 
-- [ ] new domain-requirements skill (directory link!)
+- [x] new domain-requirements skill (directory link!)
 
 - [ ] analyse, run and test the newly created skills.
+      - [ ] `ubiquitous-language-guard` — **lens** · enforce the glossary on `requirements.md`; write approved new/changed terms back into `CONTEXT.md` (HITL).
+      - [ ] `pareto-scope-cut` — **lens** · cut imagined/future scope (ai-mail: defer M2b/M3/M4); append a Postponed-decisions log.
+      - [ ] `domain-model` — **fork** · produce the conceptual model (glossary-aware, VO/aggregate-aware) → `docs/entity_model.md`.
+      - [ ] `adr-threshold-gate` — **lens** · catch any irreversible modelling decision → `docs/adr/####-*.md` (proposed; HITL to accept).
+      - [ ] `hidden-constraint-sweep` — **lens** · the 8-class sweep (retention / concurrency / PII / …) the model implies.
+
 
 - [ ] review workflow.md (specifically: what about the aiup artifacts and the pocock skills?)
       resolve which of the created artifacts are needed by the pockock skills and how to achieve this.

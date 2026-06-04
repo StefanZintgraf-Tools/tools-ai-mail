@@ -151,9 +151,12 @@ and the coding project*; handoff `…\Temp\handoff-aiup-bridge-skills.md`.
 
 ## How to build a skill here (manual, no toolchain)
 
-- **Location:** `c:\PROJ\ai-mail\.claude\skills\<skill-name>\SKILL.md`. One folder per skill; folder
-  name = `name:` in the frontmatter (kebab-case). An example already exists at
-  `.claude\skills\entity-model\`.
+- **Location:** `c:\PROJ\ai-mail\skills\<skill-name>\SKILL.md`. One folder per skill; folder name =
+  `name:` in the frontmatter (kebab-case). The canonical copy lives under `skills\` (version-controlled,
+  Git-tracked). After writing the file, create a directory junction (symlink) so Claude Code can find it:
+  `mklink /J .claude\skills\<skill-name> ..\..\skills\<skill-name>` (run from the repo root, Windows cmd;
+  PowerShell: `New-Item -ItemType Junction -Path .claude\skills\<skill-name> -Target .\skills\<skill-name>`).
+  An example already exists at `.claude\skills\entity-model\`.
 - **Anatomy:** YAML frontmatter with `name:` and a `description:` written in the third person and
   packed with trigger phrases (the `description` is what makes the skill auto-invoke). Then a
   markdown body: `## Instructions`, `## DO NOT`, `## Workflow`, plus any reference tables — mirror the
@@ -262,7 +265,7 @@ appear only as the test case.
 - **Out:** a consistency report (pass / list of breaks); HITL fixes loop back into the offending
   artifact.
 
-### - [ ] 7 · `domain-requirements`  (Family B · modified authoring — replaces stock `requirements`)
+### - [x] 7 · `domain-requirements`  (Family B · modified authoring — replaces stock `requirements`)
 - **Baseline:** start from a *copy* of the stock `requirements` SKILL.md; keep its FR/NFR/C catalog
   structure, user-story format, quality-checks table, and error-recovery **wholesale** — change **only**
   the glossary-consumption defect below.
@@ -346,11 +349,18 @@ source docs.
 
 ## Placement
 
-For now, build and iterate the skills **inside ai-mail as project skills**
-(`.claude/skills/<name>/`) — ai-mail is the **sandbox** for trying skillsets, not yet wired to the
-coding toolchain. Do **not** use the coding repo's `/make-skill` for now. Once a skill proves out
-here, port it back to the coding project (mechanism TBD — likely the `skills/output/` toolchain
-later). Upstream `aiup-core` marketplace stays **untouched** throughout.
+For now, build and iterate the skills **inside ai-mail as project skills** — ai-mail is the
+**sandbox** for trying skillsets, not yet wired to the coding toolchain. Do **not** use the coding
+repo's `/make-skill` for now.
+
+**File layout:**
+- Canonical skill files live under `skills\<name>\SKILL.md` (version-controlled, tracked in Git).
+- `.claude\skills\<name>` is a directory junction pointing at `skills\<name>` — it is what Claude
+  Code actually looks up; it is **not** the authoritative copy. Create one junction per skill right
+  after writing the SKILL.md (see **Location** under "How to build a skill here").
+
+Once a skill proves out here, port it back to the coding project (mechanism TBD — likely the
+`skills/output/` toolchain later). Upstream `aiup-core` marketplace stays **untouched** throughout.
 
 ## Decisions (all resolved — nothing open)
 
