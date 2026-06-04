@@ -2,68 +2,13 @@
 
 Next step to continue, see unchecked "[ ]" term
 
-- [x] create new skills to align aiup and the coding project: see `skills/create_skills.md`
-      call order once built: `ubiquitous-language-guard` → `pareto-scope-cut` → `domain-model` → `adr-threshold-gate` → `hidden-constraint-sweep` → `/use-case-diagram` (stock + lenses) → `/use-case-spec` (stock + lenses) → `trace-check`
-
-- [x] new domain-requirements skill (directory link!)
-
-- [x] skill overview 
-      create skills_overview.md in the skills folder that provide an overview of all the skill there. It shall include at least:
-      - purpose of the skill
-      - input artifacts the skill must use
-      - output artifacts or results the skill will produce
-      - how the skill is related to the guardrail items located in the various coding/gr_XXXX.md files
-      - if skills_overview.md exists, re-use it
-      - run the analysis that generates the overview content for a single unchecked skill in todo.md section "skill overview and review" in a fresh sub-agent and insert its result in skills_overview.md
-      - each of the sub-agents must only create such overview info for a single skill 
-      - check the skill, if done. Here is the skill list:
-      - [x] `ubiquitous-language-guard` — **lens** · enforce the glossary on `requirements.md`; write approved new/changed terms back into `CONTEXT.md` (HITL).
-      - [x] `pareto-scope-cut` — **lens** · cut imagined/future scope (ai-mail: defer M2b/M3/M4); append a Postponed-decisions log.
-      - [x] `domain-model` — **fork** · produce the conceptual model (glossary-aware, VO/aggregate-aware) → `docs/entity_model.md`.
-      - [x] `domain-requirements`
-      - [x] `adr-threshold-gate` — **lens** · catch any irreversible modelling decision → `docs/adr/####-*.md` (proposed; HITL to accept).
-      - [x] `hidden-constraint-sweep` — **lens** · the 8-class sweep (retention / concurrency / PII / …) the model implies.
-      - [x] `trace-check`
-
-- [x] critical skill review
-      create skills_review.md in the skills folder that contains a critical review of all the skill there. 
-      This file shall later be used to refactor the skills one for one in fresh agent sessions.
-      Each skill review shall start with a "- [ ] " term to signal that the refactoring is pending.
-      The review for each skill shall at least:
-      - check if the skill related guardrail items located in the various coding/gr_XXXX.md files are fully covered (are there items missing?)
-      - check if the purpose of the skill will likely be achieved
-      - if the skill is generally written effectively, so an AI agent gets sufficient and clear input, but not too much input
-      - run each review that generates the review content for a single unchecked skill in todo.md section "skill review" in a fresh sub-agent and insert its result in skills_review.md
-      - each of the sub-agents must only create such review content for a single skill 
-      - Here is the skill list:
-      - [x] `ubiquitous-language-guard` — **lens** · enforce the glossary on `requirements.md`; write approved new/changed terms back into `CONTEXT.md` (HITL).
-      - [x] `pareto-scope-cut` — **lens** · cut imagined/future scope (ai-mail: defer M2b/M3/M4); append a Postponed-decisions log.
-      - [x] `domain-model` — **fork** · produce the conceptual model (glossary-aware, VO/aggregate-aware) → `docs/entity_model.md`.
-      - [x] `domain-requirements`
-      - [x] `adr-threshold-gate` — **lens** · catch any irreversible modelling decision → `docs/adr/####-*.md` (proposed; HITL to accept).
-      - [x] `hidden-constraint-sweep` — **lens** · the 8-class sweep (retention / concurrency / PII / …) the model implies.
-      - [x] `trace-check`
-
-- [ ] skill refactoring
-      refactor all skills in the skills folder according to skills_review.md
-      Each refactoring shall be done in a separate sub-agent using opus 4.8 model with high thinking mode enabled. 
-      The orchestrator session then mark the refactoring done, when the subagents have finished their work.
-      - each of the sub-agents must only refactor a single skill 
-      - Here is the skill list:
-      - [ ] `ubiquitous-language-guard` — **lens** · enforce the glossary on `requirements.md`; write approved new/changed terms back into `CONTEXT.md` (HITL).
-      - [ ] `pareto-scope-cut` — **lens** · cut imagined/future scope (ai-mail: defer M2b/M3/M4); append a Postponed-decisions log.
-      - [ ] `domain-model` — **fork** · produce the conceptual model (glossary-aware, VO/aggregate-aware) → `docs/entity_model.md`.
-      - [ ] `domain-requirements`
-      - [ ] `adr-threshold-gate` — **lens** · catch any irreversible modelling decision → `docs/adr/####-*.md` (proposed; HITL to accept).
-      - [ ] `hidden-constraint-sweep` — **lens** · the 8-class sweep (retention / concurrency / PII / …) the model implies.
-      - [ ] `trace-check`
-
-
 - [ ] analyse, run and test the newly created skills.
       - [ ] `ubiquitous-language-guard` — **lens** · enforce the glossary on `requirements.md`; write approved new/changed terms back into `CONTEXT.md` (HITL).
       - [ ] `pareto-scope-cut` — **lens** · cut imagined/future scope (ai-mail: defer M2b/M3/M4); append a Postponed-decisions log.
       - [ ] `domain-model` — **fork** · produce the conceptual model (glossary-aware, VO/aggregate-aware) → `docs/entity_model.md`.
       - [ ] `adr-threshold-gate` — **lens** · catch any irreversible modelling decision → `docs/adr/####-*.md` (proposed; HITL to accept).
+      - [ ] `/use-case-diagram` — **stock** + lenses · → `docs/use_cases.puml`.
+      - [ ] `/use-case-spec` — **stock** + lenses · → `docs/use_cases/*.md`.
       - [ ] `hidden-constraint-sweep` — **lens** · the 8-class sweep (retention / concurrency / PII / …) the model implies.
 
 

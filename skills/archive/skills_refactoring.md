@@ -41,7 +41,7 @@ Guardrail file legend (referenced below):
 ---
 
 ## `ubiquitous-language-guard` — lens
-- [ ] refactor pending
+- [x] refactored
 
 ### 1. Guardrail coverage
 
@@ -115,7 +115,7 @@ Length is otherwise reasonable; the bloat is concentrated in the triple-stated c
 ---
 
 ## `pareto-scope-cut` — lens
-- [ ] refactor pending
+- [x] refactored
 
 ### 1. Guardrail coverage
 
@@ -188,7 +188,7 @@ Net: it will achieve the purpose **only when the agent is also handed the marker
 ---
 
 ## `domain-model` — fork
-- [ ] refactor pending
+- [x] refactored
 
 ### 1. Guardrail coverage
 
@@ -281,7 +281,7 @@ Generally tight and actionable, but with notable redundancy and a few gaps:
 ---
 
 ## `domain-requirements` — fork
-- [ ] refactor pending
+- [x] refactored
 
 ### 1. Guardrail coverage
 
@@ -353,7 +353,7 @@ Generally clear and actionable; the fork-specific additions are well-signposted.
 ---
 
 ## `adr-threshold-gate` — lens
-- [ ] refactor pending
+- [x] refactored
 
 ### 1. Guardrail coverage
 
@@ -433,7 +433,7 @@ Generally tight and actionable. Concrete issues:
 ---
 
 ## `hidden-constraint-sweep` — lens
-- [ ] refactor pending
+- [x] refactored
 
 ### 1. Guardrail coverage
 
@@ -489,7 +489,7 @@ The skill's purpose — defeating agent judgment so all 8 run every time — is 
 ---
 
 ## `trace-check` — lens
-- [ ] refactor pending
+- [x] refactored
 
 ### 1. Guardrail coverage
 

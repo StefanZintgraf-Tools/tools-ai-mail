@@ -7,6 +7,7 @@
 | FR     | Functional Requirement     | FR-001  |
 | NFR    | Non-Functional Requirement | NFR-001 |
 | C      | Constraint                 | C-001   |
+| OOS    | Out-of-Scope / Non-Goal    | OOS-001 |
 
 ## Priority
 
@@ -48,3 +49,17 @@
 | Schedule    | Deadlines, milestones, time constraints       |
 | Regulatory  | Legal, compliance, industry standards         |
 | Operational | Deployment, maintenance, support requirements |
+
+## Out-of-Scope Sources
+
+Where a recorded non-goal came from (gr_algn Aln15, gr_idea Idea3). An
+Out-of-Scope item carries forward a *decision not to do something*; it is not a
+Constraint (a limit on how you build) or a Deferred FR status (in scope, not yet
+built).
+
+| Source           | Description                                                            |
+|------------------|-----------------------------------------------------------------------|
+| vision non-goal  | An explicit non-goal / out-of-scope item in the vision document.      |
+| alignment reject | An option ruled out during grilling (alignment transcript).           |
+| idea non-goal    | A negative goal distilled in the idea phase.                          |
+| user             | A scope exclusion the user stated directly while writing requirements. |

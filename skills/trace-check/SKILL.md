@@ -26,6 +26,14 @@ human approval — loops a fix back into the offending artifact. It does NOT
 author requirements, model entities, maintain the glossary, gate ADRs, or cut
 scope; those are other skills.
 
+These checks are **chain-integrity** findings — they enforce the AIUP
+discipline that artifacts must not silently drift apart. Most of them map to no
+single numbered guardrail rule; only Check C carries a rule ID (`L1`). Do not
+overclaim a finding as a code-level rule violation: trace-check reads four
+documents, not code, so it can only see *documentation* drift (a rule named in
+a spec but absent from the model), never *placement* violations (a rule
+enforced in the wrong code layer).
+
 ## Inputs
 
 1. **Requirements** (default `docs/requirements.md`) — the functional
@@ -35,71 +43,114 @@ scope; those are other skills.
    declaring actors and use cases. Accept an override path.
 3. **Use-case specs** (default `docs/use_cases/*.md`) — per-use-case
    specification documents containing actors, scenarios, named entities, and
-   business rules (BR-###). Accept an override glob.
+   business rules. Accept an override glob.
 4. **Entity model** (default `docs/entity_model.md`) — the domain model with
    entities and their invariants/validation rules. Accept an override path.
 5. **Glossary** (optional argument) — path to the project's ubiquitous-language
-   file. Resolve in this order:
+   file. Resolve in this order, and NEVER hard-code a single filename:
    1. The explicit path the user passed, if any.
    2. `docs/CONTEXT.md`
    3. `docs/glossary.md`
-   4. If none exists: **warn the user** that no glossary was found and proceed
-      in report-only mode for the actor check (Check C) — you can still flag
-      actors that are inconsistent across artifacts, but verbatim glossary
-      matching is limited without a glossary.
+   4. If none exists: **warn** that no glossary was found and run **Check C in
+      degraded mode** — actor names are cross-checked for consistency *across*
+      the diagram and specs only (intra-artifact), and the report must label
+      Check C "intra-artifact consistency only — L1 not run" so a degraded run
+      never reads as an L1 pass.
 
-   NEVER hard-code a single glossary filename — always run the fallback chain.
+If any non-glossary input is missing, **warn**, skip the checks that need it,
+and continue (the skill is step-agnostic and must not crash on a not-yet-created
+artifact). A run with any check skipped can never be reported `PASS` — see
+**Result states**.
 
-If any non-glossary input is missing, **warn** and run whichever checks the
-available artifacts allow (the skill is step-agnostic and must not crash on a
-not-yet-created artifact). Report which checks were skipped and why.
+## Discover conventions first
 
-## Instructions
+Before running the checks, establish three things from the actual artifacts —
+do not assume a fixed format:
 
-Read every available artifact first, then run the four checks below in order,
-accumulating findings into a single **consistency report**. Do not write any fix
-until the HITL gate is satisfied.
+- **ID patterns.** Discover the id prefix the requirements catalog actually uses
+  (it may be `FR-012`, but it may also be `F22`, `M2`, or another project
+  scheme) and the prefix the specs use for business rules (commonly `BR-###`).
+  Derive the matching pattern from what is present in the files; do not
+  hard-assume `FR-`/`BR-` and silently miss other schemes.
+
+- **Trace convention (gate for Check A).** Determine whether the project carries
+  a UC→FR trace convention at all. Scan the specs and diagram for *any* FR
+  back-reference: an FR id cited inline, or a `Requirements:` / `Traces to:`
+  line, or a UC→FR mapping table in the requirements doc. If **no** use case
+  anywhere carries such a reference, the project has no author-time trace
+  convention — emit a single finding ("traceability not author-able — no FR-link
+  convention found in any spec") and do **not** flag every UC as an orphan. Only
+  when a convention is present do you flag the individual UCs that lack a trace.
+
+- **Name normalization (for Checks B and C).** To compare two names
+  mechanically rather than by judgment: trim, lowercase, and strip a trailing
+  plural (`-s`/`-es`) from both sides. Then:
+  - normalized-equal **and** byte-identical → match (silent pass);
+  - normalized-equal but **not** byte-identical → **near-match break** (report
+    both forms and the canonical one, e.g. `Mailboxes` vs `Mailbox`);
+  - not normalized-equal → no match (missing entity / unknown actor).
+
+  Translation drift (e.g. German `Benutzer` for glossary `User`) cannot be
+  detected mechanically — flag only a *suspected* translation for human
+  confirmation; never assert it as a definite break.
+
+## The four checks
+
+Run all four in order, accumulating findings into one consistency report.
 
 ### Check A — Every UC traces to ≥1 FR
 
-Enumerate every use case (from the use case diagram and/or the use-case specs).
-For each use case, confirm it traces to **at least one** functional requirement
-in the requirements catalog. A trace is an explicit reference — an FR id (e.g.
-`FR-012`) cited in the spec, a `Requirements:` / `Traces to:` line, or a
-documented mapping. A use case that traces to **zero** FRs is an **orphan
-use case** — flag it. Also note any FR ids cited by a use case that do **not**
-exist in the requirements catalog (dangling FR reference).
+Only runs if a trace convention was found (see above). Enumerate every use case
+as the **union** of the diagram and the spec files (match by normalized name so
+a UC is not double-counted). For each UC, confirm it traces to **at least one**
+FR in the requirements catalog. A UC that traces to **zero** FRs is an **orphan
+use case** — flag it. Also flag: any FR id cited by a UC that does **not** exist
+in the catalog (**dangling FR reference**); and any UC present in the diagram
+with **no** spec file (**missing spec**).
 
 ### Check B — Every entity named in a spec exists in the entity model
 
-Extract every domain entity named in the use-case specs (and, where relevant,
-in the requirements). For each, confirm an entity of that name exists in the
-entity model (`docs/entity_model.md` by default). A named entity with **no**
-corresponding entry in the entity model is a **missing entity** — flag it with
-the spec location that names it. Match on the canonical entity name; near-name
-mismatches (singular/plural, casing) are breaks, not silent passes — list them.
+Extract every domain entity named in the use-case specs (and, where relevant, in
+the requirements). For each, confirm an entity of that name exists in the entity
+model, comparing with the normalization rule above. A named entity with **no**
+match is a **missing entity** — flag it with the spec location. Report
+near-matches (singular/plural, casing) as breaks, not silent passes.
 
 ### Check C — Every actor matches the glossary (L1)
 
-Apply `gr_domain_language` rule **L1 — use defined terms exactly**. Collect
-every actor named in the use case diagram and use-case specs. For each actor,
-confirm the name appears **verbatim** in the glossary (the resolved glossary
-file). Flag any actor that is a casual variation, abbreviation, pluralization
-drift, casing change, or translation of a glossary term, and name the canonical
-form. Flag any actor that has no glossary entry at all as an unknown actor
-(propose adding it via the glossary skill — do NOT add it here). If no glossary
-was resolved, report this check as report-only and cross-check actor names for
-consistency **across** the diagram and specs instead.
+Apply `gr_domain_language` rule **L1 — use defined terms exactly**. Collect every
+actor named in the use case diagram and the specs. For each, confirm the name
+appears **verbatim** in the resolved glossary. Using the normalization rule,
+flag any actor that is a near-match (variation, abbreviation, pluralization,
+casing) and name the canonical form; flag a suspected translation for human
+confirmation. Flag any actor with no glossary entry as an **unknown actor** —
+*propose* adding it via the glossary skill; do **not** add it here. If no
+glossary was resolved, run the degraded intra-artifact check and label it as
+such in the report (L1 not run).
 
-### Check D — Every business rule (BR-###) maps to a domain-model invariant
+### Check D — Every business rule (BR) maps to a domain-model invariant
 
-Enumerate every business rule (ids of the form `BR-###`) across the use-case
-specs. For each BR, confirm it maps to a **domain-model invariant** in the
-entity model — a validation rule, constraint, or multi-column constraint that
-enforces the same rule. A `BR-###` with **no** corresponding invariant is an
-**unenforced business rule** — flag it with the rule text and the entity it
-should constrain. Also note any entity-model invariant that contradicts a BR
-(conflict), and any duplicate/contradictory BR ids.
+Enumerate every business rule (using the discovered BR id pattern) across the
+specs. The entity model carries **no** BR-id back-references (by `domain-model`'s
+output spec), so "maps to" is a **semantic** match you must perform
+deliberately:
+
+1. Identify the entity/aggregate the BR concerns.
+2. Look in that entity's attribute table (Validation Rules cells) and its
+   `Constraints` note for an invariant whose effect enforces the same rule.
+3. Verdict: **mapped** if such an invariant exists; **unenforced business rule**
+   if the entity exists but no matching invariant does (flag with the rule text
+   and the entity it should constrain); **needs human confirmation** if you
+   cannot confidently decide — do *not* guess a pass or a fail.
+
+Also flag any entity-model invariant that **contradicts** a BR (a cross-artifact
+conflict). Do not police duplicate/contradictory BR ids *within* a spec — that is
+a within-spec concern, not cross-artifact traceability.
+
+> **Worked example.** BR-04 "a thread cannot be both archived and pinned." Entity
+> `Thread` exists. Its `Constraints` note reads "not (archived AND pinned)" →
+> **mapped**. If `Thread` exists but no such constraint appears → **unenforced**.
+> If the model says "archived implies pinned" → **conflict**.
 
 ## DO NOT
 
@@ -109,12 +160,15 @@ should constrain. Also note any entity-model invariant that contradicts a BR
 - Do NOT add, define, or rename glossary terms (that is the ubiquitous-language
   skill) — propose, do not write, glossary changes.
 - Do NOT gate or author ADRs, and do NOT cut or prioritize scope.
-- Do NOT hard-code a single glossary filename — always run the resolution
-  fallback chain.
+- Do NOT hard-code a single glossary filename, or assume a fixed `FR-`/`BR-` id
+  scheme — resolve the fallback chain and discover the actual id patterns.
+- Do NOT flag every UC as an orphan when the project has no trace convention —
+  emit the single "no trace convention" finding instead.
+- Do NOT report `PASS` when any check was skipped — use `PARTIAL`.
 - Do NOT write any fix into an artifact without explicit per-change human
   approval (see HITL gate).
-- Do NOT silently invent traces, rename entities/actors, or "fix" a break by
-  guessing — flag it and let the human decide.
+- Do NOT silently invent traces, rename entities/actors, guess a fix, or assert a
+  translation you cannot prove — flag it and let the human decide.
 - Do NOT crash or stop when an input artifact is missing — warn, skip the
   affected check, and continue.
 - Do NOT bake any one project's domain specifics into your judgments — apply the
@@ -122,66 +176,88 @@ should constrain. Also note any entity-model invariant that contradicts a BR
 
 ## Workflow
 
-1. **Resolve inputs.** Resolve each artifact path (defaults above, honoring any
-   overrides). Resolve the glossary via the fallback chain
-   (passed path → `docs/CONTEXT.md` → `docs/glossary.md` → warn). State which
-   files you are using and which are missing.
-2. **Read all available artifacts.** Extract: FR ids from requirements; actors
-   and use cases from the diagram; per-spec actors, named entities, and BR-###
-   rules; entity names and invariants from the entity model; canonical terms
-   from the glossary.
-3. **Run the four checks**, accumulating findings into the consistency report:
-   - A — every UC traces to ≥1 FR (flag orphan UCs + dangling FR refs).
-   - B — every spec-named entity exists in the entity model (flag missing).
-   - C — every actor matches the glossary verbatim, L1 (flag deviations /
-     unknown actors).
-   - D — every BR-### maps to a domain-model invariant (flag unenforced /
-     conflicting).
-4. **Assemble the consistency report.** If no break is found in any run check,
-   report **PASS**. Otherwise list every break, grouped by check, with the
-   offending artifact and location.
-5. **HITL fix loop (gate).** For each break the human wants fixed: identify the
-   **offending artifact** (the one that should change), show the **exact
-   proposed change** (precise before/after diff or new line), and ask for
-   explicit approval ("approve / edit / skip"). Apply only approved changes to
-   that artifact, preserving its structure. Re-run the affected check to confirm
-   the break is resolved. Never write without approval.
-6. **Deliver.** Output the final consistency report and a summary of which
-   breaks were fixed (and into which artifact) and which remain.
+1. **Resolve inputs.** Resolve each artifact path (defaults above, honoring
+   overrides) and the glossary via the fallback chain. State which files you are
+   using and which are missing.
+2. **Read all available artifacts** and **discover conventions** — the id
+   patterns, whether a trace convention exists, and confirm the normalization
+   rule. Extract: requirement ids; actors and use cases from the diagram;
+   per-spec actors, named entities, and BR ids; entity names and invariants from
+   the model; canonical terms from the glossary.
+3. **Run Checks A–D** (above), accumulating findings.
+4. **Assemble the consistency report** with the correct **Result state**.
+5. **HITL fix loop (gate).** For each break the human wants fixed: name the
+   **candidate offending artifact(s)** and, where ambiguous, let the human pick
+   which to change rather than assuming. (An orphan UC may be the spec's fault —
+   add a trace line — *or* the requirements doc's — a missing FR; present both.)
+   Show the **exact proposed change** (precise before/after diff or new line) and
+   ask "approve / edit / skip". Apply only approved changes, preserving the
+   artifact's structure. Re-run the affected check to confirm resolution. Never
+   write without approval.
+6. **Deliver.** Output the final report and a summary of which breaks were fixed
+   (and into which artifact) and which remain.
+
+### Result states
+
+- **PASS** — every check ran (no input missing, trace convention present) and no
+  break was found.
+- **PARTIAL** — one or more checks were skipped (missing input, or no trace
+  convention for Check A); list which and why. No break found among the checks
+  that *did* run. A partial run is never `PASS`.
+- **BREAKS FOUND (N)** — N breaks across the run checks, listed by check.
 
 ## Consistency Report Template
 
 ```markdown
 # Trace Check — Consistency Report
 
-Requirements: <path | MISSING>
+Requirements: <path | MISSING>   (id pattern: <discovered, e.g. FR-### | F##>)
 Use case diagram: <path | MISSING>
-Use-case specs: <glob → N files | MISSING>
+Use-case specs: <glob → N files | MISSING>   (BR id pattern: <discovered>)
 Entity model: <path | MISSING>
-Glossary: <resolved path | NONE (Check C report-only)>
+Glossary: <resolved path | NONE — Check C intra-artifact only, L1 not run>
+Trace convention: <found | NOT FOUND — Check A not author-able>
 
-Result: <PASS | BREAKS FOUND (N)>
+Result: <PASS | PARTIAL (checks X,Y skipped) | BREAKS FOUND (N)>
 
 ## Check A — UC → ≥1 FR
 | Use case | Traces to FR(s) | Status |
 |----------|-----------------|--------|
-<rows; orphan UCs and dangling FR refs flagged>
+<rows; orphan UCs, dangling FR refs, and diagram-UCs-with-no-spec flagged>
 
 ## Check B — Entity-in-spec → entity_model.md
-| Entity named in spec | Spec location | In entity model? |
-|----------------------|---------------|------------------|
-<rows; missing entities flagged>
+| Entity named in spec | Spec location | In entity model? | Status |
+|----------------------|---------------|------------------|--------|
+<rows; missing entities and near-match breaks flagged>
 
 ## Check C — Actor ↔ glossary (L1)
 | Actor used | Source artifact | Canonical glossary term | Status |
 |------------|-----------------|-------------------------|--------|
-<rows; deviations and unknown actors flagged>
+<rows; near-match deviations, suspected translations, unknown actors flagged>
 
-## Check D — BR-### → domain-model invariant
+## Check D — BR → domain-model invariant
 | BR id | Rule (short) | Mapped invariant in entity model | Status |
 |-------|--------------|----------------------------------|--------|
-<rows; unenforced and conflicting BRs flagged>
+<rows; unenforced, conflict, and needs-confirmation flagged>
 
 ## Proposed fixes (await per-change approval)
-- <offending artifact> — <before/after diff or new line>
+- <break> — candidate offending artifact(s): <A | B>; <before/after diff or new line>
 ```
+
+## Notes
+
+- **Guardrail basis.** Only **L1** (`gr_domain_language.md`, use defined terms
+  exactly) is carried over by ID, in Check C, scoped to actors — and trace-check
+  *proposes*, never writes, glossary changes (L2/L4/L6/L8/L9 stay with
+  `ubiquitous-language-guard`). The other checks embody guardrail **intent**
+  without a numbered rule: Check D's BR→invariant mapping reflects the spirit of
+  `gr_ddd.md` D1/D9 (a business rule should be enforced as a domain invariant),
+  but trace-check only verifies the mapping *exists between two documents* — it
+  cannot see code, so it cannot detect a D1 *placement* violation (a rule
+  enforced in a controller). Checks A and B are structural AIUP chain-integrity
+  findings (no `gr_*.md` defines "every UC traces to an FR"); they serve the
+  same anti-drift purpose as the documentation guardrails but are reported as
+  chain-integrity, not as Doc4/Doc5 rule violations.
+- **Step-agnostic.** Run it at use-case-diagram time, use-case-spec time, or any
+  time artifacts may have drifted; missing inputs degrade to `PARTIAL` rather
+  than blocking.

@@ -3,14 +3,18 @@
 ## Off-limits — never read, search, or reference
 
 - `plan/archive/`
+- `skills/archive/`
 - `outlook-RAG/`
 - `todo_ideas.md` — human-only scratch (read `todo.md`, never this)
 
+## Read only when relevant
+
+- `skills/` — read only when creating, refactoring, or debugging a skill.
+
 ## Key planning artifacts
 
-Read before planning or building:
-
-- `todo.md` — live work log. Current task = topmost unchecked `- [ ]` section.
-- `plan/painlist_private.md`, `plan/painlist_acontis.md` — raw pains (`P##` private, `A##` acontis).
-- `plan/01-foundation.md` — source of truth: namespace catalog (`F##` primitives, `M#`/`M2b` capabilities), "build M2 first", M2b auto-router (`F30`/`F31`).
-- `docs/*.md` — AIUP artifacts for M2, each derived from the previous: `vision.md → requirements.md → entity_model.md → use_cases.puml → use_cases/*.md`. Trace back to `F##`/`M#`/`P##`/`A##`.
+- `todo.md` — read when asked "what's next" or to pick up the current task (topmost unchecked `- [ ]` section).
+- `plan/painlist_private.md`, `plan/painlist_acontis.md` — read when tracing why a feature exists or prioritizing scope (`P##` private pains, `A##` acontis pains).
+- `plan/01-foundation.md` — read when touching namespace/capability boundaries, adding primitives, or questioning build order (`F##` primitives, `M#`/`M2b` capabilities).
+- `docs/*.md` — read when working on requirements, entities, or use cases (`vision.md → requirements.md → entity_model.md → use_cases.puml → use_cases/*.md`).
+- `docs/adr/` — read when proposing or reviewing structural/architectural decisions.
