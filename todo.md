@@ -6,10 +6,16 @@ Next step to continue, see unchecked "[ ]" term
       - [x] `ubiquitous-language-guard` — **lens** · enforce the glossary on `requirements.md`; write approved new/changed terms back into `CONTEXT.md` (HITL).
       - [x] `pareto-scope-cut` — **lens** · cut imagined/future scope (ai-mail: defer M2b/M3/M4); append a Postponed-decisions log.
       - [x] `domain-model` — **fork** · produce the conceptual model (glossary-aware, VO/aggregate-aware) → `docs/entity_model.md`.
-      - [ ] `adr-threshold-gate entity-model` — **lens** · catch any irreversible modelling decision → `docs/adr/####-*.md` (proposed; HITL to accept).
+      - [x] `adr-threshold-gate docs/entity_model.md` — **lens** · catch any irreversible modelling decision → `docs/adr/####-*.md` (proposed; HITL to accept).
+      - [x] `hidden-constraint-sweep docs/entity_model.md` — **lens** · the 8-class sweep (retention / concurrency / PII / …) the model implies. All 4 missing gaps now resolved into the model + requirements.
+        - [x] let's work on Gap 1 out of these findings. Goal: update the related planning artifacts of ai-mail (located in plan and docs folders).
+        - [x] let's work on Gap 3 out of these findings. Goal: update the related planning artifacts of ai-mail (located in plan and docs folders).
+        - [x] let's work on Gap 5 out of these findings. Goal: update the related planning artifacts of ai-mail (located in plan and docs folders).
+        - [x] let's work on Gap 7 out of these findings. Goal: update the related planning artifacts of ai-mail (located in plan and docs folders).
+      - [x] requirements.md was modified --> run domain-model again? Update workflow.md if yes
+      - [x] re-run /hidden-constraint-sweep docs/entity_model.md
       - [ ] `/use-case-diagram` — **stock** + lenses · → `docs/use_cases.puml`.
       - [ ] `/use-case-spec` — **stock** + lenses · → `docs/use_cases/*.md`.
-      - [ ] `hidden-constraint-sweep` — **lens** · the 8-class sweep (retention / concurrency / PII / …) the model implies.
 
 - [ ] check how openspec_pocock_riptide_combination.md can bring new ideas
   - apply openspec as workflow?

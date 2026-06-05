@@ -61,6 +61,8 @@ One file carried by one Mail — the atomic unit of routing and the subject of e
 
 **Constraints:** Cannot exist without its Mail; full identity is rooted at the Mail — the pair `(Message-ID, content-hash)`. The content-hash alone is the **dedup key** and is *intentionally not globally unique*: two Attachments sharing a content-hash is exactly the dedup trigger (FR-012, C-010), resolved at the Provenance Ledger, not an identity collision. Every file the Mail carries is an Attachment; F01 may detect-but-filter inline images, footer logos, and signatures.
 
+**No silent drop (terminal outcome).** Every Attachment the pipeline begins processing reaches **exactly one** terminal outcome — **filed**, **staged**, **conflicted**, or **errored**. An Attachment that cannot be hashed, parsed, or copied does **not** vanish: it routes to the Staging Area as an explicit *errored* outcome and is surfaced in the Action Plan, never silently dropped (C-014). The four outcomes are tallied per run (NFR-008). This holds even when a full Proposal cannot be formed — the `ATTACHMENT ‖--‖ PROPOSAL` cardinality describes the routable path; an errored Attachment is still accounted for via its Staging-Area landing.
+
 ### PROPOSAL — Aggregate-root
 
 A system-suggested filing action for exactly one Attachment into a Target Location, carrying its Confidence; it exists independently of any human and is the artifact the Golden Corpus grades.
@@ -91,7 +93,7 @@ The batch serialization of all Proposals for one pipeline run — M2's plan/appl
 | Run Timestamp | Identifies the pipeline run this plan serializes | Identifier (natural) | Natural Identity |
 | Run Scope     | The set of Mails this run processed              | Run Scope            | Not Null         |
 
-**Constraints:** Serializes every Proposal of one run; the User hand-edits it (rename / re-target / skip), and `apply` commits approved rows only. Shares its structure with the Golden Corpus.
+**Constraints:** Serializes every Proposal of one run; the User hand-edits it (rename / re-target / skip), and `apply` commits approved rows only. Shares its structure with the Golden Corpus. **Run outcome visibility:** the Action Plan is where each Attachment's terminal outcome surfaces — including **errored** Attachments that produced no routable Proposal — and it carries the per-run outcome tally (counts of filed / staged / conflicted / errored) so the User can see what a run did without grepping the ledger (C-014, NFR-008). **Retention (v1):** each run's Action Plan is **retained** as the plan/apply audit trail — M2 does not rotate, purge, or garbage-collect per-run plan files (C-013); automated plan rotation/GC is a deferred mechanism.
 
 ### PROVENANCE_LEDGER — Aggregate-root
 
@@ -108,7 +110,9 @@ An external append record mapping `source Mail ↔ filed copy`, kept outside bot
 - The **dedup decision** (write the file at all?) keys on **content-hash only** — a missing or reused Message-ID can never cause a duplicate file (NFR-002, C-010). Identical content is silently de-duplicated: only a new provenance link is appended, never a second copy (FR-012).
 - The **provenance link** keys on `(Message-ID, content-hash)` (NFR-002).
 - 100% of filed copies must be resolvable from **both** their Target Location and their source Mail via the ledger, **without any write-back to the mailbox** (C-001, C-008), and must stay resolvable after the User relocates the source Mail — lookups key on Message-ID, never on folder location (NFR-005).
-- Append-only; in v1 resolution in either direction is manual ledger inspection (a greppable artifact, no dedicated lookup tool).
+- **Append-only and never purged in v1** — the retention stance is a deliberate decision, not an oversight (C-013); resolution in either direction is manual ledger inspection (a greppable artifact, no dedicated lookup tool). Automated retention/TTL is a deferred mechanism.
+- **Single-writer in v1.** M2 v1 assumes exactly one pipeline run appends to the ledger at a time — there is no append serialization or file-locking, so overlapping runs (e.g. a scheduled run colliding with a manual one) are **unsupported** in v1 (C-015). Real file-locking / concurrent-run support is a deferred mechanism.
+- **PII-bearing, owner-private.** Each record is personal data (source Sender address, mail date, content fingerprint, filed-copy location) — effectively a plaintext index of who sent what and where it was filed. The ledger is the User's private artifact and must be sited **outside any cloud-synced or shared path** (NFR-007, C-012); credentials never appear in it (C-011, ADR-0005). Its physical form remains deferred to the use-case spec (ADR-0001), but the privacy boundary is fixed here.
 
 ### GOLDEN_CORPUS — Aggregate-root
 
@@ -161,7 +165,7 @@ The holding place (`_review/`) for Attachments the pipeline could not confidentl
 | --------- | --------------------------- | ---- | ---------------- |
 | Location  | The `_review/` holding path | Text | Not Null         |
 
-**Constraints:** Receives below-threshold-Confidence, unknown-mapping, and true-Conflict Attachments. The corpus scores landing here as "no decision / deferred," never as a correct folder. It is **not** a Target Location (CON-4 / CON-5).
+**Constraints:** Receives below-threshold-Confidence, unknown-mapping, true-Conflict, and **errored** (processing-failure) Attachments — the last as the no-silent-drop landing for an Attachment that cannot be hashed, parsed, or copied (C-014). The corpus scores landing here as "no decision / deferred," never as a correct folder. It is **not** a Target Location (CON-4 / CON-5). **Retention (v1):** the Staging Area is **manually managed by the User** — M2 never auto-deletes from `_review/` and applies no TTL or garbage-collection; a staged-but-never-filed Attachment remains until the User acts on it (C-013). Automated draining/TTL is a deferred mechanism. **Re-stage idempotency (v1):** a staged-but-unfiled Attachment is written into `_review/` at a **content-hash-addressed** path, so a re-run targets the same path and overwrites identical bytes harmlessly — 0 duplicate staged files (C-015, NFR-002). Because the Staging Area is not in the Provenance Ledger, the Attachment is **re-proposed each run** (re-appears in the Action Plan) until the User drains `_review/`; this is accepted v1 behaviour, not a bug. Real run serialization / file-locking is a deferred mechanism.
 
 ### SENDER — Value-Object
 
@@ -213,7 +217,7 @@ The origin stamp carried with the filed copy (Message-ID, date, Sender); it answ
 | Mail Date  | Date of the source Mail                     | Date                 | Not Null         |
 | Sender     | The originating identity of the source Mail | Sender               | Not Null         |
 
-**Constraints:** Carried with the filed copy; its physical form (embedded metadata vs. sidecar) is deferred to the use-case spec (ADR-0001). Complements the Provenance Ledger, which answers Mail→Copy.
+**Constraints:** Carried with the filed copy; its physical form (embedded metadata vs. sidecar) is deferred to the use-case spec (ADR-0001). Complements the Provenance Ledger, which answers Mail→Copy. **PII-bearing, owner-private:** it stamps the source Sender, date, and Message-ID onto every filed copy and so travels with that copy into Target Locations the User may later sync to the cloud — an accepted exposure of the User's own data into the User's own destinations, never to be widened with additional personal data beyond these origin fields (C-012).
 
 ### CONFLICT — Value-Object
 

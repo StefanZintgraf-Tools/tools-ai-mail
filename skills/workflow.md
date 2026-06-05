@@ -48,7 +48,16 @@ own. Review between every step (AIUP's edit-between-steps discipline).
 2. `pareto-scope-cut` — **lens** · cut imagined/future scope (ai-mail: defer M2b/M3/M4); append a Postponed-decisions log.
 3. `domain-model` — **fork** · produce the conceptual model (glossary-aware, VO/aggregate-aware) → `docs/entity_model.md`.
 4. `adr-threshold-gate` — **lens** · gate **`docs/entity_model.md`** (the just-produced model; `docs/adr/*` read for numbering + dedup) for irreversible modelling decisions → `docs/adr/####-*.md` (proposed; HITL to accept).
-5. `hidden-constraint-sweep` — **lens** · the 8-class sweep (retention / concurrency / PII / …) the model implies.
+5. `hidden-constraint-sweep` — **lens** · gate **`docs/entity_model.md`** (the just-produced model; the 8-class sweep (retention / concurrency / PII / …) the model implies.
+   if issues found: 
+   5a:  PROMPT: 
+        create a plan/hidden_constraints.md file with the missing findings (the gaps). It should list all gaps and also contain suggestions, how to handle the gaps (missing findings).
+        This file will later be used in separate sessions to resolve the missing items.
+   5b: for each gap (new session): let's work on Gap ### out of these findings. Goal: update the related planning artifacts of the current project (located in plan and docs folders).
+   5c: when the gap is handled, handoff the chat into plan/gap###_close_log.md
+   5d: if requirements.md was updated: re-run /domain-model 
+   5e: re-run /hidden-constraint-sweep docs/entity_model.md. If a previously closed gap is re-detected, show the plan/gap###_close.log.md to check if it is still a gap
+   5f: archive the artifacts used for closing the gaps into plan/archive
 6. `/use-case-diagram` — **stock** + lenses · → `docs/use_cases.puml`.
 7. `/use-case-spec` — **stock** + lenses · → `docs/use_cases/*.md`.
 8. `trace-check` — **lens** · cross-artifact consistency (UC→FR, entity-in-spec, actor↔glossary, BR↔invariant).

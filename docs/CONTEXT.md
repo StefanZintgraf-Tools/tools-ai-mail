@@ -44,8 +44,10 @@ _Avoid_: target folder, destination, store, target.
 **Staging Area** (`_review/`):
 The holding place for **Attachments** the pipeline could not confidently route — an explicit
 "no Target Location yet" outcome (the fallback for unknown mappings and below-threshold
-**Confidence**, CON-4/CON-5). It is **not** a Target Location: corpus grading scores landing here as
-"no decision / deferred", never as a correct folder.
+**Confidence**, CON-4/CON-5). It is also the **no-silent-drop** landing for an **errored**
+Attachment — one that cannot be hashed, parsed, or copied — which lands here as an explicit *errored*
+outcome rather than vanishing (C-014). It is **not** a Target Location: corpus grading scores
+landing here as "no decision / deferred", never as a correct folder.
 _Avoid_: review folder (as if it were just another Target Location), quarantine.
 
 **Sender**:
