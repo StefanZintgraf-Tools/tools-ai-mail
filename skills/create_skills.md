@@ -325,7 +325,9 @@ stock `aiup-core:entity-model` SKILL.md body as the baseline to modify.
    spec #7)* — fork stock `requirements` to consume the glossary. Independent of #1–#5; build it from
    build spec #7 + the stock `requirements` baseline.
 
-**Downstream use-case steps need no modified skill** (decided 2026-06-03). `use-case-diagram` and
+**Downstream use-case steps need no modified skill** (decided 2026-06-03; **superseded 2026-06-05 by
+Decision 8** — the use-case steps are now the forks `usecase-diag` / `usecase-spec`; the paragraph
+below records the original reasoning). `use-case-diagram` and
 `use-case-spec` run as **stock `aiup-core` + composed Family-A lenses + `trace-check`**. The lenses
 are step-agnostic, so they already cover the stock gaps: fabricated actors → `ubiquitous-language-guard`;
 weak scope/slice → `pareto-scope-cut`; thin alt-flows → `hidden-constraint-sweep`; unforced
@@ -372,7 +374,7 @@ Once a skill proves out here, port it back to the coding project (mechanism TBD 
    absent. No skill hard-codes `CONTEXT.md`.
 4. **Downstream use-case steps need no modified skill** — stock `aiup-core` + Family-A lenses +
    `trace-check`. A modified `use-case-spec` is built **only reactively** if BR↔invariant linkage
-   breaks.
+   breaks. **(Superseded 2026-06-05 — see Decision 8.)**
 5. **Build & test as ai-mail project skills, by hand** — no `/make-skill` for now; port back to the
    coding project later (mechanism TBD).
 6. **No orchestrator skill yet** — compose by convention; extract a `prep-*` only if manual
@@ -386,3 +388,19 @@ Once a skill proves out here, port it back to the coding project (mechanism TBD 
    the glossary, so prevention-at-generation beats lens-cure-after, and (b) the workflow now seeds the
    glossary *before* the requirements step ([`workflow.md`](workflow.md)), so the fork has something to
    read on pass one. Output filename stays `docs/requirements.md`.
+8. **Fork stock `use-case-diagram`/`use-case-spec` → `usecase-diag`/`usecase-spec`** (2026-06-05) —
+   supersedes Decision 4's reactive-only stance. Two reasons: (a) the project is diverging from stock
+   `aiup-core` toward an owned use-case toolchain, and (b) the anticipated reactive trigger effectively
+   fired — **completeness**. A downstream lens (`trace-check`) can only check **UC→FR** (orphan/fabricated
+   use cases), never **FR→UC** (a *missing* use case); guaranteeing every in-scope FR yields a use case is
+   a *generation-time* property, so prevention-at-authoring beats lens-cure-after — the same logic as
+   Decision 7 (`domain-requirements`). The forks **consume** the glossary (actors verbatim, L1 read side)
+   and the scope marker (in-scope FR set) but, like the other forks, do **not** enforce the glossary or
+   cut scope (those stay `ubiquitous-language-guard` / `pareto-scope-cut`). `usecase-diag` guarantees
+   forward coverage (every in-scope FR → ≥1 UC or a recorded spec-level detail); `usecase-spec` emits a
+   `Requirements covered (FR-###)` trace line — which supplies the very UC→FR convention `trace-check`
+   Check A is gated on — and enforces fail-closed reverse coverage (every in-scope FR cited by ≥1 spec).
+   The earlier BR↔invariant trigger is folded into `usecase-spec` as a cite-or-flag grounding step (it
+   cites an existing invariant or flags a missing one; it never authors it). Output filenames stay
+   `docs/use_cases.puml` and `docs/use_cases/*.md` (AIUP chain contract). `trace-check` is left
+   **unmodified**; adding a reverse FR→UC check there is now *optional drift-insurance*, not load-bearing.

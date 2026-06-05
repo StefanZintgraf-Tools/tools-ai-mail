@@ -58,14 +58,17 @@ own. Review between every step (AIUP's edit-between-steps discipline).
    5d: if requirements.md was updated: re-run /domain-model 
    5e: re-run /hidden-constraint-sweep docs/entity_model.md. If a previously closed gap is re-detected, show the plan/gap###_close.log.md to check if it is still a gap
    5f: archive the artifacts used for closing the gaps into plan/archive
-6. `/use-case-diagram` — **stock** + lenses · → `docs/use_cases.puml`.
-7. `/use-case-spec` — **stock** + lenses · → `docs/use_cases/*.md`.
-8. `trace-check` — **lens** · cross-artifact consistency (UC→FR, entity-in-spec, actor↔glossary, BR↔invariant).
+6. `/usecase-diag` — **fork** + lenses · → `docs/use_cases.puml`; guarantees **forward** FR→UC coverage (every in-scope FR realised by ≥1 use case or recorded as a spec-level detail).
+7. `/usecase-spec` — **fork** + lenses · → `docs/use_cases/*.md`; emits a per-spec `Requirements covered (FR-###)` trace line and enforces **fail-closed reverse** coverage (every in-scope FR cited by ≥1 spec).
+8. `trace-check` — **lens** · cross-artifact consistency (UC→FR, entity-in-spec, actor↔glossary, BR↔invariant). The fork's trace line makes the UC→FR convention present at authoring time, so Check A now **runs** instead of reporting "no trace convention."
 
-> The use-case steps run **stock + composed lenses** (no fork): the step-agnostic lenses cover the
-> stock gaps (fabricated actors, weak scope, thin alt-flows, unforced surface decisions). Build a
-> modified `use-case-spec` **only reactively** if BR↔invariant linkage breaks. See `skills/create_skills.md`
-> §"Build order".
+> The use-case steps run **forks + composed lenses**. The forks own **completeness** (FR↔UC coverage,
+> both directions) at authoring time — the one gap the step-agnostic lenses cannot add after the fact;
+> the lenses still cover the rest (fabricated actors → `ubiquitous-language-guard`, weak scope →
+> `pareto-scope-cut`, thin alt-flows → `hidden-constraint-sweep`, unforced surface decisions →
+> `adr-threshold-gate`). Adding a reverse FR→UC check to `trace-check` is now **optional drift-insurance**,
+> not load-bearing. This supersedes the earlier "stock + lenses, no fork" stance — see
+> `skills/create_skills.md` Decision 8.
 
 ## Phase 4 · Post-spec — leave AIUP
 

@@ -33,8 +33,8 @@ Guardrail file legend (referenced below):
 6. [`domain-model` — **fork**](#domain-model--fork)
 7. [`adr-threshold-gate` — **lens**](#adr-threshold-gate--lens)
 8. [`hidden-constraint-sweep` — **lens**](#hidden-constraint-sweep--lens)
-9. [`use-case-diagram` — **stock**](#use-case-diagram--stock)
-10. [`use-case-spec` — **stock**](#use-case-spec--stock)
+9. [`usecase-diag` — **fork**](#usecase-diag--fork)
+10. [`usecase-spec` — **fork**](#usecase-spec--fork)
 11. [`trace-check` — **lens**](#trace-check--lens)
 12. [`prototype` — **external**](#prototype--external)
 13. [`to-prd` — **external**](#to-prd--external)
@@ -270,15 +270,41 @@ The threshold's subject matter is architectural decisions, so **`gr_architecture
 
 ---
 
-## `use-case-diagram` — **stock**
+## `usecase-diag` — **fork**
 
-**Purpose.** Stock AIUP skill that produces `docs/use_cases.puml` — a PlantUML actor/use-case diagram derived from `requirements.md` and the domain model. Run with step-agnostic lenses (`ubiquitous-language-guard`, `pareto-scope-cut`, `adr-threshold-gate`, `hidden-constraint-sweep`) composed on top rather than forked into the skill itself.
+**Purpose.** A *fork* of the stock AIUP `use-case-diagram` skill that produces `docs/use_cases.puml` — a PlantUML actor/use-case diagram derived from `requirements.md` and the domain model — and adds the one guarantee a downstream lens cannot add after the fact: **forward FR→UC coverage**. Every *in-scope* functional requirement must be realised by ≥1 use case or explicitly recorded as a *spec-level* detail (an error path / validation / sub-rule carried later as an alt-flow or BR), so the diagram can never silently omit a relevant use case. It emits the FR id(s) each use case realises, supplying the UC→FR convention downstream skills read. Still run with the step-agnostic lenses composed on top (`ubiquitous-language-guard`, `pareto-scope-cut`, `adr-threshold-gate`, `hidden-constraint-sweep`); the fork owns *completeness* only.
+
+**Input artifacts (must use).**
+- **`docs/requirements.md`** (required) — the FR catalog and any **Scope split** / Status column. If absent the skill STOPS.
+- **Scope marker** (optional arg) — the milestone/phase that defines "now"; the **in-scope FR set** is resolved from the requirements doc's Scope split / Status (non-`Deferred`/non-`Out-of-scope` otherwise). No milestone names hard-coded; ambiguous scope is **asked**, never guessed.
+- **`docs/entity_model.md`** (optional) — read for the domain nouns the use cases act on (names stay domain-shaped).
+- **Glossary** (optional arg) — resolved `explicit → docs/CONTEXT.md → docs/glossary.md → warn-and-continue`; actor names used **verbatim** (L1, read side); no "User/Administrator" default when the glossary names actors.
+
+**Output artifacts / results.**
+- **`docs/use_cases.puml`** — created/updated; `UC-{3-digit}` ids, glossary-verbatim actors, each UC carrying its FR id(s).
+- A **FR → UC coverage map** resolving every in-scope FR to `≥1 UC` or `spec-level (owning UC)`; an in-scope FR that is neither is a **coverage gap** that blocks completion (fail-closed).
+
+**Relation to guardrail items.** Its completeness check is an **AIUP chain-integrity** guarantee (the FR→UC reverse of `trace-check` Check A's UC→FR); no single `gr_*.md` rule defines it. It **consumes** the glossary under **`gr_domain_language.md` L1** (actors verbatim, read side) and routes a needed-but-undefined actor to the `ubiquitous-language-guard` write-back loop under **L6** (flag, never coin). It deliberately does **not** enforce/evolve the glossary (L2/L4/L8 stay `ubiquitous-language-guard`) or cut scope (`gr_greenfield` G1/G9 stay `pareto-scope-cut`) — it only consumes their outputs.
 
 ---
 
-## `use-case-spec` — **stock**
+## `usecase-spec` — **fork**
 
-**Purpose.** Stock AIUP skill that produces per-use-case spec files under `docs/use_cases/*.md`, each detailing actors, main/alternative scenarios, and business rules (`BR-###`). Run with the same composed lenses as `use-case-diagram`. A forked version is built only reactively if the `BR-###` ↔ invariant linkage breaks (see `skills/create_skills.md` §"Build order").
+**Purpose.** A *fork* of the stock AIUP `use-case-spec` skill that produces per-use-case spec files under `docs/use_cases/*.md` (actors, preconditions, main/alternative scenarios, postconditions, `BR-###` business rules), adding two guarantees stock spec lacks: (1) each spec carries a **`Requirements covered (FR-###)`** trace line — supplying the UC→FR convention `trace-check` Check A is *gated on* (without it Check A reports "no trace convention found"); and (2) a **fail-closed reverse-coverage gate** — every in-scope FR must be cited by ≥1 spec (covered-line, flow step, or BR), else completion is blocked. Run with the same composed lenses as `usecase-diag`.
+
+**Input artifacts (must use).**
+- **`docs/requirements.md`** (required) — FR catalog + Scope split / Status. STOP if absent.
+- **`docs/use_cases.puml`** (default) — the use-case set and each UC's FR id(s); if absent, **warn** and derive use cases from the in-scope FR set.
+- **Scope marker** (optional arg) — in-scope FR set resolved as in `usecase-diag`; ambiguous scope **asked**.
+- **`docs/entity_model.md`** (optional) — each `BR-###` should correspond to a domain-model **invariant**; the skill **cites** it or **flags** a missing/contradicting one — it never authors the invariant (that stays `domain-model`).
+- **Glossary** (optional arg) — resolved `explicit → docs/CONTEXT.md → docs/glossary.md → warn`; actors/terms **verbatim** (L1, read side).
+- **`$ARGUMENTS`** — the use case(s) to (re)write; default to all UCs in the diagram.
+
+**Output artifacts / results.**
+- **`docs/use_cases/*.md`** — one file per use case, each with a `Requirements covered (FR-###)` Overview line.
+- A **FR → spec coverage map** resolving every in-scope FR to a citing spec; an in-scope FR cited nowhere is a **coverage gap** that blocks completion (fail-closed). Deferred / out-of-scope FRs are excluded.
+
+**Relation to guardrail items.** Reverse-coverage and the trace line are **AIUP chain-integrity** guarantees (no single `gr_*.md` rule). The fork's BR→invariant *grounding* reflects the spirit of **`gr_ddd.md` D1/D9** (a business rule should be a domain invariant) but only **cites or flags** the document linkage — it never authors the invariant or sees code, exactly the boundary `trace-check` Check D draws. It **consumes** the glossary under **L1** (actors verbatim) and flags unknown actors under **L6**; it does **not** enforce the glossary, cut scope, or model entities (sibling skills own those). The previously-anticipated reactive trigger for forking `use-case-spec` — `BR-###` ↔ invariant linkage — is folded in as this grounding-and-flagging step.
 
 ---
 

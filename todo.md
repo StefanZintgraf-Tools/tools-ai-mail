@@ -14,8 +14,8 @@ Next step to continue, see unchecked "[ ]" term
         - [x] let's work on Gap 7 out of these findings. Goal: update the related planning artifacts of ai-mail (located in plan and docs folders).
       - [x] requirements.md was modified --> run domain-model again? Update workflow.md if yes
       - [x] re-run /hidden-constraint-sweep docs/entity_model.md
-      - [ ] `/use-case-diagram` — **stock** + lenses · → `docs/use_cases.puml`.
-      - [ ] `/use-case-spec` — **stock** + lenses · → `docs/use_cases/*.md`.
+      - [ ] `/usecase-diag` — **fork** + lenses · → `docs/use_cases.puml` (forward FR→UC coverage).
+      - [ ] `/usecase-spec` — **fork** + lenses · → `docs/use_cases/*.md` (fail-closed reverse coverage + `Requirements covered` trace line).
 
 - [ ] check how openspec_pocock_riptide_combination.md can bring new ideas
   - apply openspec as workflow?
@@ -57,9 +57,9 @@ Next step to continue, see unchecked "[ ]" term
         interface-design (the "deep modules" question below). Only once code exists.
 
 - [ ] where would humanlayer/riptide fit in this process? how to assure deep modules and tracer-bullets?
-- [ ] (3) `/entity-model` → `docs/entity_model.md` — the genuinely NEW value. Yields the missing M2 domain model: Attachment, RoutingRule, Provenance (= F06), and the idempotency key F22 needs. Watch that it surfaces these.
-- [ ] (4) `/use-case-diagram` → `docs/use_cases.puml` — actors + UC-### IDs, each tracing to ≥1 FR. This is where the M2 actor(s) + the slice into use cases gets pinned (likely a small set, e.g. "review & file proposed attachments").
-- [ ] (5) `/use-case-spec UC-XXX` → `docs/use_cases/UC-XXX-*.md` — the detailed spec: actor · preconditions · main success scenario (numbered) · alternative flows (file-already-exists, target-folder unclear/undefined, not-every-attachment-should-be-filed, rename) · postconditions · business rules. Resolve interaction-surface + mail-selection HERE as explicit decisions.
+- [ ] (3) `/domain-model` → `docs/entity_model.md` — the genuinely NEW value. Yields the missing M2 domain model: Attachment, RoutingRule, Provenance (= F06), and the idempotency key F22 needs. Watch that it surfaces these.
+- [ ] (4) `/usecase-diag` → `docs/use_cases.puml` — actors + UC-### IDs, each tracing to ≥1 FR. This is where the M2 actor(s) + the slice into use cases gets pinned (likely a small set, e.g. "review & file proposed attachments").
+- [ ] (5) `/usecase-spec UC-XXX` → `docs/use_cases/UC-XXX-*.md` — the detailed spec: actor · preconditions · main success scenario (numbered) · alternative flows (file-already-exists, target-folder unclear/undefined, not-every-attachment-should-be-filed, rename) · postconditions · business rules. Resolve interaction-surface + mail-selection HERE as explicit decisions.
 - [ ] (6) Grill the written use case — fresh session, `/grill-me` (or `/grill-with-docs` to harden docs inline). Ammunition = branches banked below (~todo.md:64-69): approval-surface shape, what earns "primitive" status (rename/conflict-resolution?), mail-access surface (IMAP/Graph/PST), existing-folder taxonomy (local/network), F22 idempotency. Defer the programming-language/stack choice to the spine's plan step.
 - [ ] (7) Into the chosen build spine (Option A/B/C below) at its specify/plan step, carrying the hardened AIUP docs in. Spine choice stays deferred to the plan step; AIUP itself can't build on this stack. Golden corpus + accuracy gate before implement (method-agnostic).
 

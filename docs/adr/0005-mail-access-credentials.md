@@ -52,7 +52,7 @@ resolving them. NFR-006 makes the principle testable.
 - A mail-access adapter (per C-007) must fetch its credential from the secret store, not receive it
   through a plan file or ledger entry — a constraint on every future adapter, alongside the
   Message-ID surfacing requirement (ADR-0004).
-- First-run credential setup becomes an explicit use-case-spec concern (how the secret first gets
+- First-run credential setup becomes an explicit use-case spec concern (how the secret first gets
   into the store), rather than something that falls out of editing a config file.
 - NFR-006 gives a pass/fail check: no M2-produced artifact may contain a credential. The Action Plan
   is hand-edited, so this is also a User-facing guarantee, not only an implementation rule.
