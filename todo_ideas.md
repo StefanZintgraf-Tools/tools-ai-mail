@@ -45,8 +45,8 @@
   - [ ] install `aiup-core` only — https://github.com/AI-Unified-Process/marketplace (skip `aiup-vaadin-jooq`, it's Java/Vaadin-locked)
   - [ ] Pocock `/grill-me` on M2 scope first (same as A)
   - [ ] write `docs/vision.md` for M2
-  - [ ] `/entity-model` — yields the missing domain model (Attachment, RoutingRule, Provenance/F06)
-  - [ ] `/use-case-spec` — the M2 spec
+  - [ ] `/domain-model` — yields the missing domain model (Attachment, RoutingRule, Provenance/F06)
+  - [ ] `/usecase-spec` — the M2 spec
   - [ ] EXECUTION is not covered by AIUP on this stack → golden corpus + Pocock `/to-issues` → `/tdd` → `/ralph` → `/verify`
   - [ ] Pocock `/review` — fresh-context review of the diff
 

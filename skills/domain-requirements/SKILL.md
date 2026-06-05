@@ -27,12 +27,11 @@ decisions *not* to do something (gr_algn **Aln15**). The filename is fixed so th
 AIUP chain stays intact (downstream skills — use-case-diagram, use-case-spec,
 domain-model, trace-check — read it).
 
-This is the glossary-aware successor to stock `requirements`. It changes two
-things versus stock: (1) the **vocabulary input** — it reads the glossary and
-uses domain terms and actors verbatim; and (2) it **carries negative decisions
-forward** from the vision/alignment into an Out-of-Scope section so scope can be
-defended later. It is **consume-only** on the glossary — it does not enforce,
-evolve, or write back to it (that stays `ubiquitous-language-guard`).
+Two behaviors are load-bearing: (1) the **vocabulary input** — it reads the
+glossary and uses domain terms and actors verbatim; and (2) it **carries negative
+decisions forward** from the vision/alignment into an Out-of-Scope section so
+scope can be defended later. It is **consume-only** on the glossary — it does not
+enforce, evolve, or write back to it (that stays `ubiquitous-language-guard`).
 
 ## Inputs
 
@@ -48,8 +47,8 @@ and ask for the source — it is the required input.
 1. an explicit glossary path passed as an argument → 2. `docs/CONTEXT.md` →
 3. `docs/glossary.md` → 4. **none found** → WARN ("No glossary found; proceeding
 without one — domain terms cannot be verified verbatim and actors will fall back
-to generic roles") and degrade to **stock behaviour** (generic roles, terms taken
-from the vision), noting that requirements should be re-run once a glossary
+to generic roles") and degrade to **generic behaviour** (generic roles, terms
+taken from the vision), noting that requirements should be re-run once a glossary
 exists.
 
 Always try the resolution order; never hard-code a single filename.
@@ -70,7 +69,7 @@ Primary source is the vision's non-goals/out-of-scope section (above). Also read
 rejections, and an idea file (`idea.md`) for negative goals. Their absence is not
 an error — the vision's out-of-scope is enough.
 
-## Consume the glossary (the one behavioral change vs. stock)
+## Consume the glossary
 
 When a glossary is present, apply these four rules everywhere — titles, user
 stories, constraints, and the out-of-scope list:
@@ -118,8 +117,8 @@ glossary's actor terms (verbatim).
 | FR-002 | Approve Proposal     | As a User, I want to approve, edit, or reject each Proposal in the Action Plan so that only what I confirm is filed.  | High     | Open   |
 | FR-003 | Route to Staging     | As a User, I want below-Confidence Proposals routed to the Staging Area so that nothing is filed into the wrong Target Location. | High     | Open   |
 
-*The roles are the glossary actor "User" verbatim — not the generic "project
-manager"/"team member" stock placeholders, and not the doc's own near-miss
+*The roles are the glossary actor "User" verbatim — not generic "project
+manager"/"team member" placeholders, and not the doc's own near-miss
 "mailbox owner". Domain nouns (Proposal, Action Plan, Staging Area, Confidence,
 Target Location) are glossary terms used exactly.*
 
@@ -198,7 +197,7 @@ Every requirement must pass these before finalizing:
   requires real-time sync but C-002 limits to batch processing") and ask the user
   to resolve.
 - **Missing actors / glossary / new term needed**: All three are handled by the
-  rules in [Inputs](#inputs) and [Consume the glossary](#consume-the-glossary-the-one-behavioral-change-vs-stock)
+  rules in [Inputs](#inputs) and [Consume the glossary](#consume-the-glossary)
   — take actors from glossary actor terms (else generic, noted for review), warn
   and degrade when no glossary exists, and record a genuinely-new term in the
   Flagged Terms section rather than coining it.

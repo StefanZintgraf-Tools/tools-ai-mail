@@ -11,20 +11,20 @@ description: >
   system use cases.
 ---
 
-# Use Case Diagram (coverage-guaranteed fork)
+# Use Case Diagram (coverage-guaranteed)
 
-A fork of the stock AIUP `use-case-diagram` skill. It produces the same
-PlantUML artifact, but adds the one thing a downstream lens cannot add after the
-fact: **forward coverage** — every *in-scope* functional requirement is realised
-by at least one use case (or explicitly recorded as a spec-level detail), so the
-diagram can never silently omit a relevant use case. (`trace-check` checks the
-opposite direction, UC→FR, and so cannot catch a *missing* use case.)
+Produces a PlantUML use case diagram and adds the one thing a downstream lens
+cannot add after the fact: **forward coverage** — every *in-scope* functional
+requirement is realised by at least one use case (or explicitly recorded as a
+spec-level detail), so the diagram can never silently omit a relevant use case.
+(`trace-check` checks the opposite direction, UC→FR, and so cannot catch a
+*missing* use case.)
 
 It **consumes** the glossary (actor names, verbatim) and the scope marker (which
 requirements are "now"); it does **not** enforce or evolve the glossary, and it
 does **not** cut scope — those stay `ubiquitous-language-guard` and
-`pareto-scope-cut`. Like the other forks, it adds one structural guarantee and
-leaves the cross-cutting lenses to do their jobs.
+`pareto-scope-cut`. It adds one structural guarantee and leaves the cross-cutting
+lenses to do their jobs.
 
 ## Inputs
 
@@ -55,8 +55,8 @@ leaves the cross-cutting lenses to do their jobs.
 - Do NOT pull in deferred / out-of-scope requirements (respect the scope split /
   Status) — that is over-scope, the `pareto-scope-cut` concern inverted.
 - Do NOT finish with an in-scope FR that no use case covers **and** that is not
-  explicitly recorded as a spec-level detail — that coverage gap is the whole
-  reason this fork exists.
+  explicitly recorded as a spec-level detail — surfacing that coverage gap is
+  this skill's core job.
 - Do NOT use non-standard PlantUML syntax, or put implementation details in use
   case names.
 - Do NOT enforce/evolve the glossary or cut scope here (sibling skills own those).
@@ -95,7 +95,7 @@ user --> UC003
   `trace-check` have an explicit UC→FR convention to read.
 - Add notes sparingly, only where a relationship needs clarification.
 
-## Coverage discipline (the fork's job)
+## Coverage discipline
 
 Build an explicit **FR → UC coverage map**. List every **in-scope** FR and the
 use case(s) that realise it. Apply the granularity rule:

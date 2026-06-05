@@ -4,9 +4,9 @@ The end-to-end order in which to run the AIUP steps and the guardrail skills. Sk
 in [`create_skills.md`](../skills/create_skills.md) and the rationale in
 [`skills_background_info.md`](../skills/skills_background_info.md); **this file is the authoritative sequence.**
 
-**Legend** — **stock** = upstream `aiup-core` skill, unmodified · **fork** = modified authoring skill
-in this repo (`domain-requirements`, `domain-model`) · **lens** = cross-cutting Family-A guardrail
-skill · **external** = matt_pocock plugin skill · **HITL** = human-in-the-loop / brainstorming.
+**Legend** — **authoring** = an AIUP step that produces a chain artifact · **lens** = cross-cutting
+Family-A guardrail skill · **external** = matt_pocock plugin skill · **HITL** = human-in-the-loop /
+brainstorming.
 
 ## The load-bearing ordering rule
 
@@ -21,7 +21,7 @@ else follows from this.
 | # | Step | Type | In → Out |
 |---|------|------|----------|
 | 1 | General brainstorming (AI-recommended method, Pareto) | HITL | — → `painlist.md`, `ideas.md`, `00-foundation.md` |
-| 2 | Generate the vision from the inception files (AIUP vision template) | stock | inception files → `docs/vision.md` |
+| 2 | Generate the vision from the inception files (AIUP vision template) | authoring | inception files → `docs/vision.md` |
 | 3 | Brainstorm vision goals (Assumption Reversal) | HITL | `docs/vision.md` → `01-foundation.md` (replaces `00-foundation.md`) |
 
 ## Phase 2 · Glossary → requirements  ← the sequencing fix lives here
@@ -29,7 +29,7 @@ else follows from this.
 | # | Step | Type | In → Out |
 |---|------|------|----------|
 | 4 | `/grill-with-docs` — sharpen terms & decisions | external | `docs/vision.md`, `01-foundation.md` → **`docs/CONTEXT.md`** + `docs/adr/####-*.md` |
-| 5 | `domain-requirements` — author the catalog **from the glossary** | fork | `docs/CONTEXT.md`, `docs/vision.md` → `docs/requirements.md` |
+| 5 | `domain-requirements` — author the catalog **from the glossary** | authoring | `docs/CONTEXT.md`, `docs/vision.md` → `docs/requirements.md` |
 | 6 | Human review of `docs/requirements.md` | HITL | — |
 | 7 | Challenge the `FR-###` items with a strong thinking model; apply Pareto (defer features to later milestones) | HITL | `docs/requirements.md` (edited) |
 | 8 | If the changes are significant: re-grill **only the diff** | external | see command below |
@@ -46,7 +46,7 @@ own. Review between every step (AIUP's edit-between-steps discipline).
 
 1. `ubiquitous-language-guard` — **lens** · enforce the glossary on `requirements.md`; write approved new/changed terms back into `CONTEXT.md` (HITL).
 2. `pareto-scope-cut` — **lens** · cut imagined/future scope (ai-mail: defer M2b/M3/M4); append a Postponed-decisions log.
-3. `domain-model` — **fork** · produce the conceptual model (glossary-aware, VO/aggregate-aware) → `docs/entity_model.md`.
+3. `domain-model` — **authoring** · produce the conceptual model (glossary-aware, VO/aggregate-aware) → `docs/entity_model.md`.
 4. `adr-threshold-gate` — **lens** · gate **`docs/entity_model.md`** (the just-produced model; `docs/adr/*` read for numbering + dedup) for irreversible modelling decisions → `docs/adr/####-*.md` (proposed; HITL to accept).
 5. `hidden-constraint-sweep` — **lens** · gate **`docs/entity_model.md`** (the just-produced model; the 8-class sweep (retention / concurrency / PII / …) the model implies.
    if issues found: 
@@ -58,17 +58,16 @@ own. Review between every step (AIUP's edit-between-steps discipline).
    5d: if requirements.md was updated: re-run /domain-model 
    5e: re-run /hidden-constraint-sweep docs/entity_model.md. If a previously closed gap is re-detected, show the plan/gap###_close.log.md to check if it is still a gap
    5f: archive the artifacts used for closing the gaps into plan/archive
-6. `/usecase-diag` — **fork** + lenses · → `docs/use_cases.puml`; guarantees **forward** FR→UC coverage (every in-scope FR realised by ≥1 use case or recorded as a spec-level detail).
-7. `/usecase-spec` — **fork** + lenses · → `docs/use_cases/*.md`; emits a per-spec `Requirements covered (FR-###)` trace line and enforces **fail-closed reverse** coverage (every in-scope FR cited by ≥1 spec).
-8. `trace-check` — **lens** · cross-artifact consistency (UC→FR, entity-in-spec, actor↔glossary, BR↔invariant). The fork's trace line makes the UC→FR convention present at authoring time, so Check A now **runs** instead of reporting "no trace convention."
+6. `/usecase-diag` — **authoring** + lenses · → `docs/use_cases.puml`; guarantees **forward** FR→UC coverage (every in-scope FR realised by ≥1 use case or recorded as a spec-level detail).
+7. `/usecase-spec` — **authoring** + lenses · → `docs/use_cases/*.md`; emits a per-spec `Requirements covered (FR-###)` trace line and enforces **fail-closed reverse** coverage (every in-scope FR cited by ≥1 spec).
+8. `trace-check` — **lens** · cross-artifact consistency (UC→FR, entity-in-spec, actor↔glossary, BR↔invariant). The per-spec trace line makes the UC→FR convention present at authoring time, so Check A now **runs** instead of reporting "no trace convention."
 
-> The use-case steps run **forks + composed lenses**. The forks own **completeness** (FR↔UC coverage,
-> both directions) at authoring time — the one gap the step-agnostic lenses cannot add after the fact;
-> the lenses still cover the rest (fabricated actors → `ubiquitous-language-guard`, weak scope →
-> `pareto-scope-cut`, thin alt-flows → `hidden-constraint-sweep`, unforced surface decisions →
-> `adr-threshold-gate`). Adding a reverse FR→UC check to `trace-check` is now **optional drift-insurance**,
-> not load-bearing. This supersedes the earlier "stock + lenses, no fork" stance — see
-> `skills/create_skills.md` Decision 8.
+> The use-case steps run the **authoring skills + composed lenses**. The authoring skills own
+> **completeness** (FR↔UC coverage, both directions) at authoring time — the one gap the step-agnostic
+> lenses cannot add after the fact; the lenses still cover the rest (fabricated actors →
+> `ubiquitous-language-guard`, weak scope → `pareto-scope-cut`, thin alt-flows →
+> `hidden-constraint-sweep`, unforced surface decisions → `adr-threshold-gate`). Adding a reverse FR→UC
+> check to `trace-check` is **optional drift-insurance**, not load-bearing.
 
 ## Phase 4 · Post-spec — leave AIUP
 

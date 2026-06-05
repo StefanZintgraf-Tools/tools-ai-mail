@@ -11,10 +11,9 @@ description: >
   use case specification, acceptance criteria, or user scenarios.
 ---
 
-# Use Case Specification (coverage-guaranteed fork)
+# Use Case Specification (coverage-guaranteed)
 
-A fork of the stock AIUP `use-case-spec` skill. It writes the same per-use-case
-documents, but adds two guarantees stock spec lacks:
+Writes per-use-case specification documents, and adds two coverage guarantees:
 
 1. **A trace line.** Each spec records `Requirements covered (FR-###)` in its
    Overview — establishing the UC→FR trace convention that `trace-check` Check A
@@ -56,7 +55,7 @@ or author invariants/entities — those stay `ubiquitous-language-guard`,
 - Do NOT write vague or incomplete scenarios; do NOT skip numbering steps in the
   Main Success Scenario; do NOT omit alternative flows for error conditions; do
   NOT leave postconditions undefined; do NOT mix multiple use cases in one
-  document; do NOT use implementation details in flow steps. *(stock rules)*
+  document; do NOT use implementation details in flow steps.
 - Do NOT omit the `Requirements covered (FR-###)` line — it is the trace
   convention downstream skills read.
 - Do NOT finish with an in-scope FR cited by no spec — the reverse-coverage gate
@@ -68,7 +67,7 @@ or author invariants/entities — those stay `ubiquitous-language-guard`,
 
 ## Template
 
-Use the stock `use-case.md` structure — **Overview** (Use Case ID, Use Case
+Use the `use-case.md` structure — **Overview** (Use Case ID, Use Case
 Name, Primary Actor, Goal, Status) extended with a **`Requirements covered:`**
 line, then **Preconditions**, **Main Success Scenario** (numbered),
 **Alternative Flows** (triggered, for error / optional / exceptional paths),
@@ -107,7 +106,7 @@ line, then **Preconditions**, **Main Success Scenario** (numbered),
 <rule> — enforces domain-model invariant <name> (or: **FLAG** — no invariant in entity_model).
 ```
 
-## Reverse-coverage gate (the fork's job)
+## Reverse-coverage gate
 
 After the specs are written, build the **FR → spec coverage map**: every
 in-scope FR must appear in at least one spec's `Requirements covered` line, flow
