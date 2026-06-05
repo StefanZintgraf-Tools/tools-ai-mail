@@ -1,0 +1,42 @@
+@startuml Use Cases Overview
+left to right direction
+
+' Actor drawn verbatim from the glossary (docs/CONTEXT.md): ai-mail has exactly
+' one actor role throughout — the User (Mailbox owner = approver).
+actor "User" as user
+
+rectangle "M2 · Attachment Auto-Router" {
+    usecase "UC-001\nGenerate Filing Proposals for a Run" as UC001
+    usecase "UC-002\nReview and Decide on Proposals" as UC002
+    usecase "UC-003\nCommit Approved Filings" as UC003
+    usecase "UC-004\nTrace a Filed Copy to/from its Source Mail" as UC004
+}
+
+user --> UC001
+user --> UC002
+user --> UC003
+user --> UC004
+
+note bottom of UC001
+  Realises FR-014, FR-001, FR-002, FR-004
+  Spec-level: FR-005 (route uncertain to Staging Area),
+  FR-013 (flag Conflict in the Action Plan)
+end note
+
+note bottom of UC002
+  Realises FR-006, FR-007
+  Spec-level: FR-011 (manual rename = an edit)
+end note
+
+note bottom of UC003
+  Realises FR-008
+  Spec-level: FR-009 (record Provenance at commit),
+  FR-012 (deduplicate identical content at commit)
+end note
+
+note bottom of UC004
+  Realises FR-010 (bidirectional findability
+  via the Provenance Ledger + back-link)
+end note
+
+@enduml
