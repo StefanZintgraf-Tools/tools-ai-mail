@@ -47,7 +47,7 @@ own. Review between every step (AIUP's edit-between-steps discipline).
 1. `ubiquitous-language-guard` — **lens** · enforce the glossary on `requirements.md`; write approved new/changed terms back into `CONTEXT.md` (HITL).
 2. `pareto-scope-cut` — **lens** · cut imagined/future scope (ai-mail: defer M2b/M3/M4); append a Postponed-decisions log.
 3. `domain-model` — **fork** · produce the conceptual model (glossary-aware, VO/aggregate-aware) → `docs/entity_model.md`.
-4. `adr-threshold-gate` — **lens** · catch any irreversible modelling decision → `docs/adr/####-*.md` (proposed; HITL to accept).
+4. `adr-threshold-gate` — **lens** · gate **`docs/entity_model.md`** (the just-produced model; `docs/adr/*` read for numbering + dedup) for irreversible modelling decisions → `docs/adr/####-*.md` (proposed; HITL to accept).
 5. `hidden-constraint-sweep` — **lens** · the 8-class sweep (retention / concurrency / PII / …) the model implies.
 6. `/use-case-diagram` — **stock** + lenses · → `docs/use_cases.puml`.
 7. `/use-case-spec` — **stock** + lenses · → `docs/use_cases/*.md`.

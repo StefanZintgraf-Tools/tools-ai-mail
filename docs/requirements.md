@@ -61,6 +61,8 @@ Boundaries imposed on the solution.
 - **C-007 / mail-access method** — IMAP vs Graph vs PST vs Outlook vs Kerio is still deferred, but
   **no longer blocks anything**: NFR-002's dedup key is content-hash and the provenance key uses the
   portable `Message-ID`. The choice can be made at the use-case spec / build step on its own merits.
+  <!-- The "unblocked because dedup keys on content-hash" rationale is preserved durably in the C-007
+  constraint row above. When C-007 resolves, prune THIS bullet, not that rationale. -->
 
 ## Scope split (against M2 · Attachment Auto-Router)
 

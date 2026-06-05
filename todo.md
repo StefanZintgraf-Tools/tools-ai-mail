@@ -6,7 +6,7 @@ Next step to continue, see unchecked "[ ]" term
       - [x] `ubiquitous-language-guard` — **lens** · enforce the glossary on `requirements.md`; write approved new/changed terms back into `CONTEXT.md` (HITL).
       - [x] `pareto-scope-cut` — **lens** · cut imagined/future scope (ai-mail: defer M2b/M3/M4); append a Postponed-decisions log.
       - [x] `domain-model` — **fork** · produce the conceptual model (glossary-aware, VO/aggregate-aware) → `docs/entity_model.md`.
-      - [ ] `adr-threshold-gate` — **lens** · catch any irreversible modelling decision → `docs/adr/####-*.md` (proposed; HITL to accept).
+      - [ ] `adr-threshold-gate entity-model` — **lens** · catch any irreversible modelling decision → `docs/adr/####-*.md` (proposed; HITL to accept).
       - [ ] `/use-case-diagram` — **stock** + lenses · → `docs/use_cases.puml`.
       - [ ] `/use-case-spec` — **stock** + lenses · → `docs/use_cases/*.md`.
       - [ ] `hidden-constraint-sweep` — **lens** · the 8-class sweep (retention / concurrency / PII / …) the model implies.
