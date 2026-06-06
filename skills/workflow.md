@@ -16,6 +16,16 @@ requirements step**, not after it. In the original flow the glossary was born *d
 first is the whole reason `domain-requirements` can consume a real glossary on pass one. Everything
 else follows from this.
 
+## Phase 0 · Repo setup (one-time)
+
+Run once per repo, before Phase 1. Scaffolds the per-repo config the external matt_pocock skills
+assume (issue tracker, triage labels, domain-doc layout) so `to-prd`, `to-issues`, `triage`, and the
+domain-reading skills know where to look.
+
+| #   | Step                                                    | Type     | In → Out                                                                                       |
+| --- | ------------------------------------------------------- | -------- | ---------------------------------------------------------------------------------------------- |
+| 0   | `/setup-matt-pocock-skills` — scaffold per-repo config  | external | repo state → `## Agent skills` block in `CLAUDE.md` + `docs/agents/{issue-tracker,triage-labels,domain}.md` |
+
 ## Phase 1 · Inception → vision
 
 | #   | Step                                                       | Type      | In → Out                                                            |
