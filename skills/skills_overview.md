@@ -47,7 +47,7 @@ Guardrail file legend (referenced below):
 
 ## `bmad-brainstorming` — **HITL**
 
-**Purpose.** Facilitates interactive brainstorming sessions using diverse creative techniques and ideation methods. Used twice in the workflow: Phase 1 Step 1 to seed inception artifacts (`painlist.md`, `ideas.md`, `00-foundation.md`) using an AI-recommended method with Pareto prioritization, and Phase 1 Step 3 to challenge vision goals using Assumption Reversal and produce `01-foundation.md`. Produces no AIUP-chain artifact itself; its outputs are raw inception material consumed by downstream skills.
+**Purpose.** Facilitates interactive brainstorming sessions using diverse creative techniques and ideation methods. Used twice in the workflow: Phase 1 Step 1 to seed inception artifacts (`painlist.md`, `ideas.md`, `00-foundation.md`) using an AI-recommended method with Pareto prioritization, and Phase 1 Step 3 to challenge vision goals using Assumption Reversal and produce `01-foundation.md`. Produces no downstream artifact itself; its outputs are raw inception material consumed by downstream skills.
 
 ---
 
@@ -69,7 +69,7 @@ Guardrail file legend (referenced below):
 - **Negative-decision sources** (optional) — an alignment transcript (`algn_transcript.md`) and/or an idea file (`idea.md`) are read for negative decisions *if present*; their absence is not an error (the vision's out-of-scope suffices).
 
 **Output artifacts / results.**
-- `docs/requirements.md` — fixed filename so the AIUP chain stays intact (downstream `use-case-diagram`, `use-case-spec`, `domain-model`, `trace-check` read it), but positioned as a **summary** of upstream alignment, not the source of the design concept (Aln13).
+- `docs/requirements.md` — fixed filename so the downstream chain stays intact (downstream `use-case-diagram`, `use-case-spec`, `domain-model`, `trace-check` read it), but positioned as a **summary** of upstream alignment, not the source of the design concept (Aln13).
 - Four non-mixed Markdown tables: **FR** (user-story format, `As a [role], I want [goal] so that [benefit]`, roles drawn from glossary actor terms), **NFR** (measurable quality attributes, categorized), **Constraints** (categorized technical/business/schedule limitations), and **Out-of-Scope / Non-Goals (OOS)** (one row per negative decision, each citing its source) — each row carrying a unique ID and a filled Status column, validated against the Requirement Quality Checks table (Measurable, Singular, Unambiguous, Testable, Unique IDs, Verbatim).
 - A **Flagged Terms** section — a concrete landing place where a concept a requirement needs but the glossary does not name is *surfaced for the `ubiquitous-language-guard` write-back loop*, not silently coined here.
 
@@ -85,13 +85,13 @@ Guardrail file legend (referenced below):
 ## `ubiquitous-language-guard` — **lens**
 
 **Purpose.** A cross-cutting lens that protects meaning: one concept → exactly one name
-everywhere (requirements, models, diagrams, specs, code, UI). It audits a single AIUP
+everywhere (requirements, models, diagrams, specs, code, UI). It audits a single project
 artifact against the project glossary, produces a **term-diff report**, and — only with
 explicit human approval (HITL) — evolves the glossary itself. It does *not* model
 entities, cut scope, or gate ADRs (those are sibling skills).
 
 **Input artifacts (must use).**
-- **Artifact under review** (required) — one AIUP artifact: `requirements.md`, an entity
+- **Artifact under review** (required) — one project artifact: `requirements.md`, an entity
   model, a `*.puml` use case diagram, or a `use_cases/*.md` spec. Named by the user or the
   file in focus.
 - **Glossary** (the ubiquitous-language file), resolved by a fallback chain — never a
@@ -184,7 +184,7 @@ L8 write-back rather than carried as a separate section.
 
 ## `domain-model` — **authoring**
 
-**Purpose.** Produces the conceptual domain model: it reads `docs/requirements.md` plus any ADRs and the glossary, and emits `docs/entity_model.md` — a Mermaid ER diagram plus one attribute table per domain term. Its distinctive work is tactical-DDD modeling: it classifies **every** term as Entity, Value-Object, or Aggregate-root (never defaulting to "a table with an `id`") — with an explicit aggregate-root selection procedure and a worked non-root-member example so the boundary is reasoned, not guessed — turns implied business invariants into **explicit** validation rules assigned to the owning domain type, and keeps the model conceptual — no storage/transport mechanics unless a storage target is explicitly declared. It models **one bounded context** per run (flagging cross-context term collisions rather than merging them). It does *not* maintain the glossary, cut scope, gate ADRs, or sweep constraints (those are sibling skills); it only models. The filename stays `entity_model.md` (not `domain_model.md`) because that is the AIUP-chain contract downstream skills (`use-case-spec`, `trace-check`) read.
+**Purpose.** Produces the conceptual domain model: it reads `docs/requirements.md` plus any ADRs and the glossary, and emits `docs/entity_model.md` — a Mermaid ER diagram plus one attribute table per domain term. Its distinctive work is tactical-DDD modeling: it classifies **every** term as Entity, Value-Object, or Aggregate-root (never defaulting to "a table with an `id`") — with an explicit aggregate-root selection procedure and a worked non-root-member example so the boundary is reasoned, not guessed — turns implied business invariants into **explicit** validation rules assigned to the owning domain type, and keeps the model conceptual — no storage/transport mechanics unless a storage target is explicitly declared. It models **one bounded context** per run (flagging cross-context term collisions rather than merging them). It does *not* maintain the glossary, cut scope, gate ADRs, or sweep constraints (those are sibling skills); it only models. The filename stays `entity_model.md` (not `domain_model.md`) because that is the downstream contract read by `use-case-spec` and `trace-check`.
 
 **Input artifacts (must use).**
 - **`docs/requirements.md`** (required) — the source of domain terms and implied invariants. If it is absent the skill STOPS (it is the required source; only the glossary has a fallback).
@@ -284,7 +284,7 @@ The threshold's subject matter is architectural decisions, so **`gr_architecture
 - **`docs/use_cases.puml`** — created/updated; `UC-{3-digit}` ids, glossary-verbatim actors, each UC carrying its FR id(s).
 - A **FR → UC coverage map** resolving every in-scope FR to `≥1 UC` or `spec-level (owning UC)`; an in-scope FR that is neither is a **coverage gap** that blocks completion (fail-closed).
 
-**Relation to guardrail items.** Its completeness check is an **AIUP chain-integrity** guarantee (the FR→UC reverse of `trace-check` Check A's UC→FR); no single `gr_*.md` rule defines it. It **consumes** the glossary under **`gr_domain_language.md` L1** (actors verbatim, read side) and routes a needed-but-undefined actor to the `ubiquitous-language-guard` write-back loop under **L6** (flag, never coin). It deliberately does **not** enforce/evolve the glossary (L2/L4/L8 stay `ubiquitous-language-guard`) or cut scope (`gr_greenfield` G1/G9 stay `pareto-scope-cut`) — it only consumes their outputs.
+**Relation to guardrail items.** Its completeness check is a **cross-artifact integrity** guarantee (the FR→UC reverse of `trace-check` Check A's UC→FR); no single `gr_*.md` rule defines it. It **consumes** the glossary under **`gr_domain_language.md` L1** (actors verbatim, read side) and routes a needed-but-undefined actor to the `ubiquitous-language-guard` write-back loop under **L6** (flag, never coin). It deliberately does **not** enforce/evolve the glossary (L2/L4/L8 stay `ubiquitous-language-guard`) or cut scope (`gr_greenfield` G1/G9 stay `pareto-scope-cut`) — it only consumes their outputs.
 
 ---
 
@@ -304,13 +304,13 @@ The threshold's subject matter is architectural decisions, so **`gr_architecture
 - **`docs/use_cases/*.md`** — one file per use case, each with a `Requirements covered (FR-###)` Overview line.
 - A **FR → spec coverage map** resolving every in-scope FR to a citing spec; an in-scope FR cited nowhere is a **coverage gap** that blocks completion (fail-closed). Deferred / out-of-scope FRs are excluded.
 
-**Relation to guardrail items.** Reverse-coverage and the trace line are **AIUP chain-integrity** guarantees (no single `gr_*.md` rule). The BR→invariant *grounding* reflects the spirit of **`gr_ddd.md` D1/D9** (a business rule should be a domain invariant) but only **cites or flags** the document linkage — it never authors the invariant or sees code, exactly the boundary `trace-check` Check D draws. It **consumes** the glossary under **L1** (actors verbatim) and flags unknown actors under **L6**; it does **not** enforce the glossary, cut scope, or model entities (sibling skills own those). The `BR-###` ↔ invariant linkage is handled by this grounding-and-flagging step.
+**Relation to guardrail items.** Reverse-coverage and the trace line are **cross-artifact integrity** guarantees (no single `gr_*.md` rule). The BR→invariant *grounding* reflects the spirit of **`gr_ddd.md` D1/D9** (a business rule should be a domain invariant) but only **cites or flags** the document linkage — it never authors the invariant or sees code, exactly the boundary `trace-check` Check D draws. It **consumes** the glossary under **L1** (actors verbatim) and flags unknown actors under **L6**; it does **not** enforce the glossary, cut scope, or model entities (sibling skills own those). The `BR-###` ↔ invariant linkage is handled by this grounding-and-flagging step.
 
 ---
 
 ## `trace-check` — **lens**
 
-**Purpose.** A cross-cutting lens that protects traceability: every downstream artifact must trace back to something upstream, and every cross-reference must resolve. It reads the AIUP artifact set, runs four consistency checks, produces a single **consistency report** (PASS or a list of breaks), and — only with explicit human approval (HITL) — loops a fix back into the *offending* artifact. It does *not* author requirements, model entities, maintain the glossary, gate ADRs, or cut scope (those are sibling skills).
+**Purpose.** A cross-cutting lens that protects traceability: every downstream artifact must trace back to something upstream, and every cross-reference must resolve. It reads the project artifact set, runs four consistency checks, produces a single **consistency report** (PASS or a list of breaks), and — only with explicit human approval (HITL) — loops a fix back into the *offending* artifact. It does *not* author requirements, model entities, maintain the glossary, gate ADRs, or cut scope (those are sibling skills).
 
 **Input artifacts (must use).**
 - **Requirements** (default `docs/requirements.md`) — the functional-requirement (FR) catalog use cases must trace to. Override path accepted.
@@ -337,7 +337,7 @@ The threshold's subject matter is architectural decisions, so **`gr_architecture
 
 The remaining checks have no single named gr rule ID for cross-artifact traceability — no `gr_*.md` file defines a "every UC traces to an FR" or "every entity in a spec exists in the model" rule — so they are enforced as the executable embodiment of guardrail *intent* rather than carried-over check IDs:
 - **Check D** (BR → invariant) reflects the *spirit* of `gr_ddd.md` **D1**/**D9** — a business rule should be enforced as a domain invariant — but the linkage is loose, not a backstop: trace-check reads two **documents** (spec ↔ entity model) and only verifies a mapping exists between them; it **cannot see code**, so it cannot detect a D1 *placement* violation (an invariant enforced in a controller/helper). It surfaces "BR stated in a spec but absent from the model" — a documentation-drift finding — and never authors the invariant (that stays with `entity-model` / `domain-model`).
-- **Checks A and B** are reported as **AIUP chain-integrity** findings. They serve the same anti-drift purpose as the documentation guardrails but correspond to no numbered gr rule (and are *not* claimed as `gr_documentation.md` Doc4/Doc5 violations — Doc4 is about behavior changes, Doc5 about not duplicating authoritative sources, neither of which is cross-artifact reference resolution).
+- **Checks A and B** are reported as **cross-artifact integrity** findings. They serve the same anti-drift purpose as the documentation guardrails but correspond to no numbered gr rule (and are *not* claimed as `gr_documentation.md` Doc4/Doc5 violations — Doc4 is about behavior changes, Doc5 about not duplicating authoritative sources, neither of which is cross-artifact reference resolution).
 
 *Note:* the skill deliberately does **not** implement `gr_domain_language.md` **L2/L4/L6/L8/L9** (forbidden synonyms, storage-shaped names, new-term introduction, glossary write-back, CLAUDE.md pointer) — those belong to `ubiquitous-language-guard`; trace-check applies L1 to actors only and **proposes**, never writes, glossary changes. It also does not gate or author ADRs (`gr_adr.md`) and does not cut scope.
 
@@ -351,7 +351,7 @@ The remaining checks have no single named gr rule ID for cross-artifact traceabi
 
 ## `to-prd` — **external**
 
-**Purpose.** Turns the completed AIUP spec spine (`requirements.md`, `entity_model.md`, `use_cases/*.md`) into a structured Product Requirements Document.
+**Purpose.** Turns the completed spec spine (`requirements.md`, `entity_model.md`, `use_cases/*.md`) into a structured Product Requirements Document.
 
 ---
 
@@ -369,7 +369,7 @@ The remaining checks have no single named gr rule ID for cross-artifact traceabi
 
 ## `review-skills` — **meta**
 
-**Purpose.** Project skill-maintenance tooling (not an AIUP-chain skill): produces a critical review of the skills in this `skills/` folder and writes it to `skills/skills_refactoring.md` — the refactoring worklist that `refactor-skills` later consumes. It **always asks first** whether to review a *single* skill or *all* skills. For each in-scope skill it spawns a **fresh sub-agent** (clean, un-cross-contaminated context) that reads only that one skill's `SKILL.md` (+ `REFERENCE.md`) and its entry here, discovers the `gr_*.md` files the skill cites, and reviews three dimensions: (1) guardrail coverage (missing/partial vs. the claims recorded here), (2) whether an agent running it achieves the skill's stated purpose, (3) writing effectiveness. Each review is headed by a pending `- [ ] refactored` checkbox.
+**Purpose.** Project skill-maintenance tooling (not an authoring-chain skill): produces a critical review of the skills in this `skills/` folder and writes it to `skills/skills_refactoring.md` — the refactoring worklist that `refactor-skills` later consumes. It **always asks first** whether to review a *single* skill or *all* skills. For each in-scope skill it spawns a **fresh sub-agent** (clean, un-cross-contaminated context) that reads only that one skill's `SKILL.md` (+ `REFERENCE.md`) and its entry here, discovers the `gr_*.md` files the skill cites, and reviews three dimensions: (1) guardrail coverage (missing/partial vs. the claims recorded here), (2) whether an agent running it achieves the skill's stated purpose, (3) writing effectiveness. Each review is headed by a pending `- [ ] refactored` checkbox.
 
 **Input artifacts (must use).**
 - The in-scope skill(s) under `skills/*/SKILL.md` (+ `REFERENCE.md`). Excludes `skills/archive/`, the loose `skills/*.md` files, and the meta-skills `review-skills` / `refactor-skills` themselves.

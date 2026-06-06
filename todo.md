@@ -16,7 +16,7 @@ Next step to continue, see unchecked "[ ]" term
       - [x] re-run /hidden-constraint-sweep docs/entity_model.md
       - [x] `/usecase-diag` — **authoring** + lenses · → `docs/use_cases.puml` (forward FR→UC coverage).
       - [x] `/usecase-spec` — **authoring** + lenses · → `docs/use_cases/*.md` (fail-closed reverse coverage + `Requirements covered` trace line).
-      - [ ] manual review of the use-cases
+      - [x] manual review of the use-cases
       - [ ] `/trace-check` — **lens** · cross-artifact consistency (UC→FR, entity-in-spec, actor↔glossary, BR↔invariant). 
         Frage: muss man alles zurueckverfolgen? also nicht nur bis zu requirements.md sondern komplett? 
   

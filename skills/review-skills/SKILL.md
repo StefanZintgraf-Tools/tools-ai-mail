@@ -25,7 +25,7 @@ and writing effectiveness — by a dedicated fresh sub-agent so findings stay
 independent and un-cross-contaminated. Each review is headed by a `- [ ]
 refactored` checkbox that `refactor-skills` flips once it has acted on it.
 
-This is project skill-maintenance tooling, not a generic AIUP skill, so it may
+This is project skill-maintenance tooling, not a generic project skill, so it may
 name repo-specific paths (`skills/`, the guardrail folder, `skills_refactoring.md`).
 
 ## Inputs

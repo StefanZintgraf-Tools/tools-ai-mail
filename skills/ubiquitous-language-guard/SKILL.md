@@ -1,7 +1,7 @@
 ---
 name: ubiquitous-language-guard
 description: >
-  Guards the ubiquitous language of any software project by auditing AIUP
+  Guards the ubiquitous language of any software project by auditing project
   artifacts against the domain glossary. Use when the user asks to "check the
   ubiquitous language", "guard domain language", "audit terminology",
   "check the glossary", "review terms", "find forbidden synonyms", "catch
@@ -18,14 +18,14 @@ description: >
 
 A cross-cutting lens that protects meaning: the same concept must have exactly
 one name everywhere — in requirements, models, diagrams, specs, code, and UI.
-This skill audits a single AIUP artifact against the project glossary, produces
+This skill audits a single project artifact against the project glossary, produces
 a term-diff report, and — only with explicit human approval — evolves the
 glossary itself. It does NOT model entities, cut scope, or gate ADRs; those are
 other skills.
 
 ## Inputs
 
-1. **Artifact** (required) — the AIUP artifact under review: a requirements
+1. **Artifact** (required) — the artifact under review: a requirements
    document, an entity model, a `*.puml` use case diagram, or a `use_cases/*.md`
    spec. The user names it or it is the file currently in focus.
 2. **Glossary** (optional argument) — path to the project's ubiquitous-language
@@ -76,7 +76,7 @@ distinction.
 
 A domain concept (`Invoice`) must not be named after a technical artifact
 (`InvoiceDTO`, `InvoiceRow`) **in the domain layer**. Technical suffixes belong
-to technical layers only. Because this skill audits conceptual AIUP artifacts
+to technical layers only. Because this skill audits conceptual project artifacts
 (requirements, domain model, use cases) — which are domain-layer by nature — a
 technical-suffixed name appearing in them is a violation; flag it and propose
 the plain domain name. Do **not** flag a name that the artifact explicitly

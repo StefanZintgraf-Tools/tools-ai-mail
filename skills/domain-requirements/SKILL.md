@@ -24,7 +24,7 @@ project's **ubiquitous language** by consuming the glossary as input.
 grilling that produced `CONTEXT.md` and the ADRs), not the origin of the design
 concept (gr_algn **Aln13**). It restates decisions already made — including the
 decisions *not* to do something (gr_algn **Aln15**). The filename is fixed so the
-AIUP chain stays intact (downstream skills — use-case-diagram, use-case-spec,
+downstream chain stays intact (downstream skills — use-case-diagram, use-case-spec,
 domain-model, trace-check — read it).
 
 Two behaviors are load-bearing: (1) the **vocabulary input** — it reads the

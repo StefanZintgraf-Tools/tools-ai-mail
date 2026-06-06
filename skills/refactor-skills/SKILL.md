@@ -19,7 +19,7 @@ description: >
 Consumes `skills/skills_refactoring.md` and refactors every skill still marked
 `- [ ] refactored`, one sub-agent per skill, **sequentially**, in a single
 invocation. After all pending skills are refactored, the worklist is archived
-with a timestamp. This is project skill-maintenance tooling, not a generic AIUP
+with a timestamp. This is project skill-maintenance tooling, not a generic
 skill, so it may name repo-specific paths.
 
 ## Inputs

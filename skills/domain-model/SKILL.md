@@ -18,7 +18,7 @@ diagram, one attribute table per domain term, an Entity/Value-Object/Aggregate
 classification, and explicit validation rules derived from implied invariants.
 
 The filename stays `docs/entity_model.md` (not `domain_model.md`): it is the
-AIUP-chain contract that downstream skills (use-case-spec, trace-check) read.
+downstream contract read by use-case-spec and trace-check.
 
 This skill models **one bounded context**. If the glossary spans multiple
 bounded contexts, model a single context per run; do NOT silently merge terms

@@ -1,7 +1,7 @@
 ---
 name: trace-check
 description: >
-  Verifies cross-artifact consistency and traceability across AIUP artifacts:
+  Verifies cross-artifact consistency and traceability across project artifacts:
   every use case traces to at least one functional requirement, every entity
   named in a spec exists in the entity model, every actor matches the glossary
   verbatim, and every business rule (BR-###) maps to a domain-model invariant.
@@ -20,13 +20,13 @@ description: >
 
 A cross-cutting lens that protects traceability: every downstream artifact must
 trace back to something upstream, and every cross-reference must resolve. This
-skill reads the AIUP artifact set, runs four consistency checks, produces a
+skill reads the project artifact set, runs four consistency checks, produces a
 single consistency report (pass or a list of breaks), and — only with explicit
 human approval — loops a fix back into the offending artifact. It does NOT
 author requirements, model entities, maintain the glossary, gate ADRs, or cut
 scope; those are other skills.
 
-These checks are **chain-integrity** findings — they enforce the AIUP
+These checks are **chain-integrity** findings — they enforce the
 discipline that artifacts must not silently drift apart. Most of them map to no
 single numbered guardrail rule; only Check C carries a rule ID (`L1`). Do not
 overclaim a finding as a code-level rule violation: trace-check reads four
@@ -254,7 +254,7 @@ Result: <PASS | PARTIAL (checks X,Y skipped) | BREAKS FOUND (N)>
   `gr_ddd.md` D1/D9 (a business rule should be enforced as a domain invariant),
   but trace-check only verifies the mapping *exists between two documents* — it
   cannot see code, so it cannot detect a D1 *placement* violation (a rule
-  enforced in a controller). Checks A and B are structural AIUP chain-integrity
+  enforced in a controller). Checks A and B are structural cross-artifact integrity
   findings (no `gr_*.md` defines "every UC traces to an FR"); they serve the
   same anti-drift purpose as the documentation guardrails but are reported as
   chain-integrity, not as Doc4/Doc5 rule violations.
