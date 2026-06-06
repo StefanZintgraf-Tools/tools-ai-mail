@@ -5,12 +5,15 @@ description: >
   every use case traces to at least one functional requirement, every entity
   named in a spec exists in the entity model, every actor matches the glossary
   verbatim, and every business rule (BR-###) maps to a domain-model invariant.
+  Also flags when an upstream artifact (e.g. vision.md) was modified after a
+  downstream one it feeds, signalling the downstream may be stale.
   Use when the user asks to "trace check", "check traceability", "verify
   consistency", "find traceability gaps", "check UC to FR coverage", "audit
   cross-artifact consistency", "find orphan use cases", "check that entities
   exist in the entity model", "verify actors against the glossary", "check
-  business rules map to invariants", or whenever requirements, use case
-  diagram, use-case specs, and entity model may have drifted apart. Produces a
+  business rules map to invariants", "check upstream freshness", or whenever
+  requirements, use case diagram, use-case specs, and entity model may have
+  drifted apart. Produces a
   consistency report (pass / list of breaks) and HITL-fixes the offending
   artifact only with explicit human approval. Step-agnostic: usable at
   use-case-diagram, use-case-spec, or any time artifacts drift.
@@ -56,6 +59,10 @@ enforced in the wrong code layer).
       the diagram and specs only (intra-artifact), and the report must label
       Check C "intra-artifact consistency only — L1 not run" so a degraded run
       never reads as an L1 pass.
+6. **Vision** (default `docs/vision.md`, optional) — the upstream
+   vision/goals document. Used **only by Check 0** (upstream freshness); its
+   content is not read by Checks A–D. If absent, skip the `vision →
+   requirements` freshness pair and continue.
 
 If any non-glossary input is missing, **warn**, skip the checks that need it,
 and continue (the skill is step-agnostic and must not crash on a not-yet-created
@@ -94,9 +101,42 @@ do not assume a fixed format:
   detected mechanically — flag only a *suspected* translation for human
   confirmation; never assert it as a definite break.
 
-## The four checks
+## The checks
 
-Run all four in order, accumulating findings into one consistency report.
+Run **Check 0 first**, then Checks A–D in order, accumulating findings into one
+consistency report.
+
+### Check 0 — Upstream freshness (pre-check, non-blocking)
+
+A *recency* signal, not a semantic judgment: it never decides whether a change
+was "substantial" — that call is the human's. It only detects when an
+**upstream** artifact was modified **after** a **downstream** one, which means
+the downstream (and every trace built on it) may be stale.
+
+Use the documented artifact chain, upstream → downstream:
+
+> vision → requirements → use-case diagram → use-case specs → entity model
+
+For each adjacent upstream→downstream pair where both files exist, compare
+**effective last-modified recency** using git:
+
+1. **Committed recency** — the timestamp of the last commit touching the file
+   (`git log -1 --format=%cI -- <path>`).
+2. **Uncommitted edits** — if the file has pending working-tree changes
+   (`git status --porcelain -- <path>` is non-empty), treat its effective time
+   as **now** (more recent than any commit).
+
+If the upstream's effective time is **more recent** than the downstream's, emit
+a **stale-downstream warning** naming both files and recommending a
+re-grill / re-review of the downstream before its traces are trusted. The
+`vision → requirements` link is the highest-value one: vision is otherwise not
+read by any check, so this is the only place a vision change surfaces.
+
+This check is **advisory** — it warns and continues, never halts the run and
+never counts as a break. But any stale-downstream warning forces the result
+state to at least `PARTIAL` (never `PASS`), so a run built on stale upstream can
+never read as a clean pass. If the project is not a git repository or git is
+unavailable, **skip Check 0**, note it, and continue (→ `PARTIAL`).
 
 ### Check A — Every UC traces to ≥1 FR
 
@@ -165,6 +205,10 @@ a within-spec concern, not cross-artifact traceability.
 - Do NOT flag every UC as an orphan when the project has no trace convention —
   emit the single "no trace convention" finding instead.
 - Do NOT report `PASS` when any check was skipped — use `PARTIAL`.
+- Do NOT judge whether an upstream change was "substantial" — Check 0 reports
+  recency only; the substance call and the decision to re-grill are the human's.
+- Do NOT halt the run or block Checks A–D on a Check 0 warning — warn, force
+  `PARTIAL`, and continue.
 - Do NOT write any fix into an artifact without explicit per-change human
   approval (see HITL gate).
 - Do NOT silently invent traces, rename entities/actors, guess a fix, or assert a
@@ -183,8 +227,10 @@ a within-spec concern, not cross-artifact traceability.
    patterns, whether a trace convention exists, and confirm the normalization
    rule. Extract: requirement ids; actors and use cases from the diagram;
    per-spec actors, named entities, and BR ids; entity names and invariants from
-   the model; canonical terms from the glossary.
-3. **Run Checks A–D** (above), accumulating findings.
+   the model; canonical terms from the glossary. Also capture the git
+   modification recency (last-commit time and uncommitted status) of the chain
+   artifacts, for Check 0.
+3. **Run Check 0, then Checks A–D** (above), accumulating findings.
 4. **Assemble the consistency report** with the correct **Result state**.
 5. **HITL fix loop (gate).** For each break the human wants fixed: name the
    **candidate offending artifact(s)** and, where ambiguous, let the human pick
@@ -199,18 +245,22 @@ a within-spec concern, not cross-artifact traceability.
 
 ### Result states
 
-- **PASS** — every check ran (no input missing, trace convention present) and no
-  break was found.
-- **PARTIAL** — one or more checks were skipped (missing input, or no trace
-  convention for Check A); list which and why. No break found among the checks
-  that *did* run. A partial run is never `PASS`.
-- **BREAKS FOUND (N)** — N breaks across the run checks, listed by check.
+- **PASS** — every check ran (no input missing, trace convention present), no
+  break was found, **and** Check 0 raised no stale-downstream warning.
+- **PARTIAL** — one or more checks were skipped (missing input, no trace
+  convention for Check A, or Check 0 skipped for lack of git); **or** Check 0
+  raised a stale-downstream warning. List which and why. No break found among
+  the checks that *did* run. A partial run is never `PASS`.
+- **BREAKS FOUND (N)** — N breaks across the run checks, listed by check. A
+  Check 0 stale-downstream warning is reported alongside but is **not** counted
+  in N (it is advisory, not a break).
 
 ## Consistency Report Template
 
 ```markdown
 # Trace Check — Consistency Report
 
+Vision: <path | MISSING — Check 0 vision→requirements pair skipped>
 Requirements: <path | MISSING>   (id pattern: <discovered, e.g. FR-### | F##>)
 Use case diagram: <path | MISSING>
 Use-case specs: <glob → N files | MISSING>   (BR id pattern: <discovered>)
@@ -218,7 +268,12 @@ Entity model: <path | MISSING>
 Glossary: <resolved path | NONE — Check C intra-artifact only, L1 not run>
 Trace convention: <found | NOT FOUND — Check A not author-able>
 
-Result: <PASS | PARTIAL (checks X,Y skipped) | BREAKS FOUND (N)>
+Result: <PASS | PARTIAL (checks X,Y skipped) | BREAKS FOUND (N)>  <⚠ upstream stale: <pair(s)> | not git — Check 0 skipped>
+
+## Check 0 — Upstream freshness
+| Upstream → downstream | Upstream newer? | Status |
+|-----------------------|-----------------|--------|
+<rows per chain pair; stale-downstream warnings flagged with a re-grill recommendation>
 
 ## Check A — UC → ≥1 FR
 | Use case | Traces to FR(s) | Status |
@@ -258,6 +313,13 @@ Result: <PASS | PARTIAL (checks X,Y skipped) | BREAKS FOUND (N)>
   findings (no `gr_*.md` defines "every UC traces to an FR"); they serve the
   same anti-drift purpose as the documentation guardrails but are reported as
   chain-integrity, not as Doc4/Doc5 rule violations.
+- **Check 0 is git-based and advisory.** It reads commit times and working-tree
+  status — not content — so it detects *recency* drift only, never whether a
+  change was meaningful. It maps to no `gr_*.md` rule; it is a chain-integrity
+  signal in the same anti-drift spirit as Checks A and B. It is the only check
+  that touches `vision.md`, closing the otherwise-invisible top link
+  (vision → requirements) of the artifact chain. It never blocks: a warning
+  forces `PARTIAL`, and a non-git repo skips it.
 - **Step-agnostic.** Run it at use-case-diagram time, use-case-spec time, or any
   time artifacts may have drifted; missing inputs degrade to `PARTIAL` rather
   than blocking.

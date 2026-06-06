@@ -70,7 +70,10 @@ own. Review between every step.
 6. `/usecase-diag` — **authoring** + lenses · → `docs/use_cases.puml`; guarantees **forward** FR→UC coverage (every in-scope FR realised by ≥1 use case or recorded as a spec-level detail).
 
 7. `/usecase-spec` — **authoring** + lenses · → `docs/use_cases/*.md`; emits a per-spec `Requirements covered (FR-###)` trace line and enforces **fail-closed reverse** coverage (every in-scope FR cited by ≥1 spec).
-   IMPORTANT: manually review the use-cases and update related artifacts depending on the findings!
+   7a: IMPORTANT: manually review the use-cases and update related artifacts depending on the findings!
+   7b: If artifacts have changed:
+     7c: trace-check → resolve any Check 0 staleness (re-grill if needed) and fix the A–D breaks.
+     7d: adr-threshold-gate → on the now-stable artifacts, capture any ADR-worthy decisions your vision/CONTEXT edits introduced.
 
 8. `trace-check` — **lens** · cross-artifact consistency (UC→FR, entity-in-spec, actor↔glossary, BR↔invariant). The per-spec trace line makes the UC→FR convention present at authoring time, so Check A now **runs** instead of reporting "no trace convention."
 
