@@ -56,7 +56,7 @@ principle applies throughout — minimum work, maximum relief on the actual pain
   definition of an attachment
 - **F02** extract-attachment — get the file object from the mail (one **Proposal** per attachment)
 - **F04** derive-target-location — map the **Routing Key (Sender)** to an **existing**
-  folder discovered beneath the declared **Routing Roots**; *Sender = the From email address* in v1;
+  folder discovered beneath the declared **Routing Root**; *Sender = the From email address* in v1;
   unknown mappings or below-threshold confidence → `_review/` Staging Area, never auto-created folders.
   *Sender-only is single-valued only when each sender files into one folder.* A sender that
   historically files into **more than one** folder (e.g. a company sending both an invoice → `Finanzen/Rechnungen`
@@ -107,7 +107,7 @@ principle applies throughout — minimum work, maximum relief on the actual pain
 - **CON-3 Pareto / spare-time** — built in evenings for fun. Every design decision must ask: "is this
   necessary for P01/P02 relief, or is it scope creep?" Prefer the simplest surface that works.
 - **CON-4 Existing folders only (v1)** — F04 is a gradeable closed-set classifier over the existing
-  folders beneath the declared **Routing Roots**; it must never fabricate a folder path. Unknown
+  folders beneath the declared **Routing Root**; it must never fabricate a folder path. Unknown
   targets → `_review/` Staging Area.
 - **CON-5 Confidence gate** — F04 emits a location-confidence in [0,1]; the gate compares it to the
   threshold; below it the proposal goes to `_review/` rather than being auto-approved. (M2b adds

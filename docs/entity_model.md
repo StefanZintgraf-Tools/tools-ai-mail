@@ -109,7 +109,7 @@ An external append record mapping `source Mail ↔ filed copy`, kept outside bot
 
 - The **dedup decision** (write the file at all?) keys on **content-hash only** — a missing or reused Message-ID can never cause a duplicate file (NFR-002, C-010). Identical content is silently de-duplicated: only a new provenance link is appended, never a second copy (FR-012).
 - The **provenance link** keys on `(Message-ID, content-hash)` (NFR-002).
-- 100% of filed copies must be resolvable from **both** their Target Location and their source Mail via the ledger, **without any write-back to the mailbox** (C-001, C-008), and must stay resolvable after the User relocates the source Mail — lookups key on Message-ID, never on folder location (NFR-005).
+- 100% of filed copies must be resolvable from **both** their Target Location and their source Mail via the ledger, **without any write-back to the mailbox** (C-001, C-008), keying on Message-ID, never on folder location (NFR-005). The two directions are asymmetric after relocation: **Mail→Copy** greps the ledger and stays resolvable wherever the Mail moves; **Copy→Mail** searches the **Reverse-Search Scope** (inbox + configured folders) and stays resolvable only while the Mail remains within that scope (uc-004 BR-006; broader reverse search deferred, tied to C-007).
 - **Append-only and never purged in v1** — the retention stance is a deliberate decision, not an oversight (C-013); resolution in either direction is manual ledger inspection (a greppable artifact, no dedicated lookup tool). Automated retention/TTL is a deferred mechanism.
 - **Single-writer in v1.** M2 v1 assumes exactly one pipeline run appends to the ledger at a time — there is no append serialization or file-locking, so overlapping runs (e.g. a scheduled run colliding with a manual one) are **unsupported** in v1 (C-015). Real file-locking / concurrent-run support is a deferred mechanism.
 - **PII-bearing, owner-private.** Each record is personal data (source Sender address, mail date, content fingerprint, filed-copy location) — effectively a plaintext index of who sent what and where it was filed. The ledger is the User's private artifact and must be sited **outside any cloud-synced or shared path** (NFR-007, C-012); credentials never appear in it (C-011, ADR-0005). Its physical form remains deferred to the use-case spec (ADR-0001), but the privacy boundary is fixed here.
@@ -124,7 +124,7 @@ The labelled reference set the headless pipeline is graded against; each entry p
 | Subject Attachment      | The input Attachment an entry labels                                     | Identifier (natural) | Not Null, References ATTACHMENT |
 | Correct Target Location | The correct folder by Sender, or absent for "Staging Area / no decision" | Target Location      | Optional                        |
 
-**Constraints:** Grades Proposals directly and never raises an Approval Request. Landing in the Staging Area is scored as "no decision / deferred," never as a correct folder. Shares its structure with the Action Plan; F04 is graded against a **snapshot** of the Target Location set discovered beneath the Routing Roots.
+**Constraints:** Grades Proposals directly and never raises an Approval Request. Landing in the Staging Area is scored as "no decision / deferred," never as a correct folder. Shares its structure with the Action Plan; F04 is graded against a **snapshot** of the Target Location set discovered beneath the Routing Root.
 
 ### USER — Entity
 
@@ -134,7 +134,7 @@ The single actor — the Mailbox owner, who is also the approver of every Approv
 | ------------- | --------------------------------------------------------------- | -------------------- | ---------------- |
 | Mailbox Owner | The owner of the Mailbox and approver of every Approval Request | Identifier (natural) | Natural Identity |
 
-**Constraints:** One actor role (owner = approver — never modeled as distinct operator / reviewer / admin roles). Declares one or more Routing Roots and decides every Approval Request. In v1 the Mailbox is the private mailbox only (C-004).
+**Constraints:** One actor role (owner = approver — never modeled as distinct operator / reviewer / admin roles). Declares **exactly one Routing Root** in v1 (multiple roots deferred to M2b — ADR-0006) and decides every Approval Request. In v1 the Mailbox is the private mailbox only (C-004).
 
 ### APPROVAL_REQUEST — Entity
 
@@ -161,11 +161,11 @@ The place a Proposal routes its subject to — in M2, an existing folder on the 
 
 The holding place (`_review/`) for Attachments the pipeline could not confidently route — an explicit "no Target Location yet" outcome.
 
-| Attribute | Description                 | Type | Validation Rules |
-| --------- | --------------------------- | ---- | ---------------- |
-| Location  | The `_review/` holding path | Text | Not Null         |
+| Attribute | Description                                                          | Type | Validation Rules                                                      |
+| --------- | ------------------------------------------------------------------- | ---- | -------------------------------------------------------------------- |
+| Location  | The `_review/` holding path — relative, beneath the (single, v1) Routing Root | Text | Not Null; relative (never absolute / drive-rooted); single per run |
 
-**Constraints:** Receives below-threshold-Confidence, unknown-mapping, true-Conflict, and **errored** (processing-failure) Attachments — the last as the no-silent-drop landing for an Attachment that cannot be hashed, parsed, or copied (C-014). The corpus scores landing here as "no decision / deferred," never as a correct folder. It is **not** a Target Location (CON-4 / CON-5). **Retention (v1):** the Staging Area is **manually managed by the User** — M2 never auto-deletes from `_review/` and applies no TTL or garbage-collection; a staged-but-never-filed Attachment remains until the User acts on it (C-013). Automated draining/TTL is a deferred mechanism. **Re-stage idempotency (v1):** a staged-but-unfiled Attachment is written into `_review/` at a **content-hash-addressed** path, so a re-run targets the same path and overwrites identical bytes harmlessly — 0 duplicate staged files (C-015, NFR-002). Because the Staging Area is not in the Provenance Ledger, the Attachment is **re-proposed each run** (re-appears in the Action Plan) until the User drains `_review/`; this is accepted v1 behaviour, not a bug. Real run serialization / file-locking is a deferred mechanism.
+**Constraints:** Receives below-threshold-Confidence, unknown-mapping, true-Conflict, and **errored** (processing-failure) Attachments — the last as the no-silent-drop landing for an Attachment that cannot be hashed, parsed, or copied (C-014). The corpus scores landing here as "no decision / deferred," never as a correct folder. It is **not** a Target Location (CON-4 / CON-5). **Location (v1):** a **single** `_review/` directory resolved at run time **relative to the (single, v1) Routing Root** — never an absolute / drive-rooted path. v1 declares **exactly one Routing Root**, so "the Staging Area" and "the root" are unambiguous; this single namespace is what lets content-hash addressing and the single-writer assumption hold globally. The literal `_review` name is a fixed convention, not user-configurable in M2 (ADR-0006). Multiple Routing Roots and, with them, configurable / per-root staging are deferred to M2b. **Retention (v1):** the Staging Area is **manually managed by the User** — M2 never auto-deletes from `_review/` and applies no TTL or garbage-collection; a staged-but-never-filed Attachment remains until the User acts on it (C-013). Automated draining/TTL is a deferred mechanism. **Re-stage idempotency (v1):** a staged-but-unfiled Attachment is written into `_review/` at a **content-hash-addressed** path, so a re-run targets the same path and overwrites identical bytes harmlessly — 0 duplicate staged files (C-015, NFR-002). Because the Staging Area is not in the Provenance Ledger, the Attachment is **re-proposed each run** (re-appears in the Action Plan) until the User drains `_review/`; this is accepted v1 behaviour, not a bug. Real run serialization / file-locking is a deferred mechanism.
 
 ### SENDER — Value-Object
 
@@ -248,7 +248,7 @@ A folder the User declares as a scanning root (e.g. `D:\Documents\Filing`); the 
 | --------- | ------------------------------- | ---- | ---------------- |
 | Root Path | The declared scanning root path | Text | Not Null         |
 
-**Constraints:** Target Locations are drawn from existing folders beneath the Routing Roots — leaf and intermediate, at any depth (CON-4: existing only, never fabricated). New subfolders join the set automatically on the next run; the corpus grades F04 against a snapshot of the discovered set.
+**Constraints:** Target Locations are drawn from existing folders beneath the Routing Root — leaf and intermediate, at any depth (CON-4: existing only, never fabricated). New subfolders join the set automatically on the next run; the corpus grades F04 against a snapshot of the discovered set.
 
 ## Terms intentionally not modeled as data entities
 

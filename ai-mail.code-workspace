@@ -13,13 +13,13 @@
 			"path": "../ai-knowhow/coding"
 		},
 		{
-			"path": "../github/humanlayer"
-		},
-		{
 			"path": "../github/aiup"
 		},
 		{
 			"path": "../ai-knowhow/skills-plugins/matt_pocock_skills"
+		},
+		{
+			"path": "../github/humanlayer"
 		}
 	],
 	"settings": {}

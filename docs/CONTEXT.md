@@ -159,11 +159,12 @@ _Avoid_: duplicate (a duplicate is dedup, not a Conflict).
 ### M2 · Attachment Auto-Router
 
 **Routing Root**:
-A folder the **User** declares as a scanning root (e.g. `D:\Documents\Filing`). The closed set of
-valid **Target Locations** is *every existing folder discovered beneath the Routing Roots* — leaf
-and intermediate, at any depth (CON-4: existing only, never fabricated). New subfolders join the set
-automatically on the next run; the golden corpus grades F04 against a **snapshot** of the discovered
-set.
+A folder the **User** declares as a scanning root (e.g. `D:\Documents\Filing`). **v1 declares exactly
+one Routing Root** (multiple roots deferred to M2b — ADR-0006); the single `_review/` **Staging Area**
+lives directly beneath it. The closed set of valid **Target Locations** is *every existing folder
+discovered beneath the Routing Root* — leaf and intermediate, at any depth (CON-4: existing only,
+never fabricated). New subfolders join the set automatically on the next run; the golden corpus grades
+F04 against a **snapshot** of the discovered set.
 _Avoid_: base folder, scan path, root (unqualified).
 
 **Run Scope**:
@@ -174,3 +175,15 @@ dedup is content-hash based and re-runs are silent no-ops, Run Scope is an **eff
 never a correctness one — re-scanning is always safe; "since last run" incrementality is a deferred
 optimization.
 _Avoid_: filter, query, batch (for the selected set).
+
+**Reverse-Search Scope**:
+The configured set of mailbox folders the **Copy→Mail** trace searches when resolving a
+**Provenance back-link** to its source **Mail**. The inbox is **always** searched; the User adds
+further folders (e.g. an archive) to the set. It bounds the cost of reverse resolution on a large
+mailbox — a small inbox plus a thousands-of-mails archive would otherwise force a per-folder scan of
+everything — at the price of scoping the guarantee: a relocated source **Mail** stays findable
+**only while it lives within the Reverse-Search Scope**. It applies to **Copy→Mail only**; the
+**Mail→Copy** direction greps the **Provenance Ledger** and is unaffected by folder location. Broader
+or index-backed reverse search is deferred (method TBD, tied to the C-007 mail-access choice).
+_Avoid_: search scope, folder filter (unqualified); do not conflate with **Run Scope** (the set of
+Mails a *run* processes) or **Routing Root** (where filed copies land).
