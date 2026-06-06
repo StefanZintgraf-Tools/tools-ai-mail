@@ -31,6 +31,7 @@ erDiagram
     ACTION_PLAN ||--|| RUN_SCOPE : "processes"
     USER ||--o{ ROUTING_ROOT : "declares"
     USER ||--o{ APPROVAL_REQUEST : "decides"
+    USER ||--|| REVERSE_SEARCH_SCOPE : "configures"
     PROVENANCE_LEDGER }o--|| MAIL : "maps from"
     PROVENANCE_LEDGER }o--o| TARGET_LOCATION : "maps to"
     GOLDEN_CORPUS }o--o{ ATTACHMENT : "labels"
@@ -109,7 +110,7 @@ An external append record mapping `source Mail ↔ filed copy`, kept outside bot
 
 - The **dedup decision** (write the file at all?) keys on **content-hash only** — a missing or reused Message-ID can never cause a duplicate file (NFR-002, C-010). Identical content is silently de-duplicated: only a new provenance link is appended, never a second copy (FR-012).
 - The **provenance link** keys on `(Message-ID, content-hash)` (NFR-002).
-- 100% of filed copies must be resolvable from **both** their Target Location and their source Mail via the ledger, **without any write-back to the mailbox** (C-001, C-008), keying on Message-ID, never on folder location (NFR-005). The two directions are asymmetric after relocation: **Mail→Copy** greps the ledger and stays resolvable wherever the Mail moves; **Copy→Mail** searches the **Reverse-Search Scope** (inbox + configured folders) and stays resolvable only while the Mail remains within that scope (uc-004 BR-006; broader reverse search deferred, tied to C-007).
+- 100% of filed copies must be resolvable from **both** their Target Location and their source Mail via the ledger, **without any write-back to the mailbox** (C-001, C-008), keying on Message-ID, never on folder location (NFR-005). The two directions are asymmetric after relocation: **Mail→Copy** greps the ledger and stays resolvable wherever the Mail moves; **Copy→Mail** must *locate* the source Mail by searching the **Reverse-Search Scope** (inbox + configured folders) — the back-link supplies the Message-ID, but reaching the live Mail still requires finding it — and stays resolvable only while the Mail remains within that scope (ADR-0007; uc-004 BR-006; broader reverse search deferred, tied to C-007).
 - **Append-only and never purged in v1** — the retention stance is a deliberate decision, not an oversight (C-013); resolution in either direction is manual ledger inspection (a greppable artifact, no dedicated lookup tool). Automated retention/TTL is a deferred mechanism.
 - **Single-writer in v1.** M2 v1 assumes exactly one pipeline run appends to the ledger at a time — there is no append serialization or file-locking, so overlapping runs (e.g. a scheduled run colliding with a manual one) are **unsupported** in v1 (C-015). Real file-locking / concurrent-run support is a deferred mechanism.
 - **PII-bearing, owner-private.** Each record is personal data (source Sender address, mail date, content fingerprint, filed-copy location) — effectively a plaintext index of who sent what and where it was filed. The ledger is the User's private artifact and must be sited **outside any cloud-synced or shared path** (NFR-007, C-012); credentials never appear in it (C-011, ADR-0005). Its physical form remains deferred to the use-case spec (ADR-0001), but the privacy boundary is fixed here.
@@ -217,7 +218,7 @@ The origin stamp carried with the filed copy (Message-ID, date, Sender); it answ
 | Mail Date  | Date of the source Mail                     | Date                 | Not Null         |
 | Sender     | The originating identity of the source Mail | Sender               | Not Null         |
 
-**Constraints:** Carried with the filed copy; its physical form (embedded metadata vs. sidecar) is deferred to the use-case spec (ADR-0001). Complements the Provenance Ledger, which answers Mail→Copy. **PII-bearing, owner-private:** it stamps the source Sender, date, and Message-ID onto every filed copy and so travels with that copy into Target Locations the User may later sync to the cloud — an accepted exposure of the User's own data into the User's own destinations, never to be widened with additional personal data beyond these origin fields (C-012).
+**Constraints:** Carried with the filed copy; its physical form (embedded metadata vs. sidecar) is deferred to the use-case spec (ADR-0001). Complements the Provenance Ledger, which answers Mail→Copy. It carries the Message-ID the **Copy→Mail** direction resolves, but reaching the live source Mail still requires locating it within the Reverse-Search Scope (ADR-0007). **PII-bearing, owner-private:** it stamps the source Sender, date, and Message-ID onto every filed copy and so travels with that copy into Target Locations the User may later sync to the cloud — an accepted exposure of the User's own data into the User's own destinations, never to be widened with additional personal data beyond these origin fields (C-012).
 
 ### CONFLICT — Value-Object
 
@@ -239,6 +240,17 @@ The set of Mails one pipeline run processes — a trigger/adapter concern; the c
 | Date Range    | An optional narrowing window          | Date | Optional         |
 
 **Constraints:** An efficiency choice, never a correctness one — re-scanning is always safe because dedup keys on content-hash (NFR-002). Date-range narrowing and "since last run" incrementality are deferred optimizations.
+
+### REVERSE_SEARCH_SCOPE — Value-Object
+
+The configured set of mailbox folders the Copy→Mail trace searches when resolving a Provenance back-link to its source Mail — a bound on reverse-resolution cost, not a correctness mechanism.
+
+| Attribute         | Description                                                            | Type | Validation Rules |
+| ----------------- | --------------------------------------------------------------------- | ---- | ---------------- |
+| Inbox             | The mailbox inbox — always part of the scope                          | Text | Not Null         |
+| Configured Folder | A further mailbox folder the User adds to the scope (e.g. an archive) | Text | Optional         |
+
+**Constraints:** The inbox is **always** searched; the User adds further folders. Applies to **Copy→Mail only** — the Mail→Copy direction greps the Provenance Ledger and is unaffected by folder location. It bounds reverse-resolution cost on a large mailbox at the price of scoping the guarantee: a relocated source Mail stays reverse-findable **only while it remains within this scope** (ADR-0007; uc-004 BR-006, NFR-005). Broader / index-backed reverse search is deferred (method TBD, tied to C-007).
 
 ### ROUTING_ROOT — Value-Object
 

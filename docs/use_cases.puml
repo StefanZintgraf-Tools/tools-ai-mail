@@ -1,6 +1,10 @@
 @startuml Use Cases Overview
 left to right direction
 
+' trace-check 2026-06-06: re-validated against docs/requirements.md; no structural
+' change — the requirements delta since this diagram (singular Routing Root / C-016,
+' NFR-005 Reverse-Search Scope) is NFR/constraint-level and adds no actor, use case,
+' or UC→FR mapping.
 ' Actor drawn verbatim from the glossary (docs/CONTEXT.md): ai-mail has exactly
 ' one actor role throughout — the User (Mailbox owner = approver).
 actor "User" as user

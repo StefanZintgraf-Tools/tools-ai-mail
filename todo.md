@@ -17,12 +17,13 @@ Next step to continue, see unchecked "[ ]" term
       - [x] `/usecase-diag` — **authoring** + lenses · → `docs/use_cases.puml` (forward FR→UC coverage).
       - [x] `/usecase-spec` — **authoring** + lenses · → `docs/use_cases/*.md` (fail-closed reverse coverage + `Requirements covered` trace line).
       - [x] manual review of the use-cases
-      - [ ] session Frage beantworten
-      - [ ] `/trace-check` — **lens** · cross-artifact consistency (UC→FR, entity-in-spec, actor↔glossary, BR↔invariant). 
+      - [x] `/trace-check` — **lens** · cross-artifact consistency (UC→FR, entity-in-spec, actor↔glossary, BR↔invariant). 
         Frage: muss man alles zurueckverfolgen? also nicht nur bis zu requirements.md sondern komplett? 
         - /trace-check dann /adr-threshold-gate docs/entity_model oder andersrum?
         - update workflow.md
-  
+  trace-check → resolve any Check 0 staleness (re-grill if needed) and fix the A–D breaks.
+adr-threshold-gate → on the now-stable artifacts, capture any ADR-worthy decisions your vision/CONTEXT edits introduced.
+
 
 - review created artifacts and how to use them
   - what are the input artifacts for the vanilla pocock skills
