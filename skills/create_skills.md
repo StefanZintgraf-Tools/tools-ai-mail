@@ -306,7 +306,7 @@ appear only as the test case.
   [`workflow.md`](workflow.md) (grill-with-docs seeds `CONTEXT.md` before requirements). On a cold
   project with no glossary, it degrades to stock behaviour (warn-and-continue).
 
-### - [ ] 8 · `spec-to-prd`  (authoring — replaces external `to-prd`; Phase 4)
+### - [x] 8 · `spec-to-prd`  (authoring — replaces external `to-prd`; Phase 4)
 - **Decision/rationale:** [`../plan/to-prd-review.md`](../plan/to-prd-review.md) (Decision 9). Projects
   the existing spec spine onto the tracker as a **thin** PRD; supersedes the vendored `to-prd` (which
   authors from conversation). Falls back to vanilla codebase-driven authoring **only** where the spine
@@ -344,7 +344,7 @@ appear only as the test case.
   codebase-driven authoring (vanilla `to-prd` behavior) **for that section only**. `spec-to-prd` is a
   *superset* of the vanilla skill, not a replacement that assumes a complete spine.
 
-### - [ ] 9 · `testing-strategy`  (authoring — new artifact; Phase 4)
+### - [x] 9 · `testing-strategy`  (authoring — new artifact; Phase 4)
 - **Decision/rationale:** [`../plan/to-prd-review.md`](../plan/to-prd-review.md) (Decisions 2–3). Owns
   the *how-to-test* artifact, invoked by #8 right after the module sketch so it can read the
   just-decided (ephemeral) modules.
@@ -366,7 +366,7 @@ appear only as the test case.
   provenance link; real temp FS, fake mail source." The threshold ("0 duplicate writes") stays in the
   NFR and is **referenced, never copied**.
 
-### - [ ] 10 · `tracker-trace-check`  (Family A · lens — tracker-aware counterpart of `trace-check`; Phase 4)
+### - [x] 10 · `tracker-trace-check`  (Family A · lens — tracker-aware counterpart of `trace-check`; Phase 4)
 - **Decision/rationale:** [`../plan/to-prd-review.md`](../plan/to-prd-review.md) (Decision 4). The
   repo↔tracker drift audit, **built up front**; offline `trace-check` (#6) stays unmodified.
 - **gr:** AIUP-native traceability (no single gr cluster, like `trace-check`) + gr_domain_language L1

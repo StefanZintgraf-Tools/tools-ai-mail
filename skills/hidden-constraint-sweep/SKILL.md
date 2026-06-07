@@ -2,16 +2,16 @@
 name: hidden-constraint-sweep
 description: >
   Runs an 8-class hidden-constraint sweep over a requirements doc, use-case
-  spec, or domain model, forcing an explicit covered / not-applicable / missing
-  verdict for each class — security & PII, permissions, data-retention,
+  spec, domain model, or PRD draft, forcing an explicit covered / not-applicable
+  / missing verdict for each class — security & PII, permissions, data-retention,
   migrations, observability, public-API-compat, concurrency, out-of-scope. Use
   when the user asks to "run the hidden-constraint sweep", "check for hidden
   constraints", "find missing constraints", "do the constraint checklist", "what
   did we forget", "sweep for security/PII/retention/observability gaps", or wants
   to pressure-test a spec against the cross-cutting concerns stakeholders
   commonly miss before alignment, a use case, or a domain model is considered
-  complete. Step-agnostic: works at requirements, use-case-spec, and
-  domain-model stages.
+  complete. Step-agnostic: works at requirements, use-case-spec, domain-model,
+  and PRD-draft (the pre-publish `spec-to-prd` Phase-4 projection) stages.
 ---
 
 # Hidden-Constraint Sweep
@@ -42,9 +42,11 @@ not yet complete; the human resolves the listed gaps and re-runs the sweep.
 
 ## Instructions
 
-1. **Resolve the input.** The target is the requirements doc, use-case spec, or
-   domain/entity model the user names (or the one in context). If none is named,
-   ask which artifact to sweep before proceeding.
+1. **Resolve the input.** The target is the requirements doc, use-case spec,
+   domain/entity model, *or a PRD draft* (the pre-publish `spec-to-prd` Phase-4
+   projection — provided as in-session/inline content, not necessarily a file on
+   disk) the user names (or the one in context). If none is named, ask which
+   artifact to sweep before proceeding.
 2. **Resolve optional context.** If a glossary/context file is given as an arg,
    use it. Otherwise resolve in order: `docs/CONTEXT.md`, then `docs/glossary.md`.
    If neither exists, warn ("no glossary/context found; proceeding without term
@@ -135,11 +137,20 @@ land in an artifact the next skill can act on.
 | Use-case alternative flow | Missing branch in an existing use case. | use-case-spec: an unauthorized-access flow |
 | New invariant / Constraints note | Missing rule the model must enforce. | domain-model: a Constraints line on the owning aggregate (e.g. "a Message cannot be both archived and pinned") |
 | Deferral | Concern acknowledged but intentionally out of this iteration. | any stage: surface as a deferral candidate and hand to the scope-cut skill — do **not** enact the cut here |
+| PRD-draft follow-up | Missing concern found while sweeping a PRD draft. | PRD-draft: route to a new FR/NFR in the spine (via `domain-requirements`) or a use-case alt-flow in the spine (via `usecase-spec`), **or** into the PRD's freshly-authored module/testing decisions — **NEVER** patched into the published PRD body (Doc5: the PRD restates nothing, it only links the spine). |
 
 At the **domain-model** stage, a `covered` pointer is an entity name, an
 attribute's Validation Rules cell, or an aggregate's Constraints note (rather
 than an FR/NFR id), and a `missing` follow-up is a new invariant/Constraints
 note (rather than an FR or alt-flow).
+
+At the **PRD-draft** stage, a `covered` pointer is a linked spine id (an
+`FR/NFR/UC` id the PRD already carries) or the PRD's module/testing-decision
+subsection (rather than a raw FR/NFR id authored into the PRD), and a `missing`
+follow-up routes to the spine (a new FR/NFR via `domain-requirements`, or a
+use-case alt-flow via `usecase-spec`) or into the PRD's freshly-authored
+module/testing decisions — never into the published PRD body (Doc5: the PRD
+restates nothing).
 
 ## Output Format
 
@@ -178,9 +189,12 @@ already in the shape Rev11's "Hidden-constraint coverage" line requires.
 ## Notes
 
 - **Step-agnostic.** This is the same checklist whether run at alignment close,
-  on a requirements doc, on a use-case spec, or on a domain model. Only the kind
-  of pointer/follow-up varies (FR/NFR at requirements, alt-flow at use-case,
-  invariant/Constraints at domain-model — see Routing).
+  on a requirements doc, on a use-case spec, on a domain model, or on a PRD
+  draft (the pre-publish `spec-to-prd` Phase-4 projection — in-session/inline
+  content, not necessarily a file on disk). Only the kind of pointer/follow-up
+  varies (FR/NFR at requirements, alt-flow at use-case, invariant/Constraints at
+  domain-model, and at the PRD-draft stage a linked `FR/NFR/UC` id or the
+  module/testing-decision subsection — see Routing).
 - **Source rules.** `gr_algn.md` Aln6 — the alignment-close sweep: fires always
   at close, the three outcomes, `missing` blocks close, "no silent passes, no
   'documented gap' closes." `gr_rev.md` Rev7 / Rev11 — the review-side mirror:

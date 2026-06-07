@@ -6,12 +6,13 @@ description: >
   ubiquitous language", "guard domain language", "audit terminology",
   "check the glossary", "review terms", "find forbidden synonyms", "catch
   invented terms", "enforce naming consistency", or wants to verify that a
-  requirements doc, entity model, PlantUML use case diagram, or use-case spec
-  uses canonical domain terms verbatim. Flags forbidden synonyms, storage-shaped
-  names, and silently-invented terms; halts on near-matches to ask same /
-  refinement / new; and writes human-approved term changes back into the
-  glossary. Step-agnostic: works at requirements, domain-model,
-  use-case-diagram, and use-case-spec stages.
+  requirements doc, entity model, PlantUML use case diagram, use-case spec, or
+  PRD draft uses canonical domain terms verbatim. Flags forbidden synonyms,
+  storage-shaped names, and silently-invented terms; halts on near-matches to
+  ask same / refinement / new; and writes human-approved term changes back into
+  the glossary. Step-agnostic: works at requirements, domain-model,
+  use-case-diagram, use-case-spec, and PRD-draft (the pre-publish `spec-to-prd`
+  Phase-4 projection) stages.
 ---
 
 # Ubiquitous Language Guard
@@ -26,8 +27,12 @@ other skills.
 ## Inputs
 
 1. **Artifact** (required) — the artifact under review: a requirements
-   document, an entity model, a `*.puml` use case diagram, or a `use_cases/*.md`
-   spec. The user names it or it is the file currently in focus.
+   document, an entity model, a `*.puml` use case diagram, a `use_cases/*.md`
+   spec, or a PRD draft (the pre-publish `spec-to-prd` Phase-4 projection —
+   provided as in-session/inline content, not necessarily a file on disk). The
+   user names it or it is the file currently in focus; for a PRD draft, the
+   artifact may be in-session/inline content rather than a named file or "file
+   in focus."
 2. **Glossary** (optional argument) — path to the project's ubiquitous-language
    file. Resolve in this order, taking the first that exists (match the filename
    case-insensitively):

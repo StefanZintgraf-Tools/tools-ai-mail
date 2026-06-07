@@ -94,16 +94,32 @@ own. Review between every step.
 > `hidden-constraint-sweep`, unforced surface decisions → `adr-threshold-gate`). Adding a reverse FR→UC
 > check to `trace-check` is **optional drift-insurance**, not load-bearing.
 
-## Phase 4 · Post-spec
+## Phase 4 · Post-spec — PRD chain
 
-The spec spine ends at `trace-check`. Continue with the following skills:
+The spec spine ends at `trace-check`. Continue with the PRD chain below. **Loop the whole chain once
+per in-scope milestone** — one PRD per milestone (steps 1–4), pulling only that milestone's
+non-deferred, in-scope requirements. `to-issues` → `tdd` run afterward (still external; handled later).
 
-| #   | Step                     | Type     | Note                                                                                            |
-| --- | ------------------------ | -------- | ----------------------------------------------------------------------------------------------- |
-| 1   | `prototype` *(optional)* | external | resolve the #1 open unknown (interaction surface + plan/apply state machine) before committing. |
-| 2   | `to-prd`                 | external | turn the spec into a PRD.                                                                       |
-| 3   | `to-issues`              | external | break the PRD into tracer-bullet vertical-slice issues.                                         |
-| 4   | `tdd`                    | external | implement issues red-green-refactor.                                                            |
+| #   | Step                     | Type      | Note                                                                                                                                                  |
+| --- | ------------------------ | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0   | `prototype` *(optional)* | external  | resolve the #1 open unknown (interaction surface + plan/apply state machine) before committing.                                                      |
+| 1   | `spec-to-prd`            | authoring | read the spine, project it onto the tracker; **interactive module sketch (HITL)** — confirm modules + which want tests.                              |
+| 2   | `testing-strategy`       | authoring | invoked by `spec-to-prd` right after the module sketch — author `docs/testing/<milestone>.md` from the just-decided modules + NFRs + chosen stack.   |
+| 3   | `spec-to-prd`            | authoring | draft the **thin PRD** (Testing Decisions links `docs/testing/<milestone>.md`); **run the composed lenses on the draft** (`ubiquitous-language-guard`, `hidden-constraint-sweep`, `adr-threshold-gate`); publish to the tracker with `ready-for-agent`. |
+| 4   | `tracker-trace-check`    | lens      | repo↔tracker drift audit (dangling refs + forward coverage PASS/FAIL; semantic divergence as `needs-human-confirmation`).                            |
+| —   | `to-issues`              | external  | break the PRD into tracer-bullet vertical-slice issues. *(handled later)*                                                                            |
+| —   | `tdd`                    | external  | implement issues red-green-refactor. *(handled later)*                                                                                               |
+
+> **Settled decisions the Phase-4 steps assume** (see `plan/to-prd-review.md` § Settled decisions):
+> (a) **Thin PRD** — it *links* spine IDs (`FR/UC/BR/ADR`) and duplicates **no** spine content; only the
+>   module-decomposition and testing-decisions sections are authored fresh.
+> (b) **One PRD per milestone** — matches the milestone-scoped spine; loop steps 1–4 per in-scope milestone.
+> (c) **Testing strategy lives in a dedicated `docs/testing/<milestone>.md`** — thresholds stay in the NFRs,
+>   universal philosophy stays in `tdd`; the file carries only the project-specific *how*, referencing both.
+> (d) **A standalone `testing-strategy` skill owns it**, invoked right after the module sketch (so it sees the
+>   just-decided, ephemeral modules from the same session).
+> (e) **The repo↔tracker drift audit is the standalone `tracker-trace-check`** (built up front); `trace-check`
+>   stays **offline/repo-only**, and forward coverage at publish time lives in `spec-to-prd`'s POST check.
 
 ## Notes
 

@@ -130,6 +130,11 @@ Append to (or, on re-run, replace at) the END of the artifact, behind the HITL a
 - ...
 ```
 
+**Contract:** the `## Postponed decisions` heading is a stable contract token consumed by
+`spec-to-prd` (Out of Scope projection) and `tracker-trace-check`, which scan the scope-cut
+artifacts for this exact heading. Do NOT rename it. (No mechanism change — the section is still
+appended to the END of the artifact that was scope-cut, not redirected to a standalone file.)
+
 ## DO NOT
 
 (HITL-before-write, replace-in-place, and the G9-per-deferred-item rule are enforced in Procedure/Validate above; the prohibitions below are the ones not otherwise covered.)

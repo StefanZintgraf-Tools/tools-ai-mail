@@ -23,8 +23,8 @@ setup- review created artifacts and how to use them
    
 - [~] Migrate to use pocock skills
   - [x] setup-matt-pocock-skills, check result (some artifacts already exist, e.g. CONTEXT.md)
-  - [ ] develop strategy for ai-mail (see pocock_workflow.md)
-    - [ ] to-prd
+  - [~] develop strategy for ai-mail (see pocock_workflow.md)
+    - [~] to-prd
           - to-prd artifacts
             IN:  conversation context + codebase + `CONTEXT.md` glossary + ADRs (+ prototype answer/snippets) 
             OUT: a **PRD** published as an issue on the tracker, labelled `ready-for-agent`
@@ -43,7 +43,16 @@ setup- review created artifacts and how to use them
             - does it make sense to adjust the to-prd skill to maximize the utilization of the existing artifacts in ai-mail
             - what other options exist to streamline to-prd and the existing skillset/artifacts
             Create a document plan/to-prd-review.md with the results
-          - create/update skills
+          - [x] create/update skills
+          - [ ] existing skills do not need to be updated?????
+                PROMPT:
+                In the current local working tree of this repo, new skills have been created (see create_skills.md and to-prd-review.md).
+                Also some documentation artifacts have been updated (see ### Part A — adjust the existing skillset in to-prd-review.md).
+                The previously existing skills (e.g. domain-requirements, domain-model, usecase-spec etc.) had not been modified.
+                Please check if they would also need some adaptations to match/align with the newly created ones.
+                Add your findings (in case there are some) at the end of to-prd-review.md into a new section.
+    - [ ] should some artifacts be located in a <milestone> subfolder (similar to docs/testing/<milestome>)?
+    - [ ] test the new skills (ok, without to-issues and tdd adjusted?)
     - [ ] see section `to-issues` / `tdd` — forward note (handled later) in to-prd-review.md
     - [ ] update/sync skills_overview.md
     - [ ] update skills_background_info.md

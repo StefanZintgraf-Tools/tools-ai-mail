@@ -2,8 +2,9 @@
 name: adr-threshold-gate
 description: >
   Scans any artifact (pre or post: a plan, requirements doc, entity model,
-  use-case spec, diff, or design note) for decisions that cross the
-  Architectural Decision Record threshold, then drafts and human-gates ADRs.
+  use-case spec, PRD / milestone PRD draft, diff, or design note) for decisions
+  that cross the Architectural Decision Record threshold, then drafts and
+  human-gates ADRs.
   Use when the user asks to "check for ADR-worthy decisions", "gate this for
   ADRs", "should this be an ADR", "draft an ADR", "find architectural
   decisions", "ADR threshold check", "review for missing ADRs", or whenever a
@@ -26,9 +27,10 @@ glossary, cut scope, or sweep constraints (those are sibling skills).
 ## Inputs
 
 1. **The artifact** under review (required) — any one pre-decision artifact (a plan,
-   `requirements.md`, an entity model, a `use_cases/*.md` spec, a design note) or
-   post-decision artifact (a diff). Named by the user or the file in focus. If no
-   artifact is named, ask which one to gate before proceeding — do not guess.
+   `requirements.md`, an entity model, a `use_cases/*.md` spec, a PRD / milestone PRD
+   draft, a design note) or post-decision artifact (a diff). Named by the user or the
+   file in focus. If no artifact is named, ask which one to gate before proceeding — do
+   not guess.
 2. **`docs/adr/*`** (read for numbering *and* coverage) — the existing ADR files,
    scanned to (a) derive the next zero-padded monotonic `NNNN` and (b) skip decisions
    an existing ADR already covers (Adr10 dedup). If `docs/adr/` is empty or absent,

@@ -37,11 +37,14 @@ Guardrail file legend (referenced below):
 10. [`usecase-spec` — **authoring**](#usecase-spec--authoring)
 11. [`trace-check` — **lens**](#trace-check--lens)
 12. [`prototype` — **external**](#prototype--external)
-13. [`to-prd` — **external**](#to-prd--external)
-14. [`to-issues` — **external**](#to-issues--external)
-15. [`tdd` — **external**](#tdd--external)
-16. [`review-skills` — **meta**](#review-skills--meta)
-17. [`refactor-skills` — **meta**](#refactor-skills--meta)
+13. [`to-prd` — **external** (superseded by `spec-to-prd`)](#to-prd--external-superseded-by-spec-to-prd)
+14. [`spec-to-prd` — **authoring**](#spec-to-prd--authoring)
+15. [`testing-strategy` — **authoring**](#testing-strategy--authoring)
+16. [`to-issues` — **external**](#to-issues--external)
+17. [`tdd` — **external**](#tdd--external)
+18. [`tracker-trace-check` — **lens**](#tracker-trace-check--lens)
+19. [`review-skills` — **meta**](#review-skills--meta)
+20. [`refactor-skills` — **meta**](#refactor-skills--meta)
 
 ---
 
@@ -92,8 +95,9 @@ entities, cut scope, or gate ADRs (those are sibling skills).
 
 **Input artifacts (must use).**
 - **Artifact under review** (required) — one project artifact: `requirements.md`, an entity
-  model, a `*.puml` use case diagram, or a `use_cases/*.md` spec. Named by the user or the
-  file in focus.
+  model, a `*.puml` use case diagram, a `use_cases/*.md` spec, or a PRD draft (the
+  pre-publish `spec-to-prd` Phase-4 projection — in-session/inline content, not necessarily
+  a file on disk). Named by the user or the file in focus.
 - **Glossary** (the ubiquitous-language file), resolved by a fallback chain — never a
   hard-coded filename:
   1. explicit path the user passed → 2. `docs/CONTEXT.md` → 3. `docs/glossary.md` →
@@ -217,10 +221,10 @@ L8 write-back rather than carried as a separate section.
 
 ## `adr-threshold-gate` — **lens**
 
-**Purpose.** A cross-cutting lens that protects the *why* of decisions: it scans any artifact — pre-decision (a plan, requirements doc, entity model, use-case spec, design note) or post-decision (a diff) — for choices that cross the **Architectural Decision Record threshold**, then drafts and human-gates one durable `docs/adr/` record per qualifier. It detects threshold-crossing decisions, asks the human "ADR-worthy?" per hit, drafts `proposed` ADRs in Context / Decision / Consequences / Alternatives form, and writes nothing — and flips nothing to `accepted` — without explicit human approval. It is step-agnostic. It does *not* model entities, maintain the glossary, cut scope, or sweep constraints (those are sibling skills).
+**Purpose.** A cross-cutting lens that protects the *why* of decisions: it scans any artifact — pre-decision (a plan, requirements doc, entity model, use-case spec, PRD / milestone PRD draft, design note) or post-decision (a diff) — for choices that cross the **Architectural Decision Record threshold**, then drafts and human-gates one durable `docs/adr/` record per qualifier. It detects threshold-crossing decisions, asks the human "ADR-worthy?" per hit, drafts `proposed` ADRs in Context / Decision / Consequences / Alternatives form, and writes nothing — and flips nothing to `accepted` — without explicit human approval. It is step-agnostic. It does *not* model entities, maintain the glossary, cut scope, or sweep constraints (those are sibling skills).
 
 **Input artifacts (must use).**
-- **Artifact under review** (required) — any single pre- or post-decision artifact: a plan, `requirements.md`, an entity model, a `use_cases/*.md` spec, a diff, or a design note. Named by the user or the file in focus.
+- **Artifact under review** (required) — any single pre- or post-decision artifact: a plan, `requirements.md`, an entity model, a `use_cases/*.md` spec, a PRD / milestone PRD draft (the pre-publish `spec-to-prd` Phase-4 projection), a diff, or a design note. Named by the user or the file in focus.
 - **`docs/adr/*`** (read for numbering and coverage) — the existing ADR files. Scanned to (a) derive the next zero-padded monotonic `NNNN` and (b) avoid re-drafting an already-captured decision. If `docs/adr/` is empty or absent, numbering starts at `0001`.
 
 **Output artifacts / results.**
@@ -248,10 +252,10 @@ The threshold's subject matter is architectural decisions, so **`gr_architecture
 
 ## `hidden-constraint-sweep` — **lens**
 
-**Purpose.** A cross-cutting lens that pressure-tests a spec against the constraints stakeholders habitually miss: it fires an **8-class hidden-constraint checklist** (security & PII, permissions, data-retention, migrations, observability, public-API-compat, concurrency, out-of-scope) over a requirements doc, use-case spec, or domain model and forces an explicit **`covered` / `not-applicable` / `missing`** verdict for *every* class — every run, in order. Its whole value is that it **defeats agent judgment about which classes apply**: silent omission of a class is forbidden, and a `missing` class **blocks** the sweep from reporting complete. To stop the central loophole on a human-less doc run, a `not-applicable` verdict must **cite a concrete fact in the artifact/context** (not a generic assertion), and the skill states that **`blocked` is the expected, valuable outcome** — never a failure to be dodged by under-reporting `missing` as `not-applicable`. It is a **pure report** — it writes nothing: it surfaces gaps and names concrete follow-ups for the human or a sibling skill (`domain-requirements`, `use-case-spec`, `pareto-scope-cut`) to act on; it does *not* model entities, edit the glossary, gate ADRs, rewrite the spec, or perform the deferral/scope-cut mechanics. Step-agnostic: identical checklist at requirements, use-case-spec, and domain-model stages — only the *kind* of pointer/follow-up varies (FR/NFR at requirements, alt-flow at use-case-spec, invariant/Constraints note at domain-model).
+**Purpose.** A cross-cutting lens that pressure-tests a spec against the constraints stakeholders habitually miss: it fires an **8-class hidden-constraint checklist** (security & PII, permissions, data-retention, migrations, observability, public-API-compat, concurrency, out-of-scope) over a requirements doc, use-case spec, domain model, or PRD draft and forces an explicit **`covered` / `not-applicable` / `missing`** verdict for *every* class — every run, in order. Its whole value is that it **defeats agent judgment about which classes apply**: silent omission of a class is forbidden, and a `missing` class **blocks** the sweep from reporting complete. To stop the central loophole on a human-less doc run, a `not-applicable` verdict must **cite a concrete fact in the artifact/context** (not a generic assertion), and the skill states that **`blocked` is the expected, valuable outcome** — never a failure to be dodged by under-reporting `missing` as `not-applicable`. It is a **pure report** — it writes nothing: it surfaces gaps and names concrete follow-ups for the human or a sibling skill (`domain-requirements`, `use-case-spec`, `pareto-scope-cut`) to act on; it does *not* model entities, edit the glossary, gate ADRs, rewrite the spec, or perform the deferral/scope-cut mechanics. Step-agnostic: identical checklist at requirements, use-case-spec, domain-model, and PRD-draft (the pre-publish `spec-to-prd` Phase-4 projection) stages — only the *kind* of pointer/follow-up varies (FR/NFR at requirements, alt-flow at use-case-spec, invariant/Constraints note at domain-model, and a linked `FR/NFR/UC` id or the module/testing-decision subsection at the PRD-draft stage).
 
 **Input artifacts (must use).**
-- **Artifact under sweep** (required) — the requirements doc, use-case spec, or domain/entity model the user names, or the file in focus. If none is named, the skill asks which artifact to sweep before proceeding.
+- **Artifact under sweep** (required) — the requirements doc, use-case spec, domain/entity model, or PRD draft (the pre-publish `spec-to-prd` Phase-4 projection — in-session/inline content, not necessarily a file on disk) the user names, or the file in focus. If none is named, the skill asks which artifact to sweep before proceeding.
 - **Glossary / context** (optional), resolved by a fallback chain — never a hard-coded filename:
   1. explicit path the user passed → 2. `docs/CONTEXT.md` → 3. `docs/glossary.md` →
   4. none found → warn (`"no glossary/context found; proceeding without term grounding"`) and continue. Absence never blocks the sweep.
@@ -353,9 +357,57 @@ The remaining checks have no single named gr rule ID for cross-artifact traceabi
 
 ---
 
-## `to-prd` — **external**
+## `to-prd` — **external** (superseded by `spec-to-prd`)
 
 **Purpose.** Turns the completed spec spine (`requirements.md`, `entity_model.md`, `use_cases/*.md`) into a structured Product Requirements Document.
+
+> **Superseded by `spec-to-prd`** in this skillset. The vendored matt-pocock `to-prd` *authors* the PRD **from the live conversation** (re-deriving user stories/problem/solution and discarding the spine's `FR/UC/BR/ADR` IDs — the `gr_documentation.md` Doc5 duplication anti-pattern). `spec-to-prd` (below) replaces it: it **projects** the existing spine onto the tracker as a thin, ID-linking PRD and falls back to conversation/codebase authoring only where the spine is missing/thin. Use `spec-to-prd` in Phase 4; `to-prd` is retained here only for lineage/reference.
+
+---
+
+## `spec-to-prd` — **authoring**
+
+**Purpose.** Projects the existing spec spine onto the issue tracker as a **thin, milestone-scoped PRD** — it **links** the spine's stable IDs (`FR-###`/`NFR-###`/`UC-###`/`BR-###`/`ADR-####`) rather than restating their content, and authors fresh **only** the two sections the spine genuinely lacks: the module/implementation decisions (an interactive deep-module sketch) and the testing decisions (delegated to `testing-strategy`). It supersedes the vendored `to-prd`, whose conversation-authoring would re-derive and duplicate the spine. Where a spine artifact is missing or thin (brownfield), it **degrades gracefully**, falling back to vanilla codebase-driven authoring for *that section only* — making it a superset of `to-prd`, not a replacement that assumes a complete spine. It does *not* slice issues (`to-issues`) or implement (`tdd`); it only produces the milestone PRD.
+
+**Input artifacts (must use).**
+- **Scope marker** (required) — the milestone that defines "now": resolved arg → the requirements doc's declared milestone / Status scope split → asked only if genuinely ambiguous (multiple undelimited milestones); never guessed silently.
+- **The spec-spine, via the AIUP-chain defaults** (overridable by an optional manifest arg) — `docs/requirements.md` (FR/NFR/C/OOS), `docs/use_cases/*.md` + `docs/use_cases.puml` (UC/BR), `docs/entity_model.md` (aggregates/invariants), `docs/vision.md` (problem/solution), the postponed-decisions log (Out of Scope), and `docs/testing/<milestone>.md` (from `testing-strategy`, invoked in-session). The **in-scope FR/UC set** is resolved at the marker (non-deferred, non-out-of-scope).
+- **Glossary**, resolved by the standard fallback chain — `explicit arg → docs/CONTEXT.md → docs/glossary.md → warn`; vocabulary used **verbatim** (L1, read side).
+- **`docs/adr/*`** (read) — decisions in the touched area, respected/flagged.
+- **Tracker wiring** — the tracker is reached abstractly via `docs/agents/issue-tracker.md`; the label vocabulary (`ready-for-agent`) via `docs/agents/triage-labels.md`. No tracker specifics are hard-coded.
+
+**Output artifacts / results.**
+- **One thin PRD per milestone**, published to the tracker with `ready-for-agent`, on the vanilla `to-prd` 7-section template (Problem Statement · Solution · User Stories · Implementation Decisions · Testing Decisions · Out of Scope · Further Notes). Spine-derived sections **link IDs** (User Stories ← FRs carried with their `FR-###` IDs + `UC-###` refs; Implementation Decisions ← linked ADRs + entity model; Testing Decisions ← `docs/testing/<milestone>.md` + NFRs by `NFR-###`; Out of Scope ← requirements OOS + postponed-decisions); only the module/implementation decisions and the testing-decisions framing are authored fresh.
+- **Traceability refs** (`FR/UC/BR/ADR`) carried onto the PRD/issues so the tracker stays linked to the in-repo spine. Internal IDs (`P##`/`A##`, `M#`/`F##`) inform synthesis but are **never** quoted into the published PRD (internal-ID hygiene).
+- An **interactive deep-module sketch** (HITL) — the major modules with deep, isolated, testable interfaces, grounded in the entity model + use cases (+ codebase exploration in brownfield); the human confirms the modules and which want tests. Right after the sketch, the skill **invokes `testing-strategy` in-session** so it sees the just-decided (ephemeral) modules.
+- The **composed step-agnostic lenses are run on the PRD draft before publishing** — `ubiquitous-language-guard` (drift in the freshly-synthesized module/testing prose), `hidden-constraint-sweep` (did the synthesis drop a class?), and `adr-threshold-gate` (did a module/interface decision cross the ADR threshold?) — extending Phase-3 gating across the Phase-4 boundary.
+
+**Relation to guardrail items.** No single `gr_*.md` cluster owns the projection; the skill operationalizes a set of cited rules:
+- **`gr_documentation.md` Doc5** (no duplication of authoritative sources) — the load-bearing constraint: the PRD **links** spine IDs and restates none of their content, so the requirements artifact (`requirements.md`) stays the single source and the PRD is a tracker-facing *projection*, not a second origin.
+- **`gr_domain_language.md` L1** (use defined terms exactly) — the glossary is consumed **verbatim** on the read side; the skill does not enforce or evolve the glossary (that stays `ubiquitous-language-guard`).
+- **`gr_adr.md`** — ADRs in the touched area are respected and linked, not restated; an ADR-threshold-crossing module decision is routed to `adr-threshold-gate` (one of the composed lenses), not gated here.
+- **AIUP-native traceability** (the same cross-artifact integrity guarantee `trace-check`/`usecase-spec` carry, with no single named gr ID) — `FR/UC/BR/ADR` IDs are carried onto the tracker, and the POST self-check asserts **forward coverage**: every in-scope requirement reached the tracker with its ID.
+
+---
+
+## `testing-strategy` — **authoring**
+
+**Purpose.** Owns the *how-to-test* artifact the spine lacks: it authors **one `docs/testing/<milestone>.md` per milestone**, carrying only the **project-specific** strategy — module/test-surface priorities, test-double policy at the real boundaries, and prior art — and **referencing** rather than restating the two things that live elsewhere (NFR/constraint **thresholds** in `requirements.md`, universal test **philosophy** in the `tdd` skill). It is a standalone authoring skill invoked by `spec-to-prd` **in-session, right after its interactive module sketch**, so it can read the just-decided (ephemeral) module decomposition before that context is gone. It closes `gr_greenfield.md` G8 (initial testing strategy), a rule no other skill owned. It does not author requirements, model entities, or set the thresholds it references (those are sibling skills / upstream artifacts).
+
+**Input artifacts (must use).**
+- **The just-decided module decomposition** (required) — read from `spec-to-prd`'s in-session module sketch; the strategy's test-surface priorities are pinned to these modules, which is why the skill runs at PRD time (the modules do not exist at requirements time).
+- **`docs/requirements.md`** — the NFRs / constraints whose **thresholds** each strategy entry *references* (`Re: NFR-###` / `Re: C-###`), never restates.
+- **Chosen stack** if declared — used to pick concrete test surfaces/doubles; **if undeclared, the strategy is written stack-agnostic and the stack dependency is flagged** rather than guessed.
+- **The `tdd` skill** — the universal test philosophy ("test behavior through public interfaces") it *references* for the cross-project parts, carrying only the project-specific *how*.
+- **Scope marker** — the milestone whose `docs/testing/<milestone>.md` is being authored.
+
+**Output artifacts / results.**
+- **`docs/testing/<milestone>.md`** (HITL write), one per milestone — mirroring how `docs/use_cases/*.md` fans out.
+- Each entry **opens `Re: NFR-###` / `Re: C-###`** (references the threshold, never restates it — the bar stays in the NFR) and adds the project-specific method (test surface, test-double policy at the real boundary, prior art); universal philosophy is referenced from `tdd`, not duplicated.
+
+**Relation to guardrail items.**
+- **`gr_greenfield.md` G8** (initial testing strategy) — the source rule; this skill is the executable form of G8 and the only skill that owns it.
+- **`gr_documentation.md` Doc5** (reference, don't duplicate authoritative sources) — thresholds stay in the NFRs and philosophy stays in `tdd`; `testing.md` references both by ID/skill and restates neither, so it adds genuinely-new *how* without duplicating any existing source.
 
 ---
 
@@ -368,6 +420,26 @@ The remaining checks have no single named gr rule ID for cross-artifact traceabi
 ## `tdd` — **external**
 
 **Purpose.** Implements the issues red-green-refactor style (test-driven development).
+
+---
+
+## `tracker-trace-check` — **lens**
+
+**Purpose.** A tracker-aware cross-cutting lens — the **repo↔tracker drift-audit counterpart** of `trace-check`. Where `trace-check` stays offline/repo-only (and must, to keep its determinism and portability), this skill catches *post-publish* divergence between the in-repo spine and the PRD/issues published to the tracker by `spec-to-prd`. It runs two mechanical PASS/FAIL checks (dangling-ref + forward-coverage) and one judgment check (semantic divergence, reported as `needs-human-confirmation` à la `trace-check` Check D), produces a **consistency report**, and — only with explicit human approval (HITL) — loops fixes back, proposing repo-side and tracker-side edits but **never auto-applying** them. It **reuses** `trace-check`'s convention-discovery *method* (derive id prefixes from the files — never hard-assume — plus name-normalization) rather than reinventing it, and **extends** that method with the UC and ADR id families `trace-check` does not discover (`trace-check` discovers only the requirements-id and BR-id patterns; it matches use cases by name and never reads ADRs). It does not author the spine, publish the PRD, or set scope (those are sibling skills).
+
+**Input artifacts (must use).**
+- **The in-repo spine** (required) — `docs/requirements.md`, `docs/use_cases/*.md` + `docs/use_cases.puml`, `docs/entity_model.md`, and the glossary — the authoritative side every tracker reference must resolve back to.
+- **The published PRD / issues for a milestone** (required) — reached abstractly via `docs/agents/issue-tracker.md`; the tracker side whose references and coverage are audited. No tracker specifics hard-coded.
+- **Scope marker** (required) — the milestone whose in-scope requirement set defines what *must* be on the tracker for the forward-coverage check.
+
+**Output artifacts / results.**
+- A **consistency report** — PASS or a list of breaks, one section per check:
+  - **Dangling-ref** (mechanical PASS/FAIL) — every `FR/UC/BR/ADR` id cited on the tracker resolves to a real spine artifact.
+  - **Forward-coverage** (mechanical PASS/FAIL) — every in-scope requirement at the marker is present on the tracker.
+  - **Semantic divergence** (`needs-human-confirmation`, not mechanical) — a tracker item that contradicts its linked spine artifact is surfaced for a human decision, never auto-judged.
+- A **HITL fix loop** — for each break the human elects to fix, the skill *proposes* the edit (repo-side into the offending spine artifact, or tracker-side onto the issue) and applies it only on per-change approval; **tracker edits are never auto-applied**.
+
+**Relation to guardrail items.** Like `trace-check`, no single `gr_*.md` cluster defines repo↔tracker traceability — the mechanical checks are the executable embodiment of **AIUP-native traceability** intent (every published reference resolves; every in-scope requirement reached the tracker), the repo↔tracker mirror of `spec-to-prd`'s forward-coverage POST check. The one carried-over rule is **`gr_domain_language.md` L1** (use defined terms exactly), applied to **actors** as in `trace-check`'s Check C. The convention-discovery *method* (derive id prefixes from the files; name-normalization) is **shared with `trace-check`**, not duplicated — and **extended** here to the UC and ADR id families `trace-check` does not discover (it covers only the requirements-id and BR-id patterns, matches use cases by name, and never reads ADRs).
 
 ---
 
