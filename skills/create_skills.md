@@ -146,6 +146,14 @@ A fresh session needs only this file plus these. All paths absolute.
 - `c:\PROJ\ai-mail\docs\requirements.md`, `docs\vision.md`, `docs\adr\*.md`
 - scope marker (M2 vs M2b/M3/M4): `c:\PROJ\ai-mail\plan\01-foundation.md`
 
+**Phase-4 PRD chain only (build specs #8–#10) — REQUIRED reading for those three skills:**
+- `c:\PROJ\ai-mail\plan\to-prd-review.md` — the PRD-integration review and source of truth for the
+  detail the #8–#10 blocks only summarize: the PRD section→artifact projection mapping (Part B), the
+  brownfield graceful-degradation rule, the `testing.md` `Re: NFR-###` convention with a worked
+  example, and the resolved decisions behind all three skills.
+- vanilla baseline to project from (the 7-section PRD template):
+  `c:\PROJ\ai-knowhow\skills-plugins\matt_pocock_skills\skills\engineering\to-prd\SKILL.md`.
+
 **Optional background (NOT required to build):** `todo.md` section *create new skills to align aiup
 and the coding project*; handoff `…\Temp\handoff-aiup-bridge-skills.md`.
 
@@ -176,18 +184,31 @@ and the coding project*; handoff `…\Temp\handoff-aiup-bridge-skills.md`.
 The skills are built in **one driver session** that spawns a **sub-agent per skill** and tracks
 progress via the `- [ ]` checkboxes in the per-skill build-spec headings below. Marking convention:
 `- [ ]` = not built; `- [x]` = built (SKILL.md written + self-checked). The driver updates the
-checkbox only after the sub-agent reports success.
+checkbox only after the sub-agent reports success. **IMPORTANT: run sub-agents strictly one at a time,
+in ascending spec-number order — the order the `### N · <skill>` blocks appear below (#1, then #2, …).
+Never run two sub-agents in parallel, even when their specs have no dependency between them.**
 
 **Driver protocol:**
 
-1. **Respect build order & dependencies.** `domain-model` (#2) consumes the glossary that
-   `ubiquitous-language-guard` (#1) maintains, so #1 must finish before #2. The four lenses
-   (#3–#6) are independent of each other and of #2 once #1 exists. So: run #1 alone first; then
-   fan out #2–#6 in parallel.
+1. **Build strictly sequentially, in spec-number order.** Run exactly one sub-agent at a time, in the
+   order the `### N · <skill>` blocks appear below (#1, then #2, …), and wait for each to finish
+   (step 3) before starting the next — **never in parallel**, even for specs with no dependency between
+   them. Sequential-in-order also satisfies every build dependency for free, because dependencies
+   always point *backward* in the numbering: `domain-model` (#2) consumes the glossary
+   `ubiquitous-language-guard` (#1) maintains, so #1 finishes before #2; the lenses (#3–#6) and the
+   Phase-4 chain (#8–#10) likewise build one at a time in number order. Runtime composition
+   (`spec-to-prd` #8 invoking `testing-strategy` #9; `tracker-trace-check` #10 reusing `trace-check`
+   #6) is a *run-time* relationship and does **not** change build order. Skip any spec already marked
+   `- [x]`.
 2. **One sub-agent per skill.** Give each sub-agent: this file's matching `### N · <skill>` build
-   spec, the `## How to build a skill here` rules, and the cited `gr_*.md` source items (for
-   `domain-model`, also the stock `entity-model` SKILL.md baseline). The sub-agent writes
-   `c:\PROJ\ai-mail\.claude\skills\<skill-name>\SKILL.md` and runs the spec's POST self-check.
+   spec, the `## How to build a skill here` rules, the cited `gr_*.md` source items (for
+   `domain-model`, also the stock `entity-model` SKILL.md baseline), and — for the Phase-4 chain
+   (#8–#10) — the spec's `Decision/rationale` doc
+   [`../plan/to-prd-review.md`](../plan/to-prd-review.md), which carries the full section→artifact
+   projection mapping, the brownfield-fallback behavior, and the worked examples that the compressed
+   build spec only summarizes. The sub-agent writes the canonical
+   `skills\<skill-name>\SKILL.md`, creates the `.claude\skills\<skill-name>` junction pointing at it
+   (per `## How to build a skill here`), and runs the spec's POST self-check.
 3. **Wait for completion.** The driver waits until each sub-agent finishes or reports a blocker.
    - On **success** → flip that skill's heading from `- [ ]` to `- [x]` in this file.
    - On **blocker/issue** → leave `- [ ]`, append a one-line note after the heading
@@ -285,6 +306,85 @@ appear only as the test case.
   [`workflow.md`](workflow.md) (grill-with-docs seeds `CONTEXT.md` before requirements). On a cold
   project with no glossary, it degrades to stock behaviour (warn-and-continue).
 
+### - [ ] 8 · `spec-to-prd`  (authoring — replaces external `to-prd`; Phase 4)
+- **Decision/rationale:** [`../plan/to-prd-review.md`](../plan/to-prd-review.md) (Decision 9). Projects
+  the existing spec spine onto the tracker as a **thin** PRD; supersedes the vendored `to-prd` (which
+  authors from conversation). Falls back to vanilla codebase-driven authoring **only** where the spine
+  is missing/thin (brownfield).
+- **gr:** gr_documentation Doc5 (no duplication of authoritative sources) + gr_domain_language L1
+  (consume glossary verbatim, read side) + gr_adr (respect/flag ADRs) + AIUP-native traceability
+  (carry `FR/UC/BR/ADR` IDs onto the tracker).
+- **In:** scope marker (arg → the requirements doc's declared milestone / Status scope split → ask only
+  if genuinely ambiguous); AIUP chain defaults `docs/requirements.md`, `docs/use_cases/*.md` +
+  `docs/use_cases.puml`, `docs/entity_model.md`, `docs/vision.md`, glossary (arg; `docs/CONTEXT.md` →
+  `docs/glossary.md` → warn), `docs/adr/*`, the postponed-decisions log, and
+  `docs/testing/<milestone>.md` (from #9) — overridable by an optional manifest arg. Tracker via
+  `docs/agents/issue-tracker.md`; label vocabulary via `docs/agents/triage-labels.md`.
+- **Does:** resolve the in-scope FR/UC set at the marker; **interactive deep-module sketch** (HITL —
+  modules + which want tests), grounded in entity model + use cases (+ codebase in brownfield); invoke
+  `testing-strategy` (#9) in-session so it sees the just-decided modules; draft a thin PRD on the
+  vanilla 7-section template (Problem Statement · Solution · User Stories · Implementation Decisions ·
+  Testing Decisions · Out of Scope · Further Notes), **linking `FR/UC/BR/ADR` IDs** for spine-derived
+  sections and authoring fresh **only** module + testing decisions (Testing Decisions links
+  `docs/testing/<milestone>.md`); run the composed lenses (`ubiquitous-language-guard`,
+  `hidden-constraint-sweep`, `adr-threshold-gate`) on the draft.
+- **Out:** **one thin PRD per milestone** published to the tracker (`ready-for-agent`), carrying
+  traceability refs; duplicates no spine content.
+- **POST self-check:** PRD restates no spine content (links IDs); every in-scope requirement is linked
+  by ID and present on the tracker (forward coverage); scope marker honored; lenses run; generic body
+  (no hard-coded project paths beyond the AIUP chain defaults).
+- **Section→source projection** (link IDs, never restate — full table in `to-prd-review.md` Part B):
+  Problem Statement ← `docs/vision.md` + pain catalogue (background, not quoted); Solution ←
+  `docs/vision.md` golden-path; User Stories ← `docs/requirements.md` FRs *carried with their `FR-###`
+  IDs* + `UC-###` refs; Implementation Decisions ← ADRs (linked) + `docs/entity_model.md` + the
+  interactive module sketch (authored fresh); Testing Decisions ← `docs/testing/<milestone>.md` (#9) +
+  NFRs by `NFR-###`; Out of Scope ← requirements OOS + the postponed-decisions log. Internal IDs
+  (`P##`/`A##`, `M#`/`F##`) inform synthesis but are **never** quoted into the published PRD.
+- **Brownfield graceful-degradation:** for any spine artifact that is missing or thin, fall back to
+  codebase-driven authoring (vanilla `to-prd` behavior) **for that section only**. `spec-to-prd` is a
+  *superset* of the vanilla skill, not a replacement that assumes a complete spine.
+
+### - [ ] 9 · `testing-strategy`  (authoring — new artifact; Phase 4)
+- **Decision/rationale:** [`../plan/to-prd-review.md`](../plan/to-prd-review.md) (Decisions 2–3). Owns
+  the *how-to-test* artifact, invoked by #8 right after the module sketch so it can read the
+  just-decided (ephemeral) modules.
+- **gr:** gr_greenfield G8 (initial testing strategy) + gr_documentation Doc5 (reference, don't duplicate).
+- **In:** the just-decided module decomposition (from #8's in-session sketch); `docs/requirements.md`
+  NFRs/constraints (the thresholds to *reference*); the chosen stack if declared (else stack-agnostic +
+  flag); the `tdd` skill (universal philosophy to *reference*); scope marker.
+- **Does:** author the **project-specific** strategy only — module/test-surface priorities, test-double
+  policy at the real boundaries, prior art (immediate in brownfield); **every entry opens `Re: NFR-###`
+  / `Re: C-###`** (references the threshold, **never restates** it) and references the `tdd` skill for
+  universal philosophy rather than restating it; stack undeclared → write stack-agnostic + flag the
+  dependency.
+- **Out:** **one `docs/testing/<milestone>.md` per milestone** (HITL write).
+- **POST self-check:** every entry cites an NFR/constraint; no threshold restated; no `tdd` philosophy
+  duplicated; stack assumptions flagged where the stack is undeclared.
+- **Worked example — the `Re: NFR-###` convention** (the NFR holds the bar; `testing.md` holds only the
+  *how*): *NFR-002 states "0 duplicate writes" →* `testing.md` entry: "`Re: NFR-002` — run the batch
+  twice through the apply surface against a temp Routing Root + temp ledger; assert 0 new files, 1 new
+  provenance link; real temp FS, fake mail source." The threshold ("0 duplicate writes") stays in the
+  NFR and is **referenced, never copied**.
+
+### - [ ] 10 · `tracker-trace-check`  (Family A · lens — tracker-aware counterpart of `trace-check`; Phase 4)
+- **Decision/rationale:** [`../plan/to-prd-review.md`](../plan/to-prd-review.md) (Decision 4). The
+  repo↔tracker drift audit, **built up front**; offline `trace-check` (#6) stays unmodified.
+- **gr:** AIUP-native traceability (no single gr cluster, like `trace-check`) + gr_domain_language L1
+  (actors). **Reuses** `trace-check`'s convention-discovery (id patterns, name normalization) — does
+  not reinvent it.
+- **In:** the in-repo spine (`docs/requirements.md`, `docs/use_cases/*.md` + `docs/use_cases.puml`,
+  `docs/entity_model.md`, glossary); the published PRD/issues for a milestone (tracker via
+  `docs/agents/issue-tracker.md`); scope marker.
+- **Does:** **dangling-ref check** (every `FR/UC/BR/ADR` id cited on the tracker resolves to a real
+  spine artifact) and **forward-coverage check** (every in-scope requirement is on the tracker) as
+  mechanical PASS/FAIL; **semantic-divergence check** (a tracker item contradicts its linked spine
+  artifact) as `needs-human-confirmation` (à la `trace-check` Check D).
+- **Out:** a consistency report (pass / list of breaks); HITL fix loop — repo-side fixes proposed into
+  the offending artifact, tracker-side fixes proposed, **never auto-applied**.
+- **POST self-check:** mechanical checks deterministic; semantic divergences marked
+  `needs-human-confirmation`, not auto-fixed; no tracker write without HITL; convention-discovery reused
+  from `trace-check`, not duplicated.
+
 ## Composition model
 
 By **convention**, not a heavyweight orchestrator (Pareto; `gr_greenfield` G5 = extract shared
@@ -324,6 +424,12 @@ stock `aiup-core:entity-model` SKILL.md body as the baseline to modify.
 6. **`domain-requirements`** *(not yet built — the one skill a fresh session must still create; build
    spec #7)* — fork stock `requirements` to consume the glossary. Independent of #1–#5; build it from
    build spec #7 + the stock `requirements` baseline.
+7. **Phase-4 PRD chain** *(not yet built — build specs #8–#10)* — `spec-to-prd`, `testing-strategy`,
+   `tracker-trace-check`. The matt-pocock `to-prd` integration (rationale + section→artifact mapping:
+   [`../plan/to-prd-review.md`](../plan/to-prd-review.md)). **No build dependency among them** (they
+   compose only at *run* time — `spec-to-prd` invokes `testing-strategy`, and `tracker-trace-check`
+   reuses `trace-check`'s convention-discovery) — but per the **Orchestration** rule the driver still
+   builds them **one at a time in spec order (#8 → #9 → #10), never in parallel**.
 
 **Downstream use-case steps need no modified skill** (decided 2026-06-03; **superseded 2026-06-05 by
 Decision 8** — the use-case steps are now the forks `usecase-diag` / `usecase-spec`; the paragraph
@@ -404,3 +510,14 @@ Once a skill proves out here, port it back to the coding project (mechanism TBD 
    cites an existing invariant or flags a missing one; it never authors it). Output filenames stay
    `docs/use_cases.puml` and `docs/use_cases/*.md` (AIUP chain contract). `trace-check` is left
    **unmodified**; adding a reverse FR→UC check there is now *optional drift-insurance*, not load-bearing.
+9. **Phase-4 PRD chain = `spec-to-prd` + `testing-strategy` + `tracker-trace-check`** (2026-06-07) — the
+   matt-pocock `to-prd` integration; full rationale and the PRD section→artifact mapping live in
+   [`../plan/to-prd-review.md`](../plan/to-prd-review.md). (a) **`spec-to-prd`** replaces the vendored
+   `to-prd`: it *projects* the spec spine onto the tracker as a **thin, milestone-scoped** PRD (links
+   `FR/UC/BR/ADR` IDs, duplicates nothing — Doc5) instead of re-authoring from conversation, falling
+   back to vanilla authoring only where the spine is thin (brownfield). (b) **`testing-strategy`** owns
+   `docs/testing/<milestone>.md` (closes G8; references NFR thresholds + the `tdd` philosophy, restates
+   neither), invoked by `spec-to-prd` right after its module sketch. (c) **`tracker-trace-check`** is the
+   repo↔tracker drift audit, **built up front**; offline `trace-check` is left unmodified. **One PRD and
+   one `testing.md` per milestone.** Module decomposition stays an *interactive* step inside
+   `spec-to-prd` (no pre-baked module artifact — premature architecture, G1/G5/G6). Build specs #8–#10.

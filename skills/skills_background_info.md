@@ -1,6 +1,6 @@
 # Handoff — background for `skills/create_skills.md` (AIUP guardrail skills)
 
-**Date:** 2026-06-03 · **Repo:** `c:\PROJ\ai-mail` (branch `master`) · planning only, **no code/skills built**.
+**Date:** 2026-06-03 (updated 2026-06-07) · **Repo:** `c:\PROJ\ai-mail` (branch `master`) · spec-spine skills **built**; the Phase-4 PRD chain is **specced, not yet built**.
 
 This document captures the *discussion and reasoning* behind [`skills/create_skills.md`](create_skills.md). It does
 **not** repeat that plan — `skills/create_skills.md` is the authoritative, self-contained build spec. Read the
@@ -77,20 +77,79 @@ After the plan was written, a **second authoring fork** was approved: stock `req
 Both **consume** the glossary; **neither maintains** it — that stays `ubiquitous-language-guard`. The
 two forks are the domain-language-aware authoring skills; the five lenses wrap around them.
 
+## The Phase-4 PRD chain — `spec-to-prd` + `testing-strategy` + `tracker-trace-check` (decided 2026-06-07)
+
+The matt_pocock post-spec phase (`to-prd` → `to-issues` → `tdd`) was reviewed for fit against the spec
+spine this skillset produces. The full analysis + the PRD section→artifact mapping live in
+[`../plan/to-prd-review.md`](../plan/to-prd-review.md); the *reasoning arc* (kept here, not there):
+
+- **The core mismatch.** Vanilla `to-prd` *authors* the requirements from a **conversation** ("do not
+  interview — synthesize what you know"); but by Phase 4 the spine already holds those requirements at
+  higher fidelity, with stable `FR/UC/BR/ADR` IDs, milestone-scoped. Run stock, `to-prd` would
+  **re-derive** user stories/scope — dropping the IDs, risking glossary drift, and **duplicating an
+  authoritative source** (`gr_documentation` Doc5). So the PRD's job shrinks from *authoring* to a thin
+  **projection** of the spine onto the tracker. (This is the load-bearing decision; the rest follows.)
+- **`spec-to-prd` is the same *shape* of fork as `domain-requirements`.** Like stock `requirements`, the
+  vanilla skill's defect is its **input channel**, not its structure: it reads the conversation, never
+  the spine. Prevention-at-generation (read the spine *inside* the skill, link IDs, restate nothing)
+  beats lens-cure-after — identical logic to Decision 7. It is a new **authoring** skill (projection is a
+  generative act), and it **falls back** to vanilla codebase-authoring only where the spine is thin
+  (brownfield), so it is a *superset* of `to-prd`, not a narrowing.
+- **Two genuine gaps, handled asymmetrically.** Mapping the PRD template onto the spine, every section is
+  already covered **except** two:
+  - *Module decomposition* — deliberately **NOT** a pre-baked artifact (that is premature architecture,
+    `gr_greenfield` G1/G5/G6 — the exact thing `pareto-scope-cut` guards). It stays an **interactive**
+    step inside `spec-to-prd`, grounded in the entity model + use cases (+ codebase in brownfield). Same
+    "don't build for imagined needs / reactive-only" discipline as the rest of the plan.
+  - *Testing strategy* — genuinely **new** information → a new artifact, owned by a standalone
+    **`testing-strategy`** skill (closes `gr_greenfield` G8, which no skill owned).
+- **The timing argument (load-bearing, like the glossary-sequencing one for `domain-requirements`).** A
+  real testing strategy depends on the **module decomposition** (decided at PRD time) and the **chosen
+  stack** (ai-mail `C-006` = "Stack TBD"); neither exists at requirements time. So the strategy cannot
+  live in `requirements.md` and cannot be owned by the (Phase-2) `domain-requirements` skill — it is
+  authored **late**, in Phase 4, right after the module sketch. The split that prevents duplication:
+  *thresholds* stay in the NFRs, the *universal philosophy* stays in the `tdd` skill, and `testing.md`
+  carries only the project-specific *how*, opening each entry `Re: NFR-###` (references, never restates).
+  **One `testing.md` per milestone**, parallel to one PRD per milestone.
+- **The drift audit was built UP FRONT — a deliberate deviation from the reactive-only default.** The
+  recommendation was to *defer* it (build only if post-publish drift bites — the project's usual Pareto
+  stance). **The user chose to build it now** as a separate `tracker-trace-check` skill. `trace-check` is
+  left **unmodified**: it stays an offline, deterministic, portable repo lens; auditing the tracker is a
+  *different* concern (network/`gh` dependency, per-project tracker config, runs a phase later), so it
+  gets its own skill that **reuses** `trace-check`'s convention-discovery rather than bloating it. First
+  version keeps the mechanical checks (dangling refs, forward coverage) as PASS/FAIL and the
+  semantic-divergence check as `needs-human-confirmation` (à la `trace-check` Check D).
+- **Build-time autonomy vs run-time HITL.** The three skills are **built** fully autonomously (generic
+  bodies, AIUP chain defaults, no human input) but keep their **run-time HITL** gates (`testing.md`
+  write, PRD publish, tracker fixes) — load-bearing safety, unchanged from the rest of the skillset.
+
+| New skill | Type | Replaces / adds | Why not just a lens / why not deferred |
+| --------- | ---- | --------------- | -------------------------------------- |
+| `spec-to-prd` | authoring | replaces external `to-prd` | input-channel defect → prevention-at-generation; projection is a generative act |
+| `testing-strategy` | authoring | new `docs/testing/<milestone>.md` | new info, depends on modules+stack → late, standalone, per-milestone (G8) |
+| `tracker-trace-check` | lens | new (repo↔tracker) | offline `trace-check` must stay portable; user chose up-front over deferred |
+
+Build specs are #8–#10 in [`create_skills.md`](create_skills.md) (Decision 9); no build dependency among
+them, so all three can be built in parallel.
+
 ## State of play
 
-- **Done:** decisions resolved (naming `domain-model`, output stays `docs/entity_model.md`,
-  glossary-as-arg, no orchestrator yet, etc. — all in `skills/create_skills.md` §Decisions). Nothing open in
-  the plan.
-- **Not done:** **zero skills built.** The next session builds them, starting with
-  `ubiquitous-language-guard`, strictly from `skills/create_skills.md` (it lists every source path + per-skill
-  spec).
+- **Built (specs #1–#7 + the use-case forks):** `ubiquitous-language-guard`, `domain-model`,
+  `hidden-constraint-sweep`, `adr-threshold-gate`, `pareto-scope-cut`, `trace-check`,
+  `domain-requirements`, plus `usecase-diag` / `usecase-spec` (Decision 8) — all `- [x]` in
+  `skills/create_skills.md`, present under `skills/<name>/SKILL.md`.
+- **Specced, not built — the Phase-4 PRD chain (specs #8–#10):** `spec-to-prd`, `testing-strategy`,
+  `tracker-trace-check`. The next build; all three buildable in parallel (no build dependency).
+- **Decisions:** all resolved — `create_skills.md` §Decisions (1–9). The Phase-4 chain is Decision 9 +
+  [`../plan/to-prd-review.md`](../plan/to-prd-review.md).
 - **Open placement detail:** the "port back to coding" mechanism is still TBD (noted in the plan).
 
 ## Key references (do not re-derive)
 
 - [`skills/create_skills.md`](create_skills.md) — **the spec.** Source materials, per-skill build specs, build order,
   decisions. Self-contained.
+- [`plan/to-prd-review.md`](../plan/to-prd-review.md) — the **Phase-4 PRD chain** analysis: vanilla
+  `to-prd` vs the spine, the section→artifact mapping, and the rationale for specs #8–#10.
 - [`todo.md`](../todo.md) — first `- [ ]` section: the call-order + the after-`trace-check` guidance.
 - Prior handoff: `…\AppData\Local\Temp\handoff-aiup-bridge-skills.md` — the *superseded* bridge
   framing; useful only as history.
@@ -100,6 +159,8 @@ two forks are the domain-language-aware authoring skills; the five lenses wrap a
   `plan/01-foundation.md`.
 - matt_pocock skills (for the post-spec phase): `c:\PROJ\ai-knowhow\skills-plugins\matt_pocock_skills\`
   (`prototype`, `to-prd`, `to-issues`, `tdd`, `improve-codebase-architecture`) — active via plugin.
+  Note: in this skillset `to-prd` is **superseded by `spec-to-prd`** (spec #8); `prototype`/`to-issues`/
+  `tdd` are still used as-is (their integration is handled later).
 
 ## CLAUDE.md constraints (must obey)
 
@@ -109,14 +170,16 @@ two forks are the domain-language-aware authoring skills; the five lenses wrap a
 
 ## Suggested skills for the next session
 
-- **None of the new skills exist yet** — building the *first* one (`ubiquitous-language-guard`) is the
-  job. Build it **by hand** per `skills/create_skills.md` §"How to build a skill here" + §"Per-skill build
-  specs" #1. Do **not** use `/make-skill` (user's explicit choice for now).
+- **Build the Phase-4 PRD chain (specs #8–#10):** `spec-to-prd`, `testing-strategy`,
+  `tracker-trace-check` — the spec-spine skills (#1–#7 + use-case forks) are already built. Build **by
+  hand** per `skills/create_skills.md` §"How to build a skill here" + §"Per-skill build specs" #8–#10
+  (canonical `skills/<name>/SKILL.md` + `.claude/skills/<name>` junction). Do **not** use `/make-skill`
+  (user's explicit choice for now). All three are independent at build time → buildable in parallel.
 - **`write-a-skill`** (matt_pocock) — optional reference for SKILL.md structure/progressive
   disclosure while authoring the new skills by hand.
 - **`grill-with-docs`** — if the next session wants to stress-test the plan itself before building.
-- **Later (post spec-spine, not now):** `prototype` (recommended next after `trace-check`), then
-  `to-issues` / `tdd` — see the after-`trace-check` block in `todo.md`.
+- **Later (post-PRD, not now):** `prototype`, then `to-issues` / `tdd` — their integration with the
+  thin PRD is deferred (see [`../plan/to-prd-review.md`](../plan/to-prd-review.md) "forward note").
 
 ## Appendix — the superseded "bridge skills" design (history)
 
