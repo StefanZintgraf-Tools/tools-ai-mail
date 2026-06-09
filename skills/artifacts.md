@@ -1,6 +1,5 @@
 # artifacts
 
-
 ## artifacts created in Phase 1..3
 
 ### Production Sequence
@@ -39,68 +38,65 @@
 |                                  |       | `pareto-scope-cut` scope-cut (requirements, entity model, a use-case spec, …) NOT a standalone |
 |                                  |       | file. Consumed by `spec-to-prd` (Out of Scope projection) and `tracker-trace-check`.           |
 
-
 ### Delta Information
 
-| Artifact                         | Phase | New information (not present in input artifacts)                                                            |
-| -------------------------------- | ----- | ---------------------------------------------------------------------------------------------------------- |
-| `plan/painlist_*.md`             | 1     | First artifact — introduces the pain catalogue and the stable `P##`/`A##` ID space                         |
+| Artifact                         | Phase | New information (not present in input artifacts)                                                                      |
+| -------------------------------- | ----- | --------------------------------------------------------------------------------------------------------------------- |
+| `plan/painlist_*.md`             | 1     | First artifact — introduces the pain catalogue and the stable `P##`/`A##` ID space                                    |
 | `plan/01-foundation.md`          | 1     | Capability matrix (`M#`/`F##`) mapping pains to capabilities, reach scores, scope boundary, "build M2 first" decision |
-| `docs/vision.md`                 | 1     | Names the system; mission, target user, dogfood context, and the golden-path scenario                      |
-| `docs/CONTEXT.md`                | 2     | Canonical definitions + avoid-lists per term — the first authoritative vocabulary                          |
-| `docs/requirements.md`           | 2     | Stable `FR-###`/`NFR-###`/`C-###` IDs and the authoritative what-must-be-built list, milestone-scoped      |
-| `docs/entity_model.md`           | 3     | Aggregates, value objects, relationships, and entity-level invariants — the data structure behind the FRs  |
-| `docs/adr/####-*.md` (modelling) | 3     | Records the design forks taken during entity modelling that the model alone leaves implicit                |
-| `docs/use_cases.puml`            | 3     | The use cases themselves and the forward `FR→UC` mapping — proof every in-scope FR is realised             |
-| `docs/use_cases/*.md`            | 3     | Per-use-case scenarios (pre/postconditions, main + alt flows, `BR-###`) and the reverse `UC→FR` traceability |
-
+| `docs/vision.md`                 | 1     | Names the system; mission, target user, dogfood context, and the golden-path scenario                                 |
+| `docs/CONTEXT.md`                | 2     | Canonical definitions + avoid-lists per term — the first authoritative vocabulary                                     |
+| `docs/requirements.md`           | 2     | Stable `FR-###`/`NFR-###`/`C-###` IDs and the authoritative what-must-be-built list, milestone-scoped                 |
+| `docs/entity_model.md`           | 3     | Aggregates, value objects, relationships, and entity-level invariants — the data structure behind the FRs             |
+| `docs/adr/####-*.md` (modelling) | 3     | Records the design forks taken during entity modelling that the model alone leaves implicit                           |
+| `docs/use_cases.puml`            | 3     | The use cases themselves and the forward `FR→UC` mapping — proof every in-scope FR is realised                        |
+| `docs/use_cases/*.md`            | 3     | Per-use-case scenarios (pre/postconditions, main + alt flows, `BR-###`) and the reverse `UC→FR` traceability          |
 
 ### Redundancies
 
-| Artifact                         | Phase | Redundant information (restates content from upstream input artifacts)                                                             |
-| -------------------------------- | ----- | ---------------------------------------------------------------------------------------------------------------------------------- |
-| `plan/painlist_*.md`             | 1     | N/A — first artifact, no inputs                                                                                                   |
-| `plan/01-foundation.md`          | 1     | N/A — references `plan/painlist_*.md` `P##`/`A##` IDs only, restates no content                                                  |
-| `docs/vision.md`                 | 1     | Out-of-scope list overlaps with `plan/01-foundation.md`'s deferred-capability set                                                 |
-| `docs/CONTEXT.md`                | 2     | N/A — canonical term definitions; downstream ADRs restate its context, not vice-versa                                            |
-| `docs/requirements.md`           | 2     | Scope split echoes `plan/01-foundation.md`'s M2-first scope decision                                                              |
-| `docs/entity_model.md`           | 3     | Invariants overlap with `C-###`/`NFR-###` in `docs/requirements.md`                                                               |
-| `docs/adr/####-*.md` (modelling) | 3     | Design rationale is partly implicit in `docs/entity_model.md` structure                                                           |
-| `docs/use_cases.puml`            | 3     | Actor list restates roles already defined in the `docs/CONTEXT.md` glossary                                                       |
+| Artifact                         | Phase | Redundant information (restates content from upstream input artifacts)                                                                  |
+| -------------------------------- | ----- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `plan/painlist_*.md`             | 1     | N/A — first artifact, no inputs                                                                                                         |
+| `plan/01-foundation.md`          | 1     | N/A — references `plan/painlist_*.md` `P##`/`A##` IDs only, restates no content                                                         |
+| `docs/vision.md`                 | 1     | Out-of-scope list overlaps with `plan/01-foundation.md`'s deferred-capability set                                                       |
+| `docs/CONTEXT.md`                | 2     | N/A — canonical term definitions; downstream ADRs restate its context, not vice-versa                                                   |
+| `docs/requirements.md`           | 2     | Scope split echoes `plan/01-foundation.md`'s M2-first scope decision                                                                    |
+| `docs/entity_model.md`           | 3     | Invariants overlap with `C-###`/`NFR-###` in `docs/requirements.md`                                                                     |
+| `docs/adr/####-*.md` (modelling) | 3     | Design rationale is partly implicit in `docs/entity_model.md` structure                                                                 |
+| `docs/use_cases.puml`            | 3     | Actor list restates roles already defined in the `docs/CONTEXT.md` glossary                                                             |
 | `docs/use_cases/*.md`            | 3     | Actor reference (`Primary Actor: User`) resolves against the `docs/CONTEXT.md` glossary; FR→UC mapping duplicates `docs/use_cases.puml` |
-
 
 ## artifacts created in Phase 4
 
 > **Settled decisions (artifact-facing):**
+> 
 > - **One `testing.md` per milestone**, at path `docs/testing/<milestone>.md` (mirrors how `docs/use_cases/*.md` fans out).
 > - **The thin PRD is a thin projection, not an authored origin** — it lives on the tracker (not a repo file), **links** spine IDs (`FR/UC/BR/ADR`) and duplicates **no** spine content; it authors fresh only the module-decomposition and testing-decisions sections. **One PRD per milestone.**
 
 ### Production Sequence
 
-| Artifact                       | Phase | Produced by                     |
-| ------------------------------ | ----- | ------------------------------- |
-| `docs/testing/<milestone>.md`  | 4     | `testing-strategy`              |
-| thin PRD (lives on the tracker)| 4     | `spec-to-prd`                   |
+| Artifact                        | Phase | Produced by        |
+| ------------------------------- | ----- | ------------------ |
+| `docs/testing/<milestone>.md`   | 4     | `testing-strategy` |
+| thin PRD (lives on the tracker) | 4     | `spec-to-prd`      |
 
 ### Content
 
-| Artifact                       | Phase | Content                                                                                                                                  |
-| ------------------------------ | ----- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `docs/testing/<milestone>.md`  | 4     | Project-specific testing strategy (module/test-surface priorities, test-double policy at the real boundaries, prior art); each entry opens `Re: NFR-###` / `Re: C-###` (references thresholds, never restates them); references the `tdd` skill for universal philosophy. One file per milestone. |
-| thin PRD (lives on the tracker)| 4     | The vanilla 7-section PRD template (Problem Statement · Solution · User Stories · Implementation Decisions · Testing Decisions · Out of Scope · Further Notes); **links** spine IDs and duplicates no spine content — only module + testing decisions authored fresh. One PRD per milestone. |
+| Artifact                        | Phase | Content                                                                                                                                                                                                                                                                                           |
+| ------------------------------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `docs/testing/<milestone>.md`   | 4     | Project-specific testing strategy (module/test-surface priorities, test-double policy at the real boundaries, prior art); each entry opens `Re: NFR-###` / `Re: C-###` (references thresholds, never restates them); references the `tdd` skill for universal philosophy. One file per milestone. |
+| thin PRD (lives on the tracker) | 4     | The vanilla 7-section PRD template (Problem Statement · Solution · User Stories · Implementation Decisions · Testing Decisions · Out of Scope · Further Notes); **links** spine IDs and duplicates no spine content — only module + testing decisions authored fresh. One PRD per milestone.      |
 
 ### Delta Information
 
-| Artifact                       | Phase | New information (not present in input artifacts)                                                                                          |
-| ------------------------------ | ----- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `docs/testing/<milestone>.md`  | 4     | The project-specific *how* of verification — module/test-surface picks, test-double policy at the real boundaries, prior art — none of which exists upstream (thresholds live in the NFRs; universal philosophy lives in `tdd`) |
-| thin PRD (lives on the tracker)| 4     | Authors fresh only the module-decomposition and testing-decisions sections; everything else is a projection of the existing spine        |
+| Artifact                        | Phase | New information (not present in input artifacts)                                                                                                                                                                                |
+| ------------------------------- | ----- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `docs/testing/<milestone>.md`   | 4     | The project-specific *how* of verification — module/test-surface picks, test-double policy at the real boundaries, prior art — none of which exists upstream (thresholds live in the NFRs; universal philosophy lives in `tdd`) |
+| thin PRD (lives on the tracker) | 4     | Authors fresh only the module-decomposition and testing-decisions sections; everything else is a projection of the existing spine                                                                                               |
 
 ### Redundancies
 
-| Artifact                       | Phase | Redundant information (restates content from upstream input artifacts)                                                                    |
-| ------------------------------ | ----- | ---------------------------------------------------------------------------------------------------------------------------------------- |
-| `docs/testing/<milestone>.md`  | 4     | N/A — references `NFR-###`/`C-###` thresholds by ID, never restates them; references the `tdd` skill for universal philosophy rather than copying it |
-| thin PRD (lives on the tracker)| 4     | Deliberately duplicates **nothing** — it **links** spine IDs (`FR/UC/BR/ADR`) instead of restating their content                          |
-
+| Artifact                        | Phase | Redundant information (restates content from upstream input artifacts)                                                                               |
+| ------------------------------- | ----- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `docs/testing/<milestone>.md`   | 4     | N/A — references `NFR-###`/`C-###` thresholds by ID, never restates them; references the `tdd` skill for universal philosophy rather than copying it |
+| thin PRD (lives on the tracker) | 4     | Deliberately duplicates **nothing** — it **links** spine IDs (`FR/UC/BR/ADR`) instead of restating their content                                     |

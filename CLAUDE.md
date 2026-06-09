@@ -9,7 +9,8 @@
 
 ## Read only when relevant
 
-- `skills/` — read only when creating, refactoring, or debugging a skill.
+- `skills/` — read only when creating, refactoring, or debugging a skill. **Skills must stay project-agnostic** — never insert ai-mail-specific content (names, paths, domain terms, file references). See `skills/CLAUDE.md`.
+- `skills/skillfactory/` — background docs and reviews used when designing or evolving skills; read when authoring or overhauling skills.
 
 ## Agent skills
 

@@ -3,28 +3,34 @@
 Next step to continue, see unchecked "[ ]" term
 
 setup- review created artifacts and how to use them
-  - what are the input artifacts for the vanilla pocock skills
-    - prototype 
-      o input: from codebase, prompt or user will be asked
-      o output: throwaway prototype
-    - to-prd 
-      o input: from conversation context, codebase, CONTEXT.md, ADRs
-      o output: a PRD published as an issue
-    - to-issues 
-      o input: plan/spec/PRD
-      o output: multiple issues
-    - tdd
-      o input: issue/slice/PRD, CONTEXT.md, ADRs
-      o output: production code + tests, one vertical slice at a time
-  - how to change the vanilla pocock skills to take benefit from the new artifacts
-    o folder agents is missing (spine, e.g. issue-tracker)
-    o ask AI how to adjust either existing skills or pocock skills to match
 
-   
-- [~] Migrate to use pocock skills
+- what are the input artifacts for the vanilla pocock skills
+  
+  - prototype 
+    o input: from codebase, prompt or user will be asked
+    o output: throwaway prototype
+  - to-prd 
+    o input: from conversation context, codebase, CONTEXT.md, ADRs
+    o output: a PRD published as an issue
+  - to-issues 
+    o input: plan/spec/PRD
+    o output: multiple issues
+  - tdd
+    o input: issue/slice/PRD, CONTEXT.md, ADRs
+    o output: production code + tests, one vertical slice at a time
+
+- how to change the vanilla pocock skills to take benefit from the new artifacts
+  o folder agents is missing (spine, e.g. issue-tracker)
+  o ask AI how to adjust either existing skills or pocock skills to match
+
+- [x] Migrate to use pocock skills, step 1
+  
   - [x] setup-matt-pocock-skills, check result (some artifacts already exist, e.g. CONTEXT.md)
-  - [~] develop strategy for ai-mail (see pocock_workflow.md)
-    - [~] to-prd
+  
+  - [x] develop strategy for ai-mail (see pocock_workflow.md)
+    
+    - [x] to-prd
+      
           - to-prd artifacts
             IN:  conversation context + codebase + `CONTEXT.md` glossary + ADRs (+ prototype answer/snippets) 
             OUT: a **PRD** published as an issue on the tracker, labelled `ready-for-agent`
@@ -44,23 +50,61 @@ setup- review created artifacts and how to use them
             - what other options exist to streamline to-prd and the existing skillset/artifacts
             Create a document plan/to-prd-review.md with the results
           - [x] create/update skills
-          - [ ] existing skills do not need to be updated?????
+          - [x] existing skills do not need to be updated?????
                 PROMPT:
                 In the current local working tree of this repo, new skills have been created (see create_skills.md and to-prd-review.md).
                 Also some documentation artifacts have been updated (see ### Part A — adjust the existing skillset in to-prd-review.md).
                 The previously existing skills (e.g. domain-requirements, domain-model, usecase-spec etc.) had not been modified.
                 Please check if they would also need some adaptations to match/align with the newly created ones.
                 Add your findings (in case there are some) at the end of to-prd-review.md into a new section.
-    - [ ] should some artifacts be located in a <milestone> subfolder (similar to docs/testing/<milestome>)?
-    - [ ] test the new skills (ok, without to-issues and tdd adjusted?)
-    - [ ] see section `to-issues` / `tdd` — forward note (handled later) in to-prd-review.md
-    - [ ] update/sync skills_overview.md
-    - [ ] update skills_background_info.md
-    - [ ] other pocock skills (e.g. improve-codebase-architecture, prototype, ...)
-    - [ ] update workflow
+
+- [x] Analyze the term milestone
+  
+      - where are milestones defined (M# are modules, not milestones), what is a milestone (definition?), missing step in the workflow?
+      - pocock skills/workflow seems not to use the term milestone (see matt_pocock_skills folder, pocock_workflow.md etc.)
+      - testing-strategy skill uses milestones, which skill does also use this term?
+      - where in the workflow should a milestone be defined? how?
+      - are issues related to a milestone? should they also be stored in a milestone folder?
+      - should there be a milestone folder and below this folder the other ortifacts (from plan, docs, testing)?
+      - alternative approach?
+      - store the analyzation result in plan/milestone_review.md
+
+- [ ] Review/cleanup all skills from ai-mail specific stuff (e.g. domain-requirements)
+  
+  - [ ] missing
+    - [ ] which parts of 01-foundation etc. will be part of requirements.md
+          (==> that would become a milestone)
+    - [ ] where to define which of the features/modules will become part of the next
+          milestone. Only this part then shall become part of requirements.md
+    - [ ] The ai-mail specific part inside domain-requirements skill must be
+          injected somehow? How was that done today?
+          Can we find a general rule for that?
+    - [ ] PROMPT
+          The workflow and skillset has to be adjusted.
+          The domain-requirements skill is such candidate to review and there is no "next milestone" handling in the workflow.
+          The domain-requirements skill shall be generic for any project, but it looks as if it is specifically related to ai-mail.
+          Also the artifacts created (in the docs folder) seem to somehow mix up the modules with possible milestones.
+          Please store the analyzation result in skill_genericity_review.md.
+          Also add todo-items that can be executed automatically at the end of this document.
+          Use the same orchestration rules as in to-prd-review, section "### Part A — adjust the existing skillset" for automatic adjustments. Do not start the adjustments.
+          
 
 
 
+
+- [ ] other skills
+
+- [ ] do we need the docs/testing/<milestone>.md artifact or just docs/testing.md? See plan/milestone_review.md
+
+- [ ] Migrate to use pocock skills, step 2
+  
+  - [ ] should some artifacts be located in a <milestone> subfolder (similar to docs/testing/<milestome>)?
+  - [ ] test the new skills (ok, without to-issues and tdd adjusted?)
+  - [ ] see section `to-issues` / `tdd` — forward note (handled later) in to-prd-review.md
+  - [ ] update/sync skills_overview.md
+  - [ ] update skills_background_info.md
+  - [ ] other pocock skills (e.g. improve-codebase-architecture, prototype, ...)
+  - [ ] update workflow
 
 - entity-model: class design?
 
@@ -71,7 +115,9 @@ setup- review created artifacts and how to use them
   o list of independent modules (public API/Classes/Objects, test-surfaces, grey modules)
 
 - use openspec, benefits?
-  - C:\PROJ\github\OpenSpec.1.4.1
+  - siehe auch: https://github.com/intent-driven-dev/intent-driven-template/tree/main  
 
+  
+  - C:\PROJ\github\OpenSpec.1.4.1
 
 - [ ] potential next steps: see todo_ideas.md

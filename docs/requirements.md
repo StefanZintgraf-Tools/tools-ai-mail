@@ -67,6 +67,7 @@ Boundaries imposed on the solution.
 
 - **NFR-001 threshold value** — the `min(type, location)` confidence cutoff that routes items to
   `_review/` is not fixed. Set it **empirically against the golden corpus** (e.g. ~0.7), not by guess.
+
 - **C-007 / mail-access method** — IMAP vs Graph vs PST vs Outlook vs Kerio is still deferred, but
   **no longer blocks anything**: NFR-002's dedup key is content-hash and the provenance key uses the
   portable `Message-ID`. The choice can be made at the use-case spec / build step on its own merits.
