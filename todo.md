@@ -72,18 +72,22 @@ setup- review created artifacts and how to use them
 - [ ] switch to OpenSpec? 
 
 - [~] Review/cleanup all skills from ai-mail specific stuff (e.g. domain-requirements)
+  
   - [~] missing
   
   - [x] which parts of 01-foundation etc. will be part of requirements.md
     
         (==> that would become a milestone)
+  
   - [x] where to define which of the features/modules will become part of the next
     
         milestone. Only this part then shall become part of requirements.md
+  
   - [x] The ai-mail specific part inside domain-requirements skill must be
     
         injected somehow? How was that done today?
         Can we find a general rule for that?
+  
   - [x] PROMPT
     
         The workflow and skillset has to be adjusted.
@@ -94,13 +98,17 @@ setup- review created artifacts and how to use them
         Please store the analyzation result in skills/skillfactory/skill_genericity_review.md.
         Also add todo-items that can be executed automatically at the end of this document.
         Use the same orchestration rules as in to-prd-review, section "### Part A — adjust the existing skillset" for automatic adjustments. Do not start the adjustments.
+  
   - [ ] test new declare-milestone skill
     
         - Q: where will ideas for the future land?
+  
   - [ ] test new domain-requirements skill
     
         - Vergleich requirements.md alt/neu
+  
   - [ ] is the grill-with-docs at the right location?
+  
   - [ ] include all other skills including work-items in skill_genericity_review.md
 
 - [ ] Review/cleanup remaining skills from ai-mail specific stuff (e.g. domain-requirements) 
@@ -125,10 +133,18 @@ setup- review created artifacts and how to use them
   o object-oriented design?
   o list of independent modules (public API/Classes/Objects, test-surfaces, grey modules)
 
-- use openspec, benefits?
+- [~] use openspec, benefits?  → ANALYSIS DONE (standalone project): C:\PROJ\ai-knowhow\coding\OpenSpecEngine\docs\openspec_migration.md
   
-  - siehe auch: https://github.com/intent-driven-dev/intent-driven-template/tree/main  
-
-- C:\PROJ\github\OpenSpec.1.4.1
+  - Decision: migrate the skillset/workflow onto OpenSpec 1.4.1 as a custom schema, fused with the
+    genericity refactor. 5 decisions locked — ADRs in C:\PROJ\ai-knowhow\coding\OpenSpecEngine\docs\adr\0001–0005:
+    - DEC1 OpenSpec replaces workflow.md as the authoritative orchestrator
+    - DEC2 two milestones: M1 Basic/Pure (in-repo) → M2 Full/Hybrid (+ GitHub bridge)
+    - DEC3 keep stable FR/UC/BR-### IDs in templates
+    - DEC4 adopt OpenSpec delta/specs model (M1 = 10-node schema, adds `specs` node)
+    - DEC5 fuse genericity refactor + migration in one project-agnostic pass (Option D)
+  - Build NOT started — runs together with the genericity refactor; cheap opener = M1-A0 + M1-A1.
+  - migration = standalone project at C:\PROJ\ai-knowhow\coding\OpenSpecEngine (ai-mail referenced read-only; new artifacts created there).
+  - siehe auch: https://github.com/intent-driven-dev/intent-driven-template/tree/main
+  - C:\PROJ\github\OpenSpec.1.4.1
 
 - [ ] potential next steps: see todo_ideas.md

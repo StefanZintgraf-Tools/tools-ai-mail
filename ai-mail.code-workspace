@@ -23,6 +23,9 @@
 		},
 		{
 			"path": "../github/intent-driven-dev"
+		},
+		{
+			"path": "../ai-knowhow/coding/OpenSpecEngine"
 		}
 	],
 	"settings": {}
