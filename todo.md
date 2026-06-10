@@ -69,30 +69,41 @@ setup- review created artifacts and how to use them
       - alternative approach?
       - store the analyzation result in plan/milestone_review.md
 
-- [ ] Review/cleanup all skills from ai-mail specific stuff (e.g. domain-requirements)
+- [ ] switch to OpenSpec? 
+
+- [~] Review/cleanup all skills from ai-mail specific stuff (e.g. domain-requirements)
+  - [~] missing
   
-  - [ ] missing
-    - [ ] which parts of 01-foundation etc. will be part of requirements.md
-          (==> that would become a milestone)
-    - [ ] where to define which of the features/modules will become part of the next
-          milestone. Only this part then shall become part of requirements.md
-    - [ ] The ai-mail specific part inside domain-requirements skill must be
-          injected somehow? How was that done today?
-          Can we find a general rule for that?
-    - [ ] PROMPT
-          The workflow and skillset has to be adjusted.
-          The domain-requirements skill is such candidate to review and there is no "next milestone" handling in the workflow.
-          The domain-requirements skill shall be generic for any project, but it looks as if it is specifically related to ai-mail.
-          Also the artifacts created (in the docs folder) seem to somehow mix up the modules with possible milestones.
-          Please store the analyzation result in skill_genericity_review.md.
-          Also add todo-items that can be executed automatically at the end of this document.
-          Use the same orchestration rules as in to-prd-review, section "### Part A — adjust the existing skillset" for automatic adjustments. Do not start the adjustments.
-          
+  - [x] which parts of 01-foundation etc. will be part of requirements.md
+    
+        (==> that would become a milestone)
+  - [x] where to define which of the features/modules will become part of the next
+    
+        milestone. Only this part then shall become part of requirements.md
+  - [x] The ai-mail specific part inside domain-requirements skill must be
+    
+        injected somehow? How was that done today?
+        Can we find a general rule for that?
+  - [x] PROMPT
+    
+        The workflow and skillset has to be adjusted.
+        The domain-requirements skill is such candidate to review and there is no "next milestone" handling in the workflow.
+        The domain-requirements skill shall be generic for any project, but it looks as if it is specifically related to ai-mail.
+        One question then is how to ingest the needed information, so the result will be similar or even better for what currently was created/stored in requirements.md (currently, the skill itself includes such information).
+        Also the artifacts created (in the docs folder) seem to somehow mix up the modules with possible milestones.
+        Please store the analyzation result in skills/skillfactory/skill_genericity_review.md.
+        Also add todo-items that can be executed automatically at the end of this document.
+        Use the same orchestration rules as in to-prd-review, section "### Part A — adjust the existing skillset" for automatic adjustments. Do not start the adjustments.
+  - [ ] test new declare-milestone skill
+    
+        - Q: where will ideas for the future land?
+  - [ ] test new domain-requirements skill
+    
+        - Vergleich requirements.md alt/neu
+  - [ ] is the grill-with-docs at the right location?
+  - [ ] include all other skills including work-items in skill_genericity_review.md
 
-
-
-
-- [ ] other skills
+- [ ] Review/cleanup remaining skills from ai-mail specific stuff (e.g. domain-requirements) 
 
 - [ ] do we need the docs/testing/<milestone>.md artifact or just docs/testing.md? See plan/milestone_review.md
 
@@ -115,9 +126,9 @@ setup- review created artifacts and how to use them
   o list of independent modules (public API/Classes/Objects, test-surfaces, grey modules)
 
 - use openspec, benefits?
+  
   - siehe auch: https://github.com/intent-driven-dev/intent-driven-template/tree/main  
 
-  
-  - C:\PROJ\github\OpenSpec.1.4.1
+- C:\PROJ\github\OpenSpec.1.4.1
 
 - [ ] potential next steps: see todo_ideas.md

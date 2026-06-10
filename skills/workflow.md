@@ -22,19 +22,24 @@ Run once per repo, before Phase 1. Scaffolds the per-repo config the external ma
 assume (issue tracker, triage labels, domain-doc layout) so `to-prd`, `to-issues`, `triage`, and the
 domain-reading skills know where to look.
 
-| #   | Step                                                    | Type     | In → Out                                                                                       |
-| --- | ------------------------------------------------------- | -------- | ---------------------------------------------------------------------------------------------- |
-| 0   | `/setup-matt-pocock-skills` — scaffold per-repo config  | external | repo state → `## Agent skills` block in `CLAUDE.md` + `docs/agents/{issue-tracker,triage-labels,domain}.md` |
+| #   | Step                                                   | Type     | In → Out                                                                                                    |
+| --- | ------------------------------------------------------ | -------- | ----------------------------------------------------------------------------------------------------------- |
+| 0   | `/setup-matt-pocock-skills` — scaffold per-repo config | external | repo state → `## Agent skills` block in `CLAUDE.md` + `docs/agents/{issue-tracker,triage-labels,domain}.md` |
 
 ## Phase 1 · Inception → vision
 
-| #   | Step                                                       | Type      | In → Out                                                            |
-| --- | ---------------------------------------------------------- | --------- | ------------------------------------------------------------------- |
-| 1   | bmad brainstorming (AI-recommended method, Pareto)         | HITL      | — → `painlist.md`, `00-foundation.md`                               |
-| 2   | Generate the vision from painlist.md, 00_foundation.md     | authoring | inception files → `docs/vision.md`                                  |
-|     | according to skills/vision_template.md                     |           |                                                                     |
-| 3   | bmad brainstorm vision goals (method: Assumption Reversal) | HITL      | `docs/vision.md` → `01-foundation.md` (replaces `00-foundation.md`) |
+| #   | Step                                                                                      | Type      | In → Out                                                                                                                              |
+| --- | ----------------------------------------------------------------------------------------- | --------- | ------------------------------------------------------------------------------------------------------------------------------------- |
+| 1   | bmad brainstorming (AI-recommended method, Pareto)                                        | HITL      | — → `painlist.md`, `00-foundation.md`                                                                                                 |
+| 2   | `declare-milestone` — declare + record the milestone from the capability/build-order plan | authoring | `00-foundation.md` (build order) + already-shipped state → declared milestone (name, committed capability/primitive-set, predecessor) |
+| 3   | Generate the vision **for the declared milestone** from painlist.md, 00_foundation.md     | authoring | declared milestone + inception files → `docs/vision.md`                                                                               |
+|     | according to skills/vision_template.md                                                    |           |                                                                                                                                       |
+| 4   | bmad brainstorm vision goals (method: Assumption Reversal)                                | HITL      | `docs/vision.md` → `01-foundation.md` (replaces `00-foundation.md`)                                                                   |
 
+> The milestone is **declared up front** here (step 2), before the vision — the vision is already
+> milestone-bound, so the scope is fixed once and fed into the vision. There is **no late
+> Status-split reconstruction** downstream; loop-back when a milestone ships re-runs
+> `declare-milestone` to pick the next one and start a fresh vision for it.
 
 ## Phase 2 · Glossary → requirements  ← the sequencing fix lives here
 
@@ -100,15 +105,15 @@ The spec spine ends at `trace-check`. Continue with the PRD chain below. **Loop 
 per in-scope milestone** — one PRD per milestone (steps 1–4), pulling only that milestone's
 non-deferred, in-scope requirements. `to-issues` → `tdd` run afterward (still external; handled later).
 
-| #   | Step                     | Type      | Note                                                                                                                                                  |
-| --- | ------------------------ | --------- | ---------------------------------------------------------------------------------------------------------------------------------------------------- |
-| 0   | `prototype` *(optional)* | external  | resolve the #1 open unknown (interaction surface + plan/apply state machine) before committing.                                                      |
-| 1   | `spec-to-prd`            | authoring | read the spine, project it onto the tracker; **interactive module sketch (HITL)** — confirm modules + which want tests.                              |
-| 2   | `testing-strategy`       | authoring | invoked by `spec-to-prd` right after the module sketch — author `docs/testing/<milestone>.md` from the just-decided modules + NFRs + chosen stack.   |
+| #   | Step                     | Type      | Note                                                                                                                                                                                                                                                    |
+| --- | ------------------------ | --------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 0   | `prototype` *(optional)* | external  | resolve the #1 open unknown (interaction surface + plan/apply state machine) before committing.                                                                                                                                                         |
+| 1   | `spec-to-prd`            | authoring | read the spine, project it onto the tracker; **interactive module sketch (HITL)** — confirm modules + which want tests.                                                                                                                                 |
+| 2   | `testing-strategy`       | authoring | invoked by `spec-to-prd` right after the module sketch — author `docs/testing/<milestone>.md` from the just-decided modules + NFRs + chosen stack.                                                                                                      |
 | 3   | `spec-to-prd`            | authoring | draft the **thin PRD** (Testing Decisions links `docs/testing/<milestone>.md`); **run the composed lenses on the draft** (`ubiquitous-language-guard`, `hidden-constraint-sweep`, `adr-threshold-gate`); publish to the tracker with `ready-for-agent`. |
-| 4   | `tracker-trace-check`    | lens      | repo↔tracker drift audit (dangling refs + forward coverage PASS/FAIL; semantic divergence as `needs-human-confirmation`).                            |
-| —   | `to-issues`              | external  | break the PRD into tracer-bullet vertical-slice issues. *(handled later)*                                                                            |
-| —   | `tdd`                    | external  | implement issues red-green-refactor. *(handled later)*                                                                                               |
+| 4   | `tracker-trace-check`    | lens      | repo↔tracker drift audit (dangling refs + forward coverage PASS/FAIL; semantic divergence as `needs-human-confirmation`).                                                                                                                               |
+| —   | `to-issues`              | external  | break the PRD into tracer-bullet vertical-slice issues. *(handled later)*                                                                                                                                                                               |
+| —   | `tdd`                    | external  | implement issues red-green-refactor. *(handled later)*                                                                                                                                                                                                  |
 
 > **Settled decisions the Phase-4 steps assume** (see `plan/to-prd-review.md` § Settled decisions):
 > (a) **Thin PRD** — it *links* spine IDs (`FR/UC/BR/ADR`) and duplicates **no** spine content; only the

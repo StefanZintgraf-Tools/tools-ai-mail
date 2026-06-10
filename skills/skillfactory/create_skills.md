@@ -385,6 +385,42 @@ appear only as the test case.
   `needs-human-confirmation`, not auto-fixed; no tracker write without HITL; convention-discovery reused
   from `trace-check`, not duplicated.
 
+### - [x] 11 · `declare-milestone`  (authoring — new up-front step; before the vision)
+- **Decision/rationale:** a milestone is currently never *declared* — it is reconstructed from scattered
+  signals (a Pareto-defer step, a requirements Status split), an emergent property resolved
+  opportunistically late in the chain; this breaks once there are 3+ deliverable slices with no single
+  open/deferred line to separate them. A **milestone** is the unit of delivery — the in-scope slice of the
+  spec spine shipped by **one** iteration of the PRD loop (one thin PRD + one test plan + its tracer-bullet
+  issues); it MAY coincide with a single module but is a *delivery* boundary, not a *functionality*
+  boundary (one milestone can bundle several modules, or split one across iterations). Because the vision
+  is already milestone-bound (it narrows the product to one capability), the milestone must be declared
+  **up front, before the vision** — the most consequential of three nested scope levels (product →
+  capability/milestone here; capability → in-milestone slice at `pareto-scope-cut`; within-milestone build
+  order at the PRD loop). This adds only the up-front declaration: it does **not** fork the spine (no
+  per-milestone requirements/entity-model/use-cases), and the declared milestone name maps onto the
+  tracker's native milestone object at publish time.
+- **gr:** gr_greenfield (Pareto / one-slice-at-a-time — declare exactly the next milestone, not a roadmap)
+  + AIUP-native build-order discipline (respect dependencies). Stays **generic** — no project-specific
+  capability/primitive/milestone identifiers in the SKILL.md body (skills/CLAUDE.md).
+- **In:** the project's capability / build-order plan (arg → a conventional plan path → ask if genuinely
+  ambiguous — resolved by a fallback chain mirroring the glossary convention) describing capabilities,
+  their reach/effort and dependencies, and a build order; **plus** what has already shipped (the
+  already-declared / completed milestones).
+- **Does:** select the **next** milestone honouring build-order dependencies (only capabilities whose
+  predecessors have shipped are eligible), Pareto (one slice at a time — declare a single next milestone,
+  never a roadmap), and the already-shipped state; record it **durably** in a project-designated location
+  — its name, the capability / primitive-set it commits to, and its predecessor (the milestone it builds
+  on); **HITL-confirm** the choice before recording. On loop-back (when milestone N ships) it re-runs and
+  picks N+1, now-unlocked capabilities included — so milestone ≡ one vision ≡ one PRD.
+- **Out:** one **declared milestone** (name + committed capability/primitive-set + predecessor) recorded
+  durably, which becomes the scope-defining input to the vision step — so the vision is bound to a
+  declared milestone, not an implicit one.
+- **POST self-check:** exactly **one** milestone declared (not a roadmap); build-order dependencies
+  respected (no milestone declared ahead of an unshipped predecessor); recorded with name + committed
+  capability/primitive-set + predecessor in the designated location; choice HITL-confirmed; no
+  project-specific identifiers baked into the SKILL.md body (generic body — capabilities/plan/milestone
+  arrive only via the arg / fallback chain / generic placeholders).
+
 ## Composition model
 
 By **convention**, not a heavyweight orchestrator (Pareto; `gr_greenfield` G5 = extract shared

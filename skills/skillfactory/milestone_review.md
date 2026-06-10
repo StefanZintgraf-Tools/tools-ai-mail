@@ -9,6 +9,11 @@ be milestone-scoped, and how?
 (`spec-to-prd`, `testing-strategy`, `tracker-trace-check`), the pocock `to-prd` / `to-issues`, and
 `plan/to-prd-review.md`.
 
+> **Note (2026-06-09).** §3.5 (added later) supersedes the original §3 recommendation: the milestone is
+> bound at **Phase 1** (the vision is already milestone-scoped), so it must be **declared up front by a
+> `declare-milestone` skill that feeds the vision** — not split out late at Phase 3.5. Cross-referenced
+> from [`skill_genericity_review.md`](skill_genericity_review.md).
+
 ---
 
 ## TL;DR
@@ -128,20 +133,79 @@ the case `spec-to-prd` handles by **"ask the human… only if genuinely ambiguou
 ([spec-to-prd/SKILL.md](../skills/spec-to-prd/SKILL.md):60). That "ask" is a symptom of the missing
 declaration, not a feature.
 
-### Recommended placement of an explicit step
-Add a lightweight **"declare milestones"** step at the **end of Phase 3** (after `trace-check`, before
-the Phase-4 PRD loop), because by then the in-scope FR/UC set is stable and traced:
+→ The fix is **not** a late Phase-3.5 step. The milestone is in fact chosen far earlier — **the vision
+is already milestone-bound** — so it must be *declared* at Phase 1, before the vision. §3.5 is the
+recommendation.
 
-> **Phase 3 → 3.5 · Declare milestones (HITL).** From the stabilized `requirements.md` `Status` split
-> and the [01-foundation.md](01-foundation.md) build order, write an explicit, ordered milestone list
-> into **one canonical place** (recommended: a short `## Milestones` section at the top of
-> `requirements.md`, since that is the doc whose `Status` column already carries scope). Each milestone
-> entry: name (e.g. `M2 · Attachment Auto-Router`), the FR/UC IDs it commits to, and its predecessor.
-> The Phase-4 loop then *reads* this list instead of re-deriving scope each iteration.
+---
 
-This keeps the skills generic (they still resolve the marker via the `Status`/scope chain — the new
-section just makes that chain unambiguous and explicit) while giving the project a single authoritative
-answer to "what are our milestones and in what order."
+## 3.5 · Recommendation — declare the milestone at Phase 1, before the vision
+
+### Evidence: the vision is already milestone-bound
+
+[`docs/vision.md`](../../docs/vision.md) is titled **"Vision: M2 · Attachment Auto-Router"** and its
+Scope section explicitly excludes the other capabilities: *"M1 / M3 / M4 / M5 / M6 capabilities — out
+of scope for this product."* So the product was narrowed to **one capability (M2)** at the **vision**
+step, and [`docs/requirements.md`](../../docs/requirements.md) merely **inherits** that scope — it
+covers 1 of 7 capabilities and ~5 of ~32 `F##` primitives from [01-foundation.md](01-foundation.md),
+*by design, not omission*.
+
+### Consequence: a late split is the wrong fix
+
+A late "declare milestones" step would assume `requirements.md` is a **product-wide, multi-milestone**
+catalog needing splitting. It is not — it is single-capability **before Phase 3 begins**, because the
+vision already chose. Such a step is therefore nearly **vacuous**: there is only ever one milestone in
+scope, the one the vision picked. The real decision lives **upstream of the vision**.
+
+### Three nested scope levels (where each narrowing actually happens)
+
+| Level | Narrowing | Where it happens today | Owned by a skill? |
+|---|---|---|---|
+| **1 · product → capability/module** | "ship M2 first, not M1/M3/…" | **Phase 1** — `01-foundation.md` reach/squeeze prose (*"start with M2"*) + the **free-style vision-generation prompt** that inherits it | **No** |
+| **2 · capability → milestone slice** | the `M2`-vs-`M2b` `Open`/`Deferred` cut inside `requirements.md` | **Phase 3** — `pareto-scope-cut`'s `## Scope split` | Yes (`pareto-scope-cut`) |
+| **3 · within-milestone** | per-iteration build order | Phase 4 loop | n/a |
+
+Level 1 — the most consequential scope decision in the whole chain — is the orphan. It is made by a
+template + a hand-written prompt (the [`workflow.md`](../workflow.md) Phase-1 step *"Generate the
+vision … according to `vision_template.md`"*), with **no skill, no guardrails, and no durable record**
+beyond a dated prose line at the bottom of `01-foundation.md`. This is also the deepest form of the
+*"no next-milestone handling"* gap the original `todo.md` sensed: when M2 ships, **nothing** drives
+selecting and scoping M2b — its vision would be hand-prompted exactly as M2's was.
+
+### Recommendation: a Phase-1 `declare-milestone` skill that feeds the vision
+
+Add a skill (working name **`declare-milestone`**; naming is a detail — cf. `select-milestone`) that
+runs **between Phase 1 step 1 (foundation) and step 2 (vision)**:
+
+- **In:** the project's capability/build-order map (generic — capabilities, reach/effort,
+  **dependencies**, build order; **no `M#`/`F##` hard-coding**, per [`skills/CLAUDE.md`](../CLAUDE.md)),
+  plus what has already shipped.
+- **Does:** select the **next** milestone respecting dependencies (e.g. *"M2's substrate must exist
+  before M2b"*), Pareto (one slice at a time), and shipped state; record it durably — the glossary
+  **Milestone** definition (§2) + a one-line milestone register (name, the capability/`F`-set it commits
+  to, predecessor).
+- **Out:** a **declared milestone** that becomes the **scope-defining input to the vision template** —
+  so the vision is bound to a *declared* milestone, not an implicit one.
+
+**The next-milestone loop-back this creates:** when milestone *N* ships, re-run `declare-milestone` → it
+picks *N+1* (now-unlocked capabilities included) → a fresh vision for *N+1* → the spine chain repeats.
+This makes **milestone ≡ one vision ≡ one PRD** clean end-to-end, matching the *"one PRD per milestone"*
+settled decision downstream.
+
+### What changes in the workflow
+
+1. **Insert a Phase-1 step** before vision generation: `declare-milestone` → declare the milestone +
+   record it.
+2. **Reword the vision step** ([`workflow.md`](../workflow.md) Phase 1 step 2) from *"Generate the
+   vision … according to `vision_template.md`"* to *"Generate the vision **for the declared milestone**
+   …"* — making the milestone an explicit input, not a free-style inheritance.
+3. **No late split step is needed** — the milestone is declared and recorded at Phase 1, so the
+   `Status`-column reconstruction §3 diagnoses is no longer the only signal.
+
+> **Still consistent with §5 (no spine fork) and §4 (GitHub Milestone).** `declare-milestone` records a
+> milestone; it does **not** fork `requirements.md` / `entity_model.md` / `use_cases/` per milestone
+> (§5 stands), and the recorded milestone name is what maps onto the GitHub native Milestone at publish
+> time (§4 stands). It only adds the **up-front declaration**; the spine stays single.
 
 ---
 
@@ -239,9 +303,10 @@ spine is not.
 1. **Glossary** — add the **Milestone** definition (§2) to [docs/CONTEXT.md](../docs/CONTEXT.md), with
    the "module vs milestone" distinction and an avoid-list entry. *(ubiquitous-language-guard would flag
    "milestone" as a silently-invented term today — this closes that.)*
-2. **Workflow** — insert **Phase 3.5 · Declare milestones (HITL)** into
-   [skills/workflow.md](../skills/workflow.md) (§3): write an ordered `## Milestones` section into
-   `requirements.md` from the `Status` split + [01-foundation.md](01-foundation.md) build order.
+2. **Workflow** — add a **Phase-1 `declare-milestone` skill** (§3.5) that runs before vision generation
+   and feeds the vision its scope; reword the [workflow.md](../skills/workflow.md) Phase-1 vision step to
+   *"for the declared milestone."* The milestone is declared up front, not re-derived from the `Status`
+   column.
 3. **Tracker convention** — add the **GitHub native Milestone** convention to
    [docs/agents/issue-tracker.md](../docs/agents/issue-tracker.md) (§4): PRD + its slice issues all
    assigned to a Milestone named after the scope marker.
@@ -250,6 +315,101 @@ spine is not.
 5. *(Optional)* This term-introduction + the GitHub-Milestone mapping may be **ADR-worthy**
    (hard-to-reverse vocabulary + tracker-structure decision) — consider running `adr-threshold-gate` on
    this review.
+
+---
+
+## 8 · Autonomous build — apply the `declare-milestone` recommendation (D1–D5)
+
+> In a fresh session, tell the agent: *"apply the D1–D5 build in
+> `skills/skillfactory/milestone_review.md` using sub-agents."* This block is the complete,
+> self-contained spec for that run. Every design choice is resolved in §2–§3.5 (the definition, the
+> Phase-1 placement, the generic I/O, the next-milestone loop-back) so the run — driver **and**
+> sub-agents — needs **no user interaction**.
+
+### Orchestration rule (same as `to-prd-review.md` Part A / `create_skills.md`)
+
+Carried out **autonomously, by the `create_skills.md` orchestration rule**: a single **driver session**
+spawns **one cold sub-agent per unit**, runs them **strictly sequentially in number order (D1 → D2 → D3
+→ D4 → D5), never in parallel** — and flips each `- [ ]` to `- [x]` **only after** that sub-agent
+reports its POST self-check passed. On a blocker the driver leaves the box `- [ ]`, appends
+`> blocked: <reason>` after the heading, continues with the rest, and surfaces all blockers at the end.
+
+**Ordering across parts:** D1 appends the build spec that D5 consumes, so **all of Part A (D1–D4) must
+complete before D5 runs** (mirrors `to-prd-review.md` A4 → Part B). Each unit is **self-contained**: the
+driver hands its sub-agent the matching `D#` block, **plus** §2–§3.5 of this review (the source of every
+change), **plus** the named target file — nothing else.
+
+**No user interaction.** D1–D4 edit skillset *text*; D5 hand-authors a generic SKILL.md. None *run* a
+skill, so no run-time HITL gate fires. If a sub-agent hits a genuinely unspecified choice it **stops and
+records `> blocked:`** — it never asks the user and never guesses.
+
+> **Not autonomous — flagged HITL (excluded from this run).** §7 items **1** (the `docs/CONTEXT.md`
+> **Milestone** glossary definition) and **3** (the `docs/agents/issue-tracker.md` GitHub-Milestone
+> convention) are **project-doc + vocabulary/tracker-structure decisions** that the skillset gates on a
+> human: term introduction runs through `ubiquitous-language-guard`, and both are **ADR-worthy** (§7.5).
+> They are **prerequisites done with a human**, not units here. `declare-milestone` functions without
+> them (it records a milestone generically); they only make the ai-mail docs reflect it.
+
+### Part A — adjust the skillset (documentation-only)
+
+**- [x] D1 · `skills/skillfactory/create_skills.md` — append build spec #11 `declare-milestone`**
+- **File:** [`skills/skillfactory/create_skills.md`](create_skills.md).
+- **Change:** append a `### - [ ] 11 · `declare-milestone`` block in the existing `gr / In / Does / Out /
+  POST` format, continuing the numbering (current max is #10). Content:
+  - **Decision/rationale:** this review's §2–§3.5.
+  - **gr:** stays **generic** — no `M#`/`F##`/project specifics in the SKILL.md (skills/CLAUDE.md);
+    Pareto/one-slice (gr_greenfield) framing for "pick the next milestone."
+  - **In:** the project's capability/build-order plan (arg → a conventional plan path → ask), plus
+    already-shipped state; resolved by a fallback chain mirroring the glossary's.
+  - **Does:** select the **next** milestone honouring build-order **dependencies** + Pareto + shipped
+    state; record it durably (name, the capability/`F`-set it commits to, predecessor) in a
+    project-designated location; HITL-confirm the choice.
+  - **Out:** a **declared milestone** that becomes the scope-defining input to the vision step.
+  - **POST:** one milestone declared (not many); dependencies respected; recorded with name/commitment/
+    predecessor; no project-specific identifiers baked into the SKILL.md body.
+- **Idempotent:** if #11 already exists, verify it matches this format rather than re-appending.
+- **POST:** spec #11 exists as a `### - [ ] 11 · `declare-milestone`` block, numbering continuous from
+  #10, carrying gr/In/Does/Out/POST; no duplicate block.
+
+**- [x] D2 · `skills/workflow.md` — insert the Phase-1 `declare-milestone` step + reword the vision step**
+- **File:** [`skills/workflow.md`](../skills/workflow.md).
+- **Change:** in **Phase 1**, insert a step *before* vision generation: `declare-milestone` — declare +
+  record the milestone from the capability/build-order plan. Reword the existing vision step from
+  *"Generate the vision … according to `vision_template.md`"* to *"Generate the vision **for the declared
+  milestone** …"*. Add a one-line note that the milestone is declared up front (no late `Status`-split
+  reconstruction). Do **not** re-introduce a Phase-3.5 declare step.
+- **POST:** Phase 1 names `declare-milestone` before the vision step; the vision step reads "for the
+  declared milestone"; no Phase-3.5 declare step present.
+
+**- [x] D3 · `skills/skills_overview.md` — add the `declare-milestone` entry**
+- **File:** [`skills/skills_overview.md`](../skills_overview.md).
+- **Change:** add a `## declare-milestone — authoring` entry (purpose / input artifacts / outputs / gr
+  relation) consistent with D1's spec and the other entries; add it to the Contents list in run order
+  (Phase 1, before the vision/requirements entries).
+- **POST:** entry present with purpose/inputs/outputs/gr; listed in Contents; states it emits a declared
+  milestone consumed by the vision step; no project specifics.
+
+**- [x] D4 · `skills/artifacts.md` — add the milestone-register artifact row**
+- **File:** [`skills/artifacts.md`](../skills/artifacts.md).
+- **Change:** add a Phase-1 row for the **declared-milestone record** — **produced by**
+  `declare-milestone`; **location** = the project-designated register (e.g. a `## Milestones` section in
+  a planning doc, *not* a spine fork — see §5); **consumed by** the vision step and the Phase-4 PRD loop.
+- **POST:** the row is present naming producer/location/consumer; it does **not** imply a per-milestone
+  spine fork (consistent with §5).
+
+### Part B — create the skill
+
+**- [x] D5 · `skills/declare-milestone/SKILL.md` — hand-author the generic skill**
+- **File:** new `skills/declare-milestone/SKILL.md` + the `.claude/skills/declare-milestone` junction.
+- **Change:** hand-author per `create_skills.md` "How to build a skill here" (**not** `/make-skill`),
+  building from spec #11 (D1) and §2–§3.5. **Generic body — no `M#`/`F##`/project terms** (skills/CLAUDE.md);
+  project values arrive via args / fallback chains. Frontmatter `name` + trigger-rich `description`
+  ("declare the next milestone", "select the milestone", "what ships next"). Process: resolve the
+  capability/build-order plan → list candidate next milestones honouring dependencies + shipped state →
+  pick the Pareto-minimal next slice → **HITL-confirm** → record (name, capability/`F`-set, predecessor)
+  in the project-designated register → emit it as the vision step's scope input.
+- **POST:** SKILL.md is generic (genericity self-check passes); declares exactly one milestone per run;
+  honours dependencies; records name/commitment/predecessor; junction created.
 
 ---
 

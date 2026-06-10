@@ -8,6 +8,7 @@
 | -------------------------------- | ----- | ------------------------------- |
 | `plan/painlist_*.md`             | 1     | bmad brainstorming              |
 | `plan/archive/00-foundation.md`  | 1     | bmad brainstorming              |
+| declared-milestone record        | 1     | `declare-milestone`             |
 | `docs/vision.md`                 | 1     | vision authoring                |
 | `plan/01-foundation.md`          | 1     | bmad brainstorming vision goals |
 | `docs/CONTEXT.md`                | 2     | `/grill-with-docs`              |
@@ -26,6 +27,10 @@
 | -------------------------------- | ----- | ---------------------------------------------------------------------------------------------- |
 | `plan/painlist_*.md`             | 1     | Catalogued pains per stakeholder group with `P##`/`A##` IDs and priority flags                 |
 | `plan/01-foundation.md`          | 1     | Capability matrix (`M#`/`F##`), reach scores, build-order decision                             |
+| declared-milestone record        | 1     | One durable line per milestone (name, the capability/primitive-set it commits to, predecessor) |
+|                                  |       | in the project-designated register (e.g. a `## Milestones` section of an existing planning     |
+|                                  |       | doc) — additive, NOT a per-milestone fork of the spec spine. Consumed by the vision step (its  |
+|                                  |       | scope-defining input) and the Phase-4 PRD loop (which delivers the milestone's slice).         |
 | `docs/vision.md`                 | 1     | Mission, target user, dogfood context, golden-path scenario, out-of-scope list                 |
 | `docs/CONTEXT.md`                | 2     | Canonical term definitions (ubiquitous language) + avoid-list per term                         |
 | `docs/requirements.md`           | 2     | `FR-###` functional requirements + `NFR-###` + `C-###` constraints, scoped by milestone        |

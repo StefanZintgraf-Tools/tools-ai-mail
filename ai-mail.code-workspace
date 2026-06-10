@@ -19,7 +19,10 @@
 			"path": "../ai-knowhow/skills-plugins/matt_pocock_skills"
 		},
 		{
-			"path": "../github/humanlayer"
+			"path": "../github/OpenSpec.1.4.1"
+		},
+		{
+			"path": "../github/intent-driven-dev"
 		}
 	],
 	"settings": {}

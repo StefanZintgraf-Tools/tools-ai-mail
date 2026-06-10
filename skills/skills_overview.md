@@ -27,31 +27,56 @@ Guardrail file legend (referenced below):
 ## Contents
 
 1. [`bmad-brainstorming` — **HITL**](#bmad-brainstorming--hitl)
-2. [`grill-with-docs` — **external**](#grill-with-docs--external)
-3. [`domain-requirements` — **authoring**](#domain-requirements--authoring)
-4. [`ubiquitous-language-guard` — **lens**](#ubiquitous-language-guard--lens)
-5. [`pareto-scope-cut` — **lens**](#pareto-scope-cut--lens)
-6. [`domain-model` — **authoring**](#domain-model--authoring)
-7. [`adr-threshold-gate` — **lens**](#adr-threshold-gate--lens)
-8. [`hidden-constraint-sweep` — **lens**](#hidden-constraint-sweep--lens)
-9. [`usecase-diag` — **authoring**](#usecase-diag--authoring)
-10. [`usecase-spec` — **authoring**](#usecase-spec--authoring)
-11. [`trace-check` — **lens**](#trace-check--lens)
-12. [`prototype` — **external**](#prototype--external)
-13. [`to-prd` — **external** (superseded by `spec-to-prd`)](#to-prd--external-superseded-by-spec-to-prd)
-14. [`spec-to-prd` — **authoring**](#spec-to-prd--authoring)
-15. [`testing-strategy` — **authoring**](#testing-strategy--authoring)
-16. [`to-issues` — **external**](#to-issues--external)
-17. [`tdd` — **external**](#tdd--external)
-18. [`tracker-trace-check` — **lens**](#tracker-trace-check--lens)
-19. [`review-skills` — **meta**](#review-skills--meta)
-20. [`refactor-skills` — **meta**](#refactor-skills--meta)
+2. [`declare-milestone` — **authoring**](#declare-milestone--authoring)
+3. [`grill-with-docs` — **external**](#grill-with-docs--external)
+4. [`domain-requirements` — **authoring**](#domain-requirements--authoring)
+5. [`ubiquitous-language-guard` — **lens**](#ubiquitous-language-guard--lens)
+6. [`pareto-scope-cut` — **lens**](#pareto-scope-cut--lens)
+7. [`domain-model` — **authoring**](#domain-model--authoring)
+8. [`adr-threshold-gate` — **lens**](#adr-threshold-gate--lens)
+9. [`hidden-constraint-sweep` — **lens**](#hidden-constraint-sweep--lens)
+10. [`usecase-diag` — **authoring**](#usecase-diag--authoring)
+11. [`usecase-spec` — **authoring**](#usecase-spec--authoring)
+12. [`trace-check` — **lens**](#trace-check--lens)
+13. [`prototype` — **external**](#prototype--external)
+14. [`to-prd` — **external** (superseded by `spec-to-prd`)](#to-prd--external-superseded-by-spec-to-prd)
+15. [`spec-to-prd` — **authoring**](#spec-to-prd--authoring)
+16. [`testing-strategy` — **authoring**](#testing-strategy--authoring)
+17. [`to-issues` — **external**](#to-issues--external)
+18. [`tdd` — **external**](#tdd--external)
+19. [`tracker-trace-check` — **lens**](#tracker-trace-check--lens)
+20. [`review-skills` — **meta**](#review-skills--meta)
+21. [`refactor-skills` — **meta**](#refactor-skills--meta)
 
 ---
 
 ## `bmad-brainstorming` — **HITL**
 
 **Purpose.** Facilitates interactive brainstorming sessions using diverse creative techniques and ideation methods. Used twice in the workflow: Phase 1 Step 1 to seed inception artifacts (`painlist.md`, `00-foundation.md`) using an AI-recommended method with Pareto prioritization, and Phase 1 Step 3 to challenge vision goals using Assumption Reversal and produce `01-foundation.md`. Produces no downstream artifact itself; its outputs are raw inception material consumed by downstream skills.
+
+---
+
+## `declare-milestone` — **authoring**
+
+**Purpose.** Selects and durably declares the **next milestone** — the in-scope slice one PRD-loop iteration will ship — up front, at the start of the loop and *before* the vision step, rather than reconstructing it late from a status column. Because the vision is milestone-bound, the milestone must exist first: this skill picks it by honouring the project's build-order **dependencies**, the **Pareto / one-slice-at-a-time** discipline (commit to a single slice, not a multi-release roadmap), and the **already-shipped state**, then records the choice durably and HITL-confirms it. Its output becomes the scope-defining input the vision step is written against. It models no entities, authors no requirements, and does **not** fork the spec spine per milestone (those are sibling concerns); it only declares the milestone. On loop-back — when the declared milestone ships — it is re-run to pick the successor, seeding a fresh vision.
+
+**Input artifacts (must use).**
+
+- **The capability / build-order plan** (required) — the project's plan that names the candidate capabilities/primitives and their ordering, resolved by a fallback chain — never a hard-coded path: an explicit plan path passed as an argument → a conventional plan location in the repo → if neither is found, **ask** the user which plan defines the build order. It is never guessed silently, and no project's plan paths or marker names are hard-coded.
+- **Already-shipped state** (required) — what previous iterations have already delivered (the predecessor milestone and the shipped capabilities), so the next pick respects what is done and is not re-selected. Read from the durable declaration location and/or the plan's status; if it cannot be determined, the user is asked rather than assumed.
+
+**Output artifacts / results.**
+
+- **A declared milestone** — recorded durably in a project-designated location: its **name**, the **capability / primitive set it commits to**, and its **predecessor** (the milestone it builds on). This record is the scope-defining input the vision step consumes.
+- **A HITL confirmation** of the selected milestone before it is committed — the dependency/Pareto/shipped-state reasoning is shown and the human approves the choice; the selection is never written silently.
+- **Loop-back behaviour** — on a fresh run after milestone N ships, the skill picks N+1 (next by dependency + Pareto, not yet shipped) and declares it, so a new vision can be written against the new scope.
+
+**Relation to guardrail items.** This skill is the executable form of the greenfield build-order discipline in **`gr_greenfield.md`** — the Pareto / one-slice-at-a-time framing for "pick the next thing to build," carried over verbatim:
+
+- **G10** Smallest Architecture / Next Known Requirement — the milestone is sized to the *next* concrete slice the build order calls for, not a multi-release roadmap; one slice is committed at a time.
+- **G3** Defer Expensive Decisions — candidates whose dependencies are unmet, or that belong to a later slice, are left for a future iteration rather than pulled forward into the current milestone.
+
+*Note:* the skill only *declares* scope — it does not perform the item-level scope cut or the postponed-decision log (those stay `pareto-scope-cut`), author the vision/requirements (those are downstream), or fork the spec spine per milestone. It selects, records, and HITL-confirms the milestone, and nothing more.
 
 ---
 
@@ -63,7 +88,7 @@ Guardrail file legend (referenced below):
 
 ## `domain-requirements` — **authoring**
 
-**Purpose.** Produces `docs/requirements.md` — a catalog of functional requirements (user stories), measurable non-functional requirements, constraints, and an explicit **out-of-scope / non-goals** list, all written in the project's **ubiquitous language**. Two behaviors are load-bearing: (1) the **vocabulary input** — it reads the glossary (in addition to the vision document), draws actors/roles from the glossary's actor terms verbatim (with a heuristic for *identifying* which glossary entries are actors, and a "single actor → don't invent extra roles" rule), and uses domain nouns exactly as defined; and (2) it **carries negative decisions forward** — the vision's non-goals and any alignment rejections become an Out-of-Scope section so scope can be defended later (Aln15). It also frames `requirements.md` as a *summary* of upstream alignment, not the origin of the design concept (Aln13). It does *not* model entities, cut scope, or gate ADRs (those are sibling skills), and — critically — it does *not* enforce, evolve, or write back to the glossary (that stays `ubiquitous-language-guard`); it is **consume-only** on the glossary.
+**Purpose.** Produces `docs/requirements.md` — a catalog of functional requirements (user stories), measurable non-functional requirements, constraints, and an explicit **out-of-scope / non-goals** list, all written in the project's **ubiquitous language**. Two behaviors are load-bearing: (1) the **vocabulary input** — it reads the glossary (in addition to the vision document), draws actors/roles from the glossary's actor terms verbatim (with a heuristic for *identifying* which glossary entries are actors, and a "single actor → don't invent extra roles" rule), and uses domain nouns exactly as defined; and (2) it **carries negative decisions forward** — the vision's non-goals and any alignment rejections become an Out-of-Scope section so scope can be defended later (Aln15). It also frames `requirements.md` as a *summary* of upstream alignment, not the origin of the design concept (Aln13). The catalog it emits is **vision-scoped** — it documents exactly the slice the vision already chose, inheriting that scope rather than deciding scope itself: it does **not** apply the milestone deferral cut (the Open/Deferred split — that stays `pareto-scope-cut`'s "Scope split"), does **not** reach beyond the vision into other capabilities, and is **never bound to a module/milestone identifier** in its title, examples, or tables (the upstream step that *declares* the milestones — analysed in `milestone_review.md` §3.5 — is the `declare-milestone` concern, handed off cleanly, not restated here). It does *not* model entities, cut scope, or gate ADRs (those are sibling skills), and — critically — it does *not* enforce, evolve, or write back to the glossary (that stays `ubiquitous-language-guard`); it is **consume-only** on the glossary.
 
 **Input artifacts (must use).**
 
@@ -71,11 +96,13 @@ Guardrail file legend (referenced below):
 - **Glossary** (the ubiquitous-language file), resolved by a fallback chain — never a hard-coded filename:
   1. an explicit glossary path passed as an argument → 2. `docs/CONTEXT.md` → 3. `docs/glossary.md` →
   2. none found → warn ("No glossary found; proceeding without one — domain terms cannot be verified verbatim and actors will fall back to generic roles") and degrade to **generic behaviour** (generic roles, terms from the vision document), noting that requirements should be re-run once a glossary exists.
+- **Foundation / build-order / capability plan** (optional) — whatever artifact carries the project's stable upstream IDs (capabilities, primitives, pains, or equivalent), the source for the per-requirement upstream trace. Resolved by the same kind of fallback chain as the glossary — never a hard-coded filename: 1. an explicit foundation-plan path passed as an argument → 2. a conventional plan path → 3. none found → note ("No foundation plan found; emitting the catalog without upstream-ID traces") and **skip** the upstream trace. Upstream IDs the project does not define are **never invented** — the trace degrades to a no-op when no plan exists.
 - **Negative-decision sources** (optional) — an alignment transcript (`algn_transcript.md`) and/or an idea file (`idea.md`) are read for negative decisions *if present*; their absence is not an error (the vision's out-of-scope suffices).
 
 **Output artifacts / results.**
 
 - `docs/requirements.md` — fixed filename so the downstream chain stays intact (downstream `use-case-diagram`, `use-case-spec`, `domain-model`, `trace-check` read it), but positioned as a **summary** of upstream alignment, not the source of the design concept (Aln13).
+- A **`Source:` trace line** opening the document — naming the upstream artifacts the catalog derives from (the vision, plus the foundation plan when one was resolved, and the resolved glossary path) so traceability is visible at the top. When a foundation plan defining stable upstream IDs was resolved, each requirement also carries a **per-requirement upstream trace** citing the upstream element it realises (in its Title or a trace column); where no such plan exists the trace is a no-op and no ID is invented.
 - Four non-mixed Markdown tables: **FR** (user-story format, `As a [role], I want [goal] so that [benefit]`, roles drawn from glossary actor terms), **NFR** (measurable quality attributes, categorized), **Constraints** (categorized technical/business/schedule limitations), and **Out-of-Scope / Non-Goals (OOS)** (one row per negative decision, each citing its source) — each row carrying a unique ID and a filled Status column, validated against the Requirement Quality Checks table (Measurable, Singular, Unambiguous, Testable, Unique IDs, Verbatim).
 - A **Flagged Terms** section — a concrete landing place where a concept a requirement needs but the glossary does not name is *surfaced for the `ubiquitous-language-guard` write-back loop*, not silently coined here.
 
