@@ -59,40 +59,114 @@ Source: [plan/Outlook_Architecture_Discussion.md](../plan/Outlook_Architecture_D
   - *State/queue manager* — job states (Pending, Fetching, Stored), retries
 - **PoC consolidation option:** 3 physical services (Frontend, Core API, Adapter) carrying the 5+ logical modules.
 
-# Session Brief Review
+## 4. Session Setup (shared defaults — confirm, don't re-elicit)
 
-The remaining parts of this session brief have to be reviewed so they fit to the reworked items 1, 2, 3 above.
+The three goals are tackled in **three separate sessions, one per act** — a single session covers
+**one act only**, to keep each context clean and avoid context rot. Each session's output is a tight,
+written input to the next; do not chain them in one conversation.
 
-## 4. Session Setup (pre-decided — confirm, don't re-elicit)
+- **Stance (all sessions):** **Creative Partner** (coach facilitates *and* contributes ideas; authorship tracked)
+- **Participant:** Stefan (solo + AI)
+- **Always loaded:** this file (§1–3 = topic, vision, seed); optionally `bmad_brainstorming.md` for technique mechanics
+- **Per-session skill + extra inputs:** see each session in §5
+
+## 5. The Three Sessions (run in order — one act each)
+
+The three goals in §1 are different *modes* of thinking (generative → structural → convergent), so
+they form a **funnel across three runs**: diverge on the vision, structure it into a map, then
+converge on the first slice. Each session starts fresh, loads only the previous session's output as
+its new input, and ends with a single named artifact.
+
+### Session 1 — Vision *(Goal 1: the press-release)*
 
 - **Skill:** `bmad-brainstorming`
-- **Stance:** **Creative Partner** (coach facilitates *and* contributes ideas; authorship tracked)
-- **Participant:** Stefan (solo + AI)
-- **Inputs to load:** this file; the MD above; optionally `bmad_brainstorming.md` for technique mechanics
+- **Extra inputs:** none beyond the shared defaults
+- **Lead technique — Sci-Fi Artifact From the Future** *(speculative, signature)*: write the artifact
+  from the world where this already won — a future **press release / fake 5-star user review** of the
+  full AI mail assistant in daily use (archiving + Lookeen-style search + triage + summarize +
+  smart-reply + whatever else surfaces). This *is* the press-release vision — Working-Backwards in one
+  move. Optionally pre-seed ambition with a quick **1000x Budget** or **What If Scenarios** pass so the
+  vision isn't pre-shrunk by v1 worries.
+- **Output → feeds Session 2:** the **press-release-style vision** of the full assistant.
 
-## 5. Technique Batch (run in this order)
+### Session 2 — Map the territory *(Goal 2: use-cases + module/seam map)*
 
-1. **Backcasting** *(structured, classic)* — **lead technique.** Fix the end-state vividly: the full AI mail assistant (archiving + Lookeen-style search + triage + archiving + other ideas found in the brainstorming) working in daily use. Then walk backward step by step to the one move v1,Module1 must make first. Output: what v1 must *prove*, and which architecture pieces are needed now vs. later. Use this to validate the module cut in §3.
-2. **Job to Be Done** *(structured, classic)* — what is attachment handling really being *hired* for? Candidate jobs to probe: "save file to folder", "never lose an invoice again", "make mail content findable" (note: the last one already overlaps with future search → scoping tension). Output: the underlying job, and what the AI analyzer must minimally do in v1 to serve it.
-3. **One Feature Only** *(constraint, signature)* — if v1 could keep exactly ONE capability and make it unbelievably good, which is it? (Auto-filing by sender? LLM classification? Manual one-click archive?) Output: the irreducible core; fights the temptation to build all five modules at full depth at once.
-4. **Cursed Genie** *(absurdist, playful)* — edge-case sweep: make a wish ("archive this mail's attachments"), let the genie grant it disastrously. Seed cases: locked PST (already found in the PDF), 50 MB attachments, mails with 20 attachments, duplicate filings, misclassified invoices, signature images archived as "attachments", token expiry mid-job. Output: edge-case list → v1 requirements vs. accepted limitations.
+- **Skill:** `bmad-brainstorming`
+- **Extra input:** Session 1's press-release vision
+- **Technique 1 — Lotus Blossom** *(structured, classic)*: center = the Session 1 vision; the 8 petals
+  = the coarse high-level **use-cases** from the user POV; bloom any petal that's rich. Expands the
+  vision into the use-case set without designing anything yet.
+- **Technique 2 — Ecosystem Thinking** *(biomimetic, signature)*: turn the use-cases into the coarse
+  set of **independent modules** and name the **architecturally-significant seams** the *whole* vision
+  implies (not just Module1's). Validate against the §3 candidate module cut: confirm, rename, add, or
+  drop seams.
+- **Output → feeds Session 3:** the **use-case list + coarse module/seam map**.
 
-## 6. Convergence (separate phase, after the batch is spent)
+### Session 3 — Find the first slice *(Goal 3: v1/later split + Module1)*
 
-- **MoSCoW** — sort everything generated into **Must / Should / Could / Won't (this version)**.
-  - The *Won'ts* become the documented "later" roadmap (AI search, additional frontends, …).
+- **Skill:** `bmad-brainstorming`
+- **Extra input:** Session 2's use-case + module/seam map
+- **Technique 1 — Backcasting** *(structured, classic)*: fix the end-state vividly (the Session 1
+  vision), then walk backward to the one move **v1 / Module1** must make first. Probe inline with
+  **Job to Be Done** ("what is attachment handling really *hired* for?" — e.g. "never lose an invoice
+  again" vs. "make mail content findable", the latter already overlapping future search → scoping
+  tension) to keep v1 honest.
+- **Technique 2 — One Feature Only** *(constraint, signature)*: if v1 kept exactly ONE capability and
+  made it unbelievably good, which is it? (Auto-filing by sender? LLM classification? Manual one-click
+  archive?) Lands the irreducible **Module1** core and fights the urge to build every module at full
+  depth at once.
+- **Converge (in-session, after divergence — see §6):** MoSCoW the v1 scope, then walk Module1 / the
+  first tracer bullet across the Session 2 seam map and confirm it **pierces every architecturally-
+  significant seam** (stubs fine) rather than omitting any — the §1 / Tracer-Bullet check.
+- **Output:** the **v1 scope statement** + **tracer-bullet reach note**.
+
+> **Cut from all three sessions:** *Cursed Genie* (edge-case sweep). Edge cases are detailed
+> requirements — explicitly **Out of Scope** per §1 ("stay high-level, don't design internals"). Defer
+> the seed cases (locked PST, 50 MB / 20-attachment mails, duplicate filings, misclassified invoices,
+> signature images, mid-job token expiry) to a later requirements / test-design pass once Module1's
+> scope is fixed.
+
+### Handoff between sessions
+
+Because each session runs in a **fresh context**, the link between them is a **file on disk**, not
+conversation memory. The BMM config places artifacts under
+`_bmad-output/planning-artifacts/` (project `ai-mail`). Save each session's artifact there and name
+the next session's **extra input** by path:
+
+| Session | Saves artifact | Loads as extra input |
+|---|---|---|
+| **1 — Vision** | `_bmad-output/planning-artifacts/brainstorming-s1-vision.md` | — |
+| **2 — Map** | `_bmad-output/planning-artifacts/brainstorming-s2-modulemap.md` | Session 1's artifact |
+| **3 — First slice** | `_bmad-output/planning-artifacts/brainstorming-s3-v1scope.md` | Session 2's artifact (+ Session 1 for the end-state in Backcasting) |
+
+At the start of each session, the coach **reads only the prior artifact(s)** named above — never the
+full transcript of the earlier run — keeping context lean while carrying the decisions forward. If a
+session revises something upstream (e.g. Session 2 adds a seam not in §3), record it in *that*
+session's artifact rather than editing this brief mid-flow; reconcile this brief at the end.
+
+## 6. Convergence (Session 3's converge phase — after its divergence is spent)
+
+- **MoSCoW** — sort the use-cases *and* the modules into **Must / Should / Could / Won't (this
+  version)**: which modules are **v1-real**, which are **stubs** (present only for tracer reach), and
+  which are **later**.
+  - The *Won'ts* become the documented "later" roadmap (AI/Lookeen search, more frontends, triage…).
   - If candidates pile up, pre-filter with an **Impact–Effort matrix** first.
 
 ## 7. Expected Outputs
 
-1. Brainstorming session document (the skill's standard artifact, saved to the configured output folder).
-2. A **v1 scope statement**: the one job v1 does, its Must/Should/Could list, and explicit Won'ts.
-3. **Edge-case register** from Cursed Genie (input for requirements/testing).
-4. Validation or revision notes on the §3 module cut (which modules are v1-real, which are stubs/deferred).
-5. Hand-off pointer: results feed `bmad-product-brief` / `bmad-prd` (BMAD Phase 1 → 2).
+1. Three brainstorming session documents (the skill's standard artifact per run, saved to the output folder).
+2. **Press-release vision** (Session 1 / Goal 1): the Working-Backwards artifact for the full assistant.
+3. **Use-case + module/seam map** (Session 2 / Goal 2): coarse user-facing use-cases and the independent
+   modules with their architecturally-significant seams (validated against the §3 cut).
+4. **v1 scope statement** (Session 3 / Goal 3): the one job v1 does, its Must/Should/Could list, explicit
+   Won'ts, and which modules are v1-real vs. stub vs. deferred.
+5. **Tracer-bullet reach note** (Session 3): confirmation that Module1 pierces every seam from output 3
+   (stubs allowed), or the revisions needed so it does.
+6. Hand-off pointer: results feed `bmad-product-brief` / `bmad-prd` (BMAD Phase 1 → 2).
 
 ---
 
-*Coach instructions: greet, confirm this brief in two sentences, then start technique 1
-(Backcasting). Keep divergence pure — no prioritizing until §6. Log everything to the
-memlog. Aim past 100 ideas across the batch; the magic happens in ideas 50–100.*
+*Coach instructions (per session): greet, confirm this brief and the session's specific goal in two
+sentences, load the prior session's output as input, then run that session's technique(s) only — do
+not bleed into the next act. Keep divergence pure; converge only where §6 says (Session 3). Log
+everything to the memlog. Aim for high idea volume within the act; the magic happens in ideas 50–100.*
