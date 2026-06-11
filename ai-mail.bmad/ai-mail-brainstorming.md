@@ -12,31 +12,38 @@
 
 ## 1. Topic & Goal
 
-- **Topic:** Scope of the *first version (v1)* of AI-supported mail handling, focused on a subset - one single testable module (Module1) - of the mail **attachment handling/archiving**. VERY IMPORTANT: besides this Module1, the architecture must be approved using Tracer Bullets (see https://www.aihero.dev/tracer-bullets). The Tracer Bullet concept means, that the result must also include a very thin slice through all parts of the architecture (prototype or mocked modules). 
-- **Goal (the why):** Decide what belongs in v1 and what is deferred — while making sure the v1 architecture does not paint the future vision into a corner.
-  Also, a (press-release like) rough overview of possible high-level use-cases from a user point of view must be generated. All independent modules the final solution may have should be included. The architecture decisions made (see §3) are just a starter/idea and not finally decided. A final vision of the product shall be generated (press-release, arhcitecture, modules overview) and also what can be v1, Module1 and what the very first Tracer Bullet slice must include.
-- **Out of Scope:** Any detailled decisions like specific requirements, programming language decision etc.
+- **Topic:** A first **product overview** of AI-supported mail handling — the long-term vision, the user-facing use-cases, and a coarse map of the modules the full solution may need. Within that frame, a first cut at what belongs in the *first version (v1)* and what is deferred, and the one thin first module (**Module1**) of **attachment handling/archiving**.
+- **Goal (the why):** Produce a shared, high-level picture of the product:
+  1. A **press-release-style vision** of the full AI mail assistant from the user's point of view.
+  2. A **rough overview of high-level use-cases** (user POV) and the **coarse set of independent modules** the final solution may have.
+  3. A first **v1 / later split**, and the irreducible **Module1** that proves the idea.
+- **Stay high-level on features, but think architecture-wide on seams:** Keep modules and use-cases coarse and user-facing — *don't* design internals or pick technology. But the *set of architecturally-significant seams* must be drawn from the **whole vision**, not just Module1's feature, so the first slice isn't scoped too narrowly to survive later modules.
+- **Out of Scope:** Detailed requirements, technology/language choices, and final internal design of any module.
 
-### Tracer Bullets Rule
+### Tracer Bullets — and why the whole vision shapes the first slice
 
-When building features, build a tiny, end-to-end slice of the feature first, seek feedback, then expand out from there.
-When building systems, you want to write code that gets you feedback as quickly as possible. Tracer bullets are small slices of functionality that go through all layers of the system, allowing you to test and validate your approach early. This helps in identifying potential issues and ensures that the overall architecture is sound before investing significant time in development.
+The end-state architecture is validated with **Tracer Bullets** (see https://www.aihero.dev/tracer-bullets): a slice that runs end-to-end through all layers to prove the approach early. The key property: a tracer bullet is **thin in functionality but complete in architectural reach** — it touches *every* architecturally-significant seam, each module present but minimal or stubbed.
+
+"Reach" here is defined by the **full vision**, not by Module1's narrow feature. A first version scoped to too few modules risks locking in an architecture that a later module (e.g. Lookeen-style search reusing the analyzer/classification layer) breaks. So in *this* session we must, at a coarse level: (a) name the seams the full vision implies, and (b) check that Module1 / the first tracer bullet pierces those seams (stubs are fine) rather than omitting them. We defer *how* each seam is built, not *whether the slice reaches it*.
 
 ## 2. Vision (the long-term picture)
 
 An **AI mail assistant** that grows feature by feature:
 
-1. **Module1 — First module of the Attachment handling (this session):** the first module of this use-case: user triggers archiving of mail attachments from Outlook; backend fetches, classifies (AI/LLM), and stores them at the right target location.
+1. **Module1 — the thin first slice (this session's focus):** the smallest end-to-end move that proves the idea — e.g. user triggers archiving on one mail; backend fetches its attachments and stores them, with classification minimal or stubbed. Thin in *capability*, but it should still **reach through every architecturally-significant seam the full vision implies** (each module present, stubbed where needed), so the architecture it validates isn't too narrow for later modules.
 
-2. **Later — All modules for v1:** the first usable version of this use-case: user triggers archiving of mail attachments from Outlook; backend fetches, classifies (AI/LLM), and stores them at the right target location.
+2. **v1 — first usable version of attachment handling:** user triggers archiving of mail attachments from Outlook; backend fetches, classifies (AI/LLM), and stores them at the right target location. Module1 grown out to a real, daily-usable feature.
 
-3. **Later — Enhanced version of v1 and then AI-supported mail search and more** in the style of *Lookeen* (fast, content-aware search across mailboxes and archives). Note: the v1 analyzer/classification layer likely overlaps with future search indexing — a scoping tension to explore in the session.
+3. **Later — AI-supported mail search** in the style of *Lookeen* (fast, content-aware search across mailboxes and archives). Note: the v1 analyzer/classification layer likely overlaps with future search indexing — a scoping tension to explore in the session.
 
-4. **Later — AI-supported mail search and more** in the style of *Lookeen* (fast, content-aware search across mailboxes and archives). Note: the v1 analyzer/classification layer likely overlaps with future search indexing — a scoping tension to explore in the session.
+4. **Later — further AI mail features** (triage, summarization, smart replies, etc. — open).
 
-5. **Later — further AI mail features** (archiving, triage, summarization, etc. — open).
+## 3. Starting Point — Architecture seed (reference input, not a target)
 
-## 3. Starting Point — Initial (restricted) brainstorming
+> These are *prior* ideas from an earlier technical chat. Use the **module cut below as the candidate
+> seam map** — the list of architecturally-significant seams to check Module1's reach against (§1). But
+> treat the *technical specifics* (ES5, IMAP/Graph, service count) as reference only, not decisions, and
+> don't let them pull this overview session into internal design.
 
 Source: [plan/Outlook_Architecture_Discussion.md](../plan/Outlook_Architecture_Discussion.md) (chat transcript). Some ideas already there:
 
