@@ -81,7 +81,7 @@ its new input, and ends with a single named artifact.
 
 - **Skill:** `bmad-brainstorming`
 - **Extra inputs:** none beyond the shared defaults
-- **Lead technique — Sci-Fi Artifact From the Future** *(speculative, signature)*: write the artifact
+- **Lead technique — Sci-Fi Artifact From the Future** *(speculative-future, signature)*: write the artifact
   from the world where this already won — a future **press release / fake 5-star user review** of the
   full AI mail assistant in daily use (archiving + Lookeen-style search + triage + summarize +
   smart-reply + whatever else surfaces). This *is* the press-release vision — Working-Backwards in one
@@ -96,10 +96,15 @@ its new input, and ends with a single named artifact.
 - **Technique 1 — Lotus Blossom** *(structured, classic)*: center = the Session 1 vision; the 8 petals
   = the coarse high-level **use-cases** from the user POV; bloom any petal that's rich. Expands the
   vision into the use-case set without designing anything yet.
-- **Technique 2 — Ecosystem Thinking** *(biomimetic, signature)*: turn the use-cases into the coarse
-  set of **independent modules** and name the **architecturally-significant seams** the *whole* vision
-  implies (not just Module1's). Validate against the §3 candidate module cut: confirm, rename, add, or
-  drop seams.
+- **Technique 2 — Morphological Analysis** *(deep, classic)*: decompose the use-cases into the coarse
+  set of **independent modules** — the problem's independent parameters. Generate the candidate module
+  set the *whole* vision implies (not just Module1's), then validate against the §3 candidate module
+  cut: confirm, rename, add, or drop. Produces the *modules*; Technique 3 finds the *seams between* them.
+- **Technique 3 — Entanglement Thinking** *(quantum, signature)*: with the module set in hand, hunt the
+  **architecturally-significant seams** — the cross-module couplings where a change in one forces a
+  change in another. This is the technique that directly surfaces the §2.3 scoping tension (the v1
+  analyzer/classification layer entangled with future Lookeen-style search). The seams it names *are*
+  the reach map Session 3's tracer-bullet check (§1, §5) walks Module1 across.
 - **Output → feeds Session 3:** the **use-case list + coarse module/seam map**.
 
 ### Session 3 — Find the first slice *(Goal 3: v1/later split + Module1)*
@@ -120,7 +125,7 @@ its new input, and ends with a single named artifact.
   significant seam** (stubs fine) rather than omitting any — the §1 / Tracer-Bullet check.
 - **Output:** the **v1 scope statement** + **tracer-bullet reach note**.
 
-> **Cut from all three sessions:** *Cursed Genie* (edge-case sweep). Edge cases are detailed
+> **Cut from all three sessions:** *Cursed Genie* *(absurdist)* — its edge-case sweep. Edge cases are detailed
 > requirements — explicitly **Out of Scope** per §1 ("stay high-level, don't design internals"). Defer
 > the seed cases (locked PST, 50 MB / 20-attachment mails, duplicate filings, misclassified invoices,
 > signature images, mid-job token expiry) to a later requirements / test-design pass once Module1's
