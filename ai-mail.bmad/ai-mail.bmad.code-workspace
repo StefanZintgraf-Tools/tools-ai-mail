@@ -1,13 +1,23 @@
 {
 	"folders": [
 		{
+			"name": "ai-mail.bmad",
 			"path": "."
 		},
 		{
+			"name": "C--PROJ-ai-mail",
+			"path": "../../../Users/szint/.claude/projects/C--PROJ-ai-mail"
+		},
+		{
+			"name": "plan",
 			"path": "../plan"
 		},
 		{
+			"name": "BMAD-METHOD.680+0611_1550",
 			"path": "../../github/BMAD-METHOD.680+0611_1550"
+		},
+		{
+			"path": "../../ai-knowhow/skills-plugins"
 		}
 	],
 	"settings": {}
