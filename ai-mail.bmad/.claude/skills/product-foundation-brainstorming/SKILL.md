@@ -41,7 +41,10 @@ language, with **no** architecture, tech, modules, or "what ships first."
    - **goal:** the §1 goal,
    - **technique batch + order:** §5 (one technique per window; stop without wrapping up
      between techniques; only the final window of each session wraps up),
-   - **boundaries:** §0, §2, §3 held firmly.
+   - **boundaries:** §0, §2, §3 held firmly — enforced by the frame's **Altitude Guard** (§2), the
+     line-by-line test that keeps feature-leaning techniques (Empathy Map, Lotus Blossom, Job to Be Done)
+     from drifting into screens/modules/tech/scope. Apply it as each line is captured *and* over every
+     artifact before it's emitted.
    Log every idea/decision/technique-switch to the memlog as bmad-brainstorming normally does.
 
 ## Sequence & resume routing — the part this skill enforces

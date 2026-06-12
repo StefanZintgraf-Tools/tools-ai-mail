@@ -56,6 +56,22 @@ not appear in the output (gently redirect if the session drifts toward them):
 The output is something a product marketer and a curious user could both read and nod at — **not**
 something an engineer would build from. Building comes much later.
 
+**Altitude guard — the operational tripwire (apply to every line you capture).** A stated boundary
+is easy to cross mid-flow; this is the line-by-line test that keeps it honest. Every idea, use-case,
+or vision line must pass: *would a user who lives with the problem — and has zero interest in how it's
+solved — recognize it as their own words?* Concretely:
+
+- **Outcome, never mechanism.** A vision line is a feeling or a future they'd cheer ("I never lose
+  track again"); a use-case is "I can now …". Never *"the system/app does X"*, never a noun-feature
+  ("a dashboard", "a sync button", "a settings screen").
+- **Banned vocabulary = you've already drifted.** *system, fetch/parse/process, module/service/layer/
+  API/database, client/app/platform/protocol, screen/button/UI/dashboard, MVP/v1/must/should/could,
+  first/ship/phase.* The instant a line needs one of these, **stop** — name it in one breath ("that's a
+  *how*, not a *what* — out of scope here") and re-ask at the user's level: *"what does that let the
+  user finally do or feel?"*
+- **One redirect, then move on.** Don't argue the boundary or delete the spark — restate it in user
+  language, log the user-level version, and continue. Drift is normal; catching it fast is the skill.
+
 ## 3. The user-first framing (the only "input")
 
 There is no architecture seed and no prior-decision input — that is intentional. The only frame we
@@ -110,6 +126,8 @@ Run each in its **own window**, stopping/resuming the same memlog between them; 
 
 - **Warm up (optional opener):** **Empathy Map** *(structured, classic)* — map what the user *says,
   thinks, does, and feels* about the problem today; mine each quadrant for the unmet need.
+  *↳ Altitude guard: stay in emotional/behavioral language — the instant a "feels" becomes "needs a
+  feature that…", you've left the map; re-ask what they feel, not what tool would fix it.*
 - **Diverge — the core batch (~4 techniques):**
   - **Assumption Reversal** *(deep, classic)* — *the anti-anchoring engine for §0.* List the baked-in
     assumptions of how this problem is handled today (the user must do X by hand; one obvious way in;
@@ -128,7 +146,9 @@ Run each in its **own window**, stopping/resuming the same memlog between them; 
 - **Distill — final window:** **Sci-Fi Artifact From the Future** *(speculative-future, signature)* —
   write from the world where this already won: a **future press release** and/or a **glowing 5-star user
   review** of the product in everyday use. This *is* the vision (Working-Backwards in one move); keep it
-  entirely in user language. This window wraps up the session and emits the vision artifact.
+  entirely in user language. **Before emitting:** run the Altitude Guard over every line of the artifact —
+  rewrite or drop any that names a screen, system, module, tech, or "v1". This window wraps up the session
+  and emits the vision artifact.
 - **Output → feeds Session B:** the **press-release-style vision** (1–2 pages, user POV, no tech).
 
 ### Session B — High-level use-cases *(produces output 2)*
@@ -141,14 +161,21 @@ each in its own window, resuming this memlog between them; run convergence as it
 
 - **Technique 1 — Lotus Blossom** *(structured, classic)*: center = the Session A vision; the 8 petals =
   the big high-level use-cases from the user's POV; bloom any rich petal into sub-uses.
+  *↳ Altitude guard (this technique's native pull is feature-decomposition): every petal and sub-petal
+  must read as "I can now …", not as a component or screen. If a petal names a thing the product has
+  rather than something the user can do, it's drifted — restate it as the user's outcome.*
 - **Technique 2 — Job to Be Done** *(structured, classic)*: pressure-test each use-case — what is the user
   really *hiring* this product to do? Keep each honest to a real job, not a feature in disguise.
+  *↳ Altitude guard: the "job" is the user's, never the product's — phrase it as their progress
+  ("stop losing track of what matters"), never as a capability the product ships.*
 - **Technique 3 — Persona Journey** *(theatrical, signature)*: walk a few different §3 users (e.g. the
   swamped professional, the demanding expert, the occasional dabbler) through their day with the product,
   to surface use-cases only one persona would notice.
 - **Light convergence — its own window:** **Affinity Clustering** to group the use-cases into a few named
   themes so the list reads as a coherent map of *what users can do*. **Do not** rank, MoSCoW, or mark
-  anything "first" — out of scope (§2). This final window wraps up the session and emits the use-case list.
+  anything "first" — out of scope (§2). **Before emitting:** run the Altitude Guard over every use-case and
+  theme name — rewrite any that slid into a feature, screen, or scope label. This final window wraps up the
+  session and emits the use-case list.
 - **Output:** the **high-level use-case list**, grouped into themes, each phrased from the user's POV.
 
 ## 6. Expected outputs
@@ -167,5 +194,6 @@ each in its own window, resuming this memlog between them; run convergence as it
 *Per window: greet, confirm this frame and which session + technique this window runs in two sentences.
 Run **one** technique, then **stop without wrapping up** — except a session's final window, which wraps up
 and produces the artifact. Starting Session B, load only Session A's vision artifact. Hold the §2 boundaries
-firmly — if the session drifts into modules, tech, or "what ships first," name it and steer back. Keep
-divergence pure and wide; the magic is in ideas 50–100.*
+firmly via the **Altitude Guard** — apply it to every line as it's captured, and again over the whole
+artifact before emitting; name drift in one breath and steer back. Keep divergence pure and wide; the magic
+is in ideas 50–100.*
