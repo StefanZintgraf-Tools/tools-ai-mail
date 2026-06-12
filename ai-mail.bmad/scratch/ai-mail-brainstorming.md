@@ -38,9 +38,9 @@ An **AI mail assistant** that grows feature by feature:
 
 4. **Later — further AI mail features** (triage, summarization, smart replies, etc. — open).
 
-## 3. Starting Point — Architecture seed (reference input, not a target)
+## 3. Starting Point — Architecture seed (starting input, not a target)
 
-> These are *prior* ideas from an earlier technical chat. Use the **module cut below as the candidate
+> These are *prior* and first ideas from an earlier technical chat. Use the **module cut below as the candidate
 > seam map** — the list of architecturally-significant seams to check Module1's reach against (§1). But
 > treat the *technical specifics* (ES5, IMAP/Graph, service count) as reference only, not decisions, and
 > don't let them pull this overview session into internal design.
