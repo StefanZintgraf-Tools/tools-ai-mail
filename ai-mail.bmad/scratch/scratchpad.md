@@ -1,3 +1,5 @@
 # scratchpad
 
-- re-read ai-mail-brainstorming.md (steps 4...)
+- /product-foundation-brainstorming 
+  - statt ai-mail-foundation-brainstorming.md
+  
