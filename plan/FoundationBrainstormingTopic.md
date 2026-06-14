@@ -9,6 +9,29 @@
 
 ---
 
+## Before you begin — turn ON scope steering
+
+The git submodule you are working in has a `UserPromptSubmit` hook that re-injects the scope
+boundary into every turn while the root flag `brainstorm_scope_boundary_on.md` exists. Both
+flag names are git-ignored (local-only state), so on a fresh clone **neither file exists**.
+
+> "Root folder" below means **the root of the current git submodule** (the one whose hook is
+> active for this session — e.g. `ai-mail.pocock`, `ap-main.bmad`, …), not this `plan/` repo.
+
+**As the very first step of this session, ensure the `_on` flag exists** in the current
+submodule's root folder:
+
+- if `brainstorm_scope_boundary_off.md` is present → rename it to `brainstorm_scope_boundary_on.md`;
+- otherwise → create `brainstorm_scope_boundary_on.md` (any contents; only its existence matters).
+
+(The hook fires at prompt-submit, so steering kicks in from the turn *after* this — that is
+fine; the kickoff turn doesn't need it.)
+
+**When the session ends, rename `_on` back to `_off`** so steering doesn't bleed into
+unrelated work.
+
+---
+
 ## 0. Read this first — a clean-slate session
 
 This brief is **deliberately unanchored**. It exists *before* and *independent of* any prior
