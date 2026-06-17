@@ -40,14 +40,14 @@ If you absolutely must use the modern Web Add-in framework but still need files 
 
 ## Summary Comparison
 
-| Feature | COM / VSTO Add-in | Office Web Add-in |
-|---|---|---|
-| Tech Stack | C#, .NET | JavaScript, TypeScript, HTML |
-| Outlook 2019/2024 Support | Yes (Windows only) | Yes |
-| Outlook 365 (Classic) Support | Yes (Windows only) | Yes |
-| "New" Outlook / Web Support | No | Yes |
-| Mac Support | No | Yes |
-| Direct Local File System Access | Yes | **No** (Requires local daemon) |
+| Feature                         | COM / VSTO Add-in  | Office Web Add-in              |
+| ------------------------------- | ------------------ | ------------------------------ |
+| Tech Stack                      | C#, .NET           | JavaScript, TypeScript, HTML   |
+| Outlook 2019/2024 Support       | Yes (Windows only) | Yes                            |
+| Outlook 365 (Classic) Support   | Yes (Windows only) | Yes                            |
+| "New" Outlook / Web Support     | No                 | Yes                            |
+| Mac Support                     | No                 | Yes                            |
+| Direct Local File System Access | Yes                | **No** (Requires local daemon) |
 
 ## Recommendation
 
@@ -184,6 +184,7 @@ If your frontend only sends an ID and an Auth Token (relying on the backend to f
 **USER**
 
 My idea is a design of at least these modules:
+
 - The frontend (e.g. Outlook add-in or new webapp) which decides which mail's attachments shall be archived. Sends an archive request to an archive-manager.
 - A storage-backend that stores the attachment at some target location (may be even a database).
 - A mail-client backend that has access to the mailbox (e.g. IMAP, GMAIL, ...).
